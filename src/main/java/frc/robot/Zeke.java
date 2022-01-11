@@ -2,6 +2,10 @@ package frc.robot;
 
 import org.xero1425.base.XeroRobot;
 import org.xero1425.base.controllers.AutoController;
+import org.xero1425.misc.SimArgs;
+
+import frc.robot.automodes.ZekeAutoController;
+import frc.robot.zekesubsystem.ZekeSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,25 +22,25 @@ public class Zeke extends XeroRobot {
     return "zeke2022";
   }
 
-  // TODO get all commented sections un-commented by adding the specific files/updates they depend on
+  // TODO: get all commented sections un-commented by adding the specific files/updates they depend on
 
   public AutoController createAutoController() {
-    // return new ZekeAutoController(this);
+    return new ZekeAutoController(this);
     return null ;
   }
   
   protected void hardwareInit() throws Exception {
-    // ZekeSubsystem robotsub = new ZekeSubsystem(this) ;
-    // setRobotSubsystem(robotsub) ;
+    ZekeSubsystem robotsub = new ZekeSubsystem(this) ;
+    setRobotSubsystem(robotsub) ;
   }
 
-  // public String getSimulationFileName() {
-  //   String ret = SimArgs.InputFileName;
-  //   if (ret != null)
-  //     return ret;
+  public String getSimulationFileName() {
+    String ret = SimArgs.InputFileName;
+    if (ret != null)
+      return ret;
 
-  //   return "testmode";
-  // }
+    return "testmode";
+  }
 
   protected void addRobotSimulationModels() {
   }
