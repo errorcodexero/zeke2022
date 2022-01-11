@@ -18,10 +18,27 @@ public class Zeke extends XeroRobot {
     return "zeke2022";
   }
 
+  // TODO get all commented sections un-commented by adding the specific files/updates they depend on
+
   public AutoController createAutoController() {
+    // return new ZekeAutoController(this);
     return null ;
   }
   
   protected void hardwareInit() throws Exception {
+    // ZekeSubsystem robotsub = new ZekeSubsystem(this) ;
+    // setRobotSubsystem(robotsub) ;
   }
+
+  // public String getSimulationFileName() {
+  //   String ret = SimArgs.InputFileName;
+  //   if (ret != null)
+  //     return ret;
+
+  //   return "testmode";
+  // }
+
+  protected void addRobotSimulationModels() {
+  }
+
 }
