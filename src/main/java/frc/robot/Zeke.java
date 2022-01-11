@@ -2,10 +2,12 @@ package frc.robot;
 
 import org.xero1425.base.XeroRobot;
 import org.xero1425.base.controllers.AutoController;
+import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MissingParameterException;
 import org.xero1425.misc.SimArgs;
 
 import frc.robot.automodes.ZekeAutoController;
-import frc.robot.zekesubsystem.ZekeSubsystem;
+import frc.robot.zekesubsystem.ZekeSubsystem ;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,9 +26,8 @@ public class Zeke extends XeroRobot {
 
   // TODO: get all commented sections un-commented by adding the specific files/updates they depend on
 
-  public AutoController createAutoController() {
+  public AutoController createAutoController() throws MissingParameterException, BadParameterTypeException {
     return new ZekeAutoController(this);
-    return null ;
   }
   
   protected void hardwareInit() throws Exception {
