@@ -7,7 +7,7 @@ import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import frc.robot.zekeoi.ZekeOISubsystem;
 
 public class ZekeSubsystem extends RobotSubsystem {
-    public final static String SubsystemName = "bunnybot" ;
+    public final static String SubsystemName = "zeke" ;
     public final static String TankdriveSubsystemName = "tankdrive" ;
     private TankDriveSubsystem db_ ;
     private ZekeOISubsystem oi_;
