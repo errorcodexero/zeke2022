@@ -20,7 +20,7 @@ public class Zeke extends XeroRobot {
     super(0.02) ;
   }
   
-  public String Zeke() {
+  public String getName() {
     return "zeke2022";
   }
 
