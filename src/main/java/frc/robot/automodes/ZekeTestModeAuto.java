@@ -23,7 +23,49 @@ public class ZekeTestModeAuto extends TestAutoMode {
 
             case 1:
                 addSubActionPair(db, new TankDrivePathFollowerAction(db, getNameParam(), false), true) ;
-                break ;                
+                break ;  
+                        
+            //
+            // Numbers 10 - 19 are for the intake
+            //
+            case 10:        
+                //add action
+                break ;
+            
+            //
+            // Numbers 20 - 29 are for the conveyor
+            //
+            case 20:        
+                //add action
+                break ;
+            
+            //
+            // Numbers 30 - 39 are for the shooter
+            //
+            case 30:        
+                //add action
+                break ;
+
+            //
+            // Numbers 40 - 49 are for the turret/limelight
+            //
+            case 40:        
+                //add action
+                break ;
+
+            //
+            // Numbers 50 - 59 are for the climber
+            //
+            case 50:        
+                //add action
+                break ;
+
+            //
+            // Numbers 100+ are for the whole-robot
+            //
+            case 100:        
+                //add action
+                break ;
         }
     }
 }
