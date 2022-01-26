@@ -1,0 +1,131 @@
+{
+    "system": {
+        "messages": {
+            "actions": true,
+            "tankdrive": false,
+            "pathmanager": false,
+            "xerorobot": false,
+            "pathfollowing": false
+        },
+        "verbose": {
+            "tankdrive": false
+        },
+        "plotting": true,
+        "pneumatics": {
+            "enabled": true,
+            "type": "REVPH"
+        }
+    },
+    "subsystems": {
+        "tankdrive": {
+            "hw": {
+                "gyro": "navx",
+                "left": {
+                    "motors": {
+                        "1": {
+                            "type": "talon_fx",
+                            "canid": 1
+                        },
+                        "2": {
+                            "type": "talon_fx",
+                            "canid": 2
+                        }
+                    }
+                },
+                "right": {
+                    "motors": {
+                        "1": {
+                            "type": "talon_fx",
+                            "canid": 3
+                        },
+                        "2": {
+                            "type": "talon_fx",
+                            "canid": 4
+                        }
+                    },
+                    "invert": true
+                }
+            },
+            "width": 30,
+            "scrub": 1.0,
+            "inches_per_tick": 0.006,
+            "speedometer": {
+                "linearsamples": 2,
+                "angluarsamples": 2
+            },
+            "follower": {
+                "left": {
+                    "ka": 0.0003,
+                    "kv": 0.006,
+                    "kp": 0.035,
+                    "kd": 0.0
+                },
+                "right": {
+                    "ka": 0.0003,
+                    "kv": 0.006,
+                    "kp": 0.035,
+                    "kd": 0.0
+                }
+            },
+            "angle_correction": {
+                "kp": 0.03,
+                "ki": 0.0,
+                "kd": 0.0,
+                "kf": 0,
+                "max": 1.0,
+                "min": -1.0,
+                "imax": 0.0
+            }
+        },
+        "zekeoi" : {
+            "xero1425_gamepad" : {
+                "index_not_used" : 0,
+                "power" : {
+                    "max" : 1.0,
+                    "default" : 0.6,
+                    "nudge_straight" : 0.2,
+                    "nudge_rotate" : 0.2,
+                    "slowby" : 0.5,
+                    "tolerance" : 0.05
+                },
+                "turn" : {
+                    "max" : 0.8,
+                    "default" : 0.4
+                },
+
+                "zerolevel" : 0.1,
+                "nudge_time" : 0.1
+            },
+            "standard_gamepad" : {
+                "index" : 0,
+                "deadband" : 0.05
+            },
+            "oi" : {
+                "index" : 2,
+                "gadgets" : {
+                    "automode" : 0,
+                    "shoot_collect_mode" : 11,
+                    "eject" : 8,
+                    "collect_onoff" : 14, 
+                    "climb_lock": 10,
+                    "climb_deploy": 5,
+                    "climb_secure": 8,
+                    "climb_up": 1,
+                    "climb_down": 2,
+                    "traverse_left": 3,
+                    "traverse_right": 4,
+                    "manual_shoot_mode": 9,
+                    "manual_shoot_fire": 7
+                }
+            }
+        }        
+    },
+    "testmode": {
+        "enabled": true,
+        "which": 1,
+        "power": 0.5,
+        "duration": 5.0,
+        "distance": 0.0,
+        "name": "Test_Straight"
+    }
+}

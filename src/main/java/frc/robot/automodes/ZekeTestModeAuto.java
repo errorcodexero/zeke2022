@@ -22,7 +22,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break;
 
             case 1:
-                addSubActionPair(db, new TankDrivePathFollowerAction(db, getNameParam(), false), true) ;
+                // addSubActionPair(db, new TankDrivePathFollowerAction(db, getNameParam(), false), true) ;
                 break ;  
                         
             //
