@@ -7,7 +7,7 @@ import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
-import frc.robot.Zeke;
+import frc.robot.Zeke2022;
 
 //
 // This class is the automode controller for Zeke.  It basically creates all of the
@@ -17,7 +17,7 @@ public class ZekeAutoController extends AutoController {
     private AutoMode test_mode_ ;
     private AutoMode [] modes_ ;
 
-    public ZekeAutoController(Zeke robot) throws MissingParameterException, BadParameterTypeException {
+    public ZekeAutoController(Zeke2022 robot) throws MissingParameterException, BadParameterTypeException {
         super(robot, "zeke-auto");
 
         MessageLogger logger = getRobot().getMessageLogger() ;
