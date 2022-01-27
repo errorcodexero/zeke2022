@@ -14,8 +14,8 @@ public class ZekeIntakeOffAction extends Action {
     public ZekeIntakeOffAction(ZekeIntakeSubsystem subsystem) throws BadParameterTypeException, MissingParameterException {
         super(subsystem.getRobot().getMessageLogger());
         subsystem_ = subsystem;
-        collector_motor_a_power_ = subsystem_.getSettingsValue("hw:collector:motor_a_power").getDouble();
-        collector_motor_b_power_ = subsystem_.getSettingsValue("hw:collector:motor_b_power").getDouble();
+        collector_motor_a_power_ = subsystem_.getSettingsValue("hw:collector:motor-a:power").getDouble();
+        collector_motor_b_power_ = subsystem_.getSettingsValue("hw:collector:motor-b:power").getDouble();
 
         
     }

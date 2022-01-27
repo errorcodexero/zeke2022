@@ -5,7 +5,6 @@ import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorController;
 import org.xero1425.base.motors.MotorRequestFailedException;
 
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 
 
@@ -24,10 +23,8 @@ public class ZekeIntakeSubsystem extends Subsystem {
         collector_a_ = getRobot().getMotorFactory().createMotor("intake-collector-a",
                 "subsystems:intake:hw:collector:motor-a");
         collector_b_ = getRobot().getMotorFactory().createMotor("intake-collecor-b", "subsystems:intake:hw:collector:motor-b");
-        
-        
-
-        solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
+          
+        solenoid = new Solenoid(getRobot().getPneumaticsType(), 1);
         
     }
 
