@@ -53,6 +53,10 @@ public class ColorSensorSubsystem extends Subsystem {
         init(0) ;
     }
 
+    public int count() {
+        return count_ ;
+    }
+
     public Color getColor(int which) {
         return colors_[which] ;
     }
@@ -87,6 +91,14 @@ public class ColorSensorSubsystem extends Subsystem {
         }
 
         sample_ &= ~(1 << which) ;
+    }
+
+    public boolean isEnabled(int which) throws Exception {
+        if (which >= count_) {
+            throw new Exception("invalid sensor number in ColorSensorSubsystem.enableSensor(int which)") ;
+        }
+
+        return ((sample_ & (1 << which)) != 0) ;
     }
 
     // Derived class override this for different initialization

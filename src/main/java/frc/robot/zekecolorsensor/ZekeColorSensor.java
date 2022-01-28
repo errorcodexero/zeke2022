@@ -42,6 +42,21 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         None
     }
 
+    @Override
+    public void computeMyState() {
+        super.computeMyState(); 
+
+        for(int i = 0 ;i < count() ; i++) {
+            String str = "none" ;
+            if (getCargoType(i) == CargoType.Same)
+                str = "same" ;
+            else if (getCargoType(i) == CargoType.Opposite)
+                str = "opposite" ;
+
+            putDashboard("CS-" + i, DisplayType.Verbose, str) ;
+        }
+    }
+
     public CargoType getCargoType(int which) {
         CargoType type = CargoType.None ;
 
