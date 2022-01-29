@@ -1,4 +1,4 @@
-package frc.robot.gpm.intake;
+package frc.robot.intake;
 
 import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;

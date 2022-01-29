@@ -1,4 +1,4 @@
-package frc.robot.gpm.intake;
+package frc.robot.intake;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.BadMotorRequestException;
