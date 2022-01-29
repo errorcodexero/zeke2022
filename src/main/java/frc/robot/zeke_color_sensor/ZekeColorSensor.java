@@ -1,4 +1,4 @@
-package frc.robot.zekecolorsensor;
+package frc.robot.zeke_color_sensor;
 
 import com.revrobotics.ColorMatch;
 
