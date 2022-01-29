@@ -9,4 +9,8 @@ public class ClimberSubsystem {
         // super(parent, SubsystemName);
 
     }
+<<<<<<< Updated upstream:src/main/java/frc/robot/climber/ClimberSubsystem.java
+=======
+
+>>>>>>> Stashed changes:src/main/java/frc/robot/automodes/ClimberSubsystem.java
 }
