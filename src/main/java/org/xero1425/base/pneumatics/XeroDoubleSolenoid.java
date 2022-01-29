@@ -1,6 +1,9 @@
 package org.xero1425.base.pneumatics;
 
+import org.xero1425.base.Subsystem;
 import org.xero1425.base.XeroRobot;
+import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MissingParameterException;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimInt;
@@ -35,6 +38,17 @@ public class XeroDoubleSolenoid {
         else {
             solenoid_ = new DoubleSolenoid(robot.getPneumaticsType(), forward, reverse) ;
         }
+    }
+
+    public XeroDoubleSolenoid(Subsystem sub, String name) throws BadParameterTypeException, MissingParameterException {
+        this(sub.getRobot(), sub.getSettingsValue("hw:solenoids:" + name + ":forward").getInteger(),
+        sub.getSettingsValue("hw:solenoids:" + name + ":reverse").getInteger()) ; 
+    }
+
+    public XeroDoubleSolenoid(Subsystem sub, int module, String name) throws BadParameterTypeException, MissingParameterException {
+        this(sub.getRobot(), module, 
+                sub.getSettingsValue("hw:solenoids:" + name + ":forward").getInteger(),
+                sub.getSettingsValue("hw:solenoids:" + name + ":reverse").getInteger()) ; 
     }
 
     public void close() {

@@ -4,8 +4,10 @@ import org.xero1425.base.RobotSubsystem;
 import org.xero1425.base.XeroRobot;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
+import frc.robot.climber.ClimberSubsystem;
 import frc.robot.gpm.GPMSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.intake.ZekeIntakeSubsystem;
 import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekeoi.ZekeOISubsystem;
@@ -16,11 +18,15 @@ public class ZekeSubsystem extends RobotSubsystem {
     public final static String TankdriveSubsystemName = "tankdrive" ;
     private TankDriveSubsystem db_ ;
     private ZekeOISubsystem oi_;
-    private GPMSubsystem gpm_ ;
     private ZekeLimeLightSubsystem limelight_ ;
     private TurretSubsystem turret_ ;
     private TargetTrackerSubsystem tracker_ ;
     private ShooterSubsystem shooter_;
+    
+    private GPMSubsystem gpm_ ;
+    private ClimberSubsystem climber_ ;
+    private ZekeIntakeSubsystem intake_ ;
+
 
     public ZekeSubsystem(XeroRobot robot) throws Exception {
         super(robot, SubsystemName) ;
@@ -45,6 +51,12 @@ public class ZekeSubsystem extends RobotSubsystem {
 
         shooter_ = new ShooterSubsystem(this);
         addChild(shooter_);
+        climber_ = new ClimberSubsystem(this) ;
+        addChild(climber_) ;
+
+        intake_ = new ZekeIntakeSubsystem(this) ;
+        addChild(intake_) ;
+
     }
 
     public TankDriveSubsystem getTankDrive() {

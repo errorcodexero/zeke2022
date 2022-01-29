@@ -53,6 +53,10 @@ public class LimeLightSubsystem extends Subsystem {
     // The amount of time to wait for the limelight to connect
     private double limelight_timeout_ ;
 
+    // Last time valid connection to limelight detected 
+    // (also reset at of execution, and start of switch to vision processing mode)
+    private double last_connection_time_ ;
+
     // If true, we have printed a message about not finding the limelight
     private boolean limelight_not_found_ ;
 
@@ -73,6 +77,8 @@ public class LimeLightSubsystem extends Subsystem {
     /// \param name the name of hte subsystem
     public LimeLightSubsystem(Subsystem parent, String name) throws BadParameterTypeException, MissingParameterException {
         super(parent, name) ;
+
+        last_connection_time_ = getRobot().getTime() ;
 
         led_mode_ = LedMode.Invalid ;
         cam_mode_ = CamMode.Invalid ;
@@ -143,6 +149,8 @@ public class LimeLightSubsystem extends Subsystem {
             if (nt_.containsKey("tv"))
             {
                 connected_ = true ;
+                limelight_not_found_ = false;
+                last_connection_time_ = getRobot().getTime() ;
                 double value = nt_.getEntry("tv").getNumber(0.0).doubleValue() ;
                 if (value < 0.01)
                 {
@@ -160,7 +168,7 @@ public class LimeLightSubsystem extends Subsystem {
             else
             {
                 connected_ = false ;
-                if (getRobot().getTime() > limelight_timeout_)
+                if ((getRobot().getTime() - last_connection_time_) > limelight_timeout_)
                 {
                     if (!limelight_not_found_)
                     {
@@ -219,6 +227,7 @@ public class LimeLightSubsystem extends Subsystem {
             switch(mode) {
                 case VisionProcessing:
                     nt_.getEntry(CamModeKeyName).setNumber(0) ;
+                    last_connection_time_ = getRobot().getTime() ;
                     break ;
                 case DriverCamera:
                     nt_.getEntry(CamModeKeyName).setNumber(1) ;

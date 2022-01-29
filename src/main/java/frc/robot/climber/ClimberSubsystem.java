@@ -1,12 +1,137 @@
 package frc.robot.climber;
 
 import org.xero1425.base.Subsystem;
+import org.xero1425.base.motors.BadMotorRequestException;
+import org.xero1425.base.motors.MotorController;
+import org.xero1425.base.motors.MotorRequestFailedException;
+import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 
-public class ClimberSubsystem {
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
+public class ClimberSubsystem extends Subsystem {
     
     public static final String SubsystemName = "climber" ;
-    public ClimberSubsystem(Subsystem parent) {
-        // super(parent, SubsystemName);
+
+    // 2 "windmills" whcih spin like windmills. 
+    // 1 on left side of robot and 1 on right side 
+    private MotorController left_windmill_ ;
+    private MotorController right_windmill_ ;
+
+    // 4 double-solenoids
+    // 2 on each windmill; 1 on either end
+    private XeroDoubleSolenoid clamp_a_left_ ;
+    private XeroDoubleSolenoid clamp_b_left_ ;
+    private XeroDoubleSolenoid clamp_a_right_ ;
+    private XeroDoubleSolenoid clamp_b_right_ ;
+
+    // there are 6 touch-sensors; aka wobble switch sensors
+    // there are 2 per each "a-clamp" and 1 per each "b-clamp"
+    // they are named after which bar they'll hit/sensee (medium, high, traversal)
+    // they are also named after which side of the robot they're on (left or right)
+    private DigitalInput mid_left_ ;
+    private DigitalInput mid_right_ ;
+    private DigitalInput high_left_ ;
+    private DigitalInput high_right_ ;
+    private DigitalInput traversal_left_ ;
+    private DigitalInput traversal_right_ ;
+
+    public ClimberSubsystem(Subsystem parent) throws Exception {
+        super(parent, SubsystemName);
+        
+        left_windmill_ = getRobot().getMotorFactory().createMotor(SubsystemName, "subsystems:climber:hw:motors:left_windmill") ;
+        right_windmill_ = getRobot().getMotorFactory().createMotor(SubsystemName, "subsystems:climber:hw:motors:right_windmill") ;
+
+        clamp_a_left_ = new XeroDoubleSolenoid(this, "clamp_a_left") ;
+        clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;
+        clamp_a_right_ = new XeroDoubleSolenoid(this, "clamp_a_right") ;
+        clamp_b_right_ = new XeroDoubleSolenoid(this, "clamp_b_right") ;
+
+        // TODO: make the channels into params
+        int index = getSettingsValue("hw:touchsensors:mid_left").getInteger() ;
+        mid_left_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:mid_right").getInteger() ;
+        mid_right_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:high_left").getInteger() ;
+        high_left_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:high_right").getInteger() ;
+        high_right_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:traversal_left").getInteger() ;
+        traversal_left_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:traversal_right").getInteger() ;
+        traversal_right_ = new DigitalInput(index) ;
+    }
+
+    @Override
+    public void run() throws Exception {
+        super.run() ;
+    }
+
+    @Override
+    public void postHWInit() {
+        // setDefaultAction(new ClimberStopAction(this));
+    }
+
+    @Override
+    public void computeMyState() throws Exception {
 
     }
+
+    //windmills
+    public void setLeftWindmill(double percent) throws BadMotorRequestException, MotorRequestFailedException {
+        left_windmill_.set(percent);
+    }
+    public void setRightWindmill(double percent) throws BadMotorRequestException, MotorRequestFailedException {
+        right_windmill_.set(percent);
+    }
+
+    //clamps. 
+    // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the  windmill
+    public void setClampA(DoubleSolenoid.Value state_) {
+        clamp_a_left_.set(state_);
+        clamp_a_right_.set(state_);
+    }
+    public void setClampB(DoubleSolenoid.Value state_) {
+        clamp_b_left_.set(state_);
+        clamp_b_right_.set(state_);
+    }
+ 
+    //touch sensors
+    public boolean isMidLeftTouched() {
+        if (mid_left_.get() == true)
+            return true ;
+        else 
+            return false;
+    }
+    public boolean isMidRightTouched() {
+        if (mid_right_.get() == true)
+            return true ;
+        else 
+            return false;
+    }
+    public boolean isHighLeftTouched() {
+        if (high_left_.get() == true)
+            return true ;
+        else 
+            return false;
+    }
+    public boolean isHighRightTouched() {
+        if (high_right_.get() == true)
+            return true ;
+        else 
+            return false;
+    }
+    public boolean isTraversalLeftTouched() {
+        if (traversal_left_.get() == true)
+            return true ;
+        else 
+            return false;
+    }
+    public boolean isTraversalRightTouched() {
+        if (traversal_right_.get() == true)
+            return true ;
+        else 
+            return false;
+    }
+
 }
