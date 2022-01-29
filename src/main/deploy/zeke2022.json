@@ -235,8 +235,13 @@
                         "power" : 0.8
                     }
                 },
-                "sensors" : {
-                    
+                "touchsensors" : {
+                    "mid_left" : 0,
+                    "mid_right": 1,
+                    "high_left" : 2,
+                    "high_right" : 3,
+                    "traversal_left" : 4,
+                    "traversal_right" : 5
                 }
             }
         }

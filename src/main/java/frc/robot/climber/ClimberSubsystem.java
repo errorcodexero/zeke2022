@@ -42,19 +42,24 @@ public class ClimberSubsystem extends Subsystem {
         left_windmill_ = getRobot().getMotorFactory().createMotor(SubsystemName, "subsystems:climber:hw:motors:left_windmill") ;
         right_windmill_ = getRobot().getMotorFactory().createMotor(SubsystemName, "subsystems:climber:hw:motors:right_windmill") ;
 
-        // TODO: make the integers into params
         clamp_a_left_ = new XeroDoubleSolenoid(this, "clamp_a_left") ;
         clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;
         clamp_a_right_ = new XeroDoubleSolenoid(this, "clamp_a_right") ;
         clamp_b_right_ = new XeroDoubleSolenoid(this, "clamp_b_right") ;
 
         // TODO: make the channels into params
-        mid_left_ = new DigitalInput(0) ;
-        mid_right_ = new DigitalInput(1) ;
-        high_left_ = new DigitalInput(2) ;
-        high_right_ = new DigitalInput(3) ;
-        traversal_left_ = new DigitalInput(4) ;
-        traversal_right_ = new DigitalInput(5) ;
+        int index = getSettingsValue("hw:touchsensors:mid_left").getInteger() ;
+        mid_left_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:mid_right").getInteger() ;
+        mid_right_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:high_left").getInteger() ;
+        high_left_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:high_right").getInteger() ;
+        high_right_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:traversal_left").getInteger() ;
+        traversal_left_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:traversal_right").getInteger() ;
+        traversal_right_ = new DigitalInput(index) ;
     }
 
     @Override
