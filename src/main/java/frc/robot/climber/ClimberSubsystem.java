@@ -1,4 +1,4 @@
-package frc.robot.automodes;
+package frc.robot.climber;
 
 import org.xero1425.base.Subsystem;
 
@@ -9,6 +9,4 @@ public class ClimberSubsystem {
         // super(parent, SubsystemName);
 
     }
-
-
 }
