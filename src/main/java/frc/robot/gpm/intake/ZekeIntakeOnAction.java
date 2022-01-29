@@ -4,7 +4,8 @@ import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 
-import frc.robot.gpm.intake.ZekeIntakeSubsystem.BallColors;
+import frc.robot.zekecolorsensor.ZekeColorSensor.CargoType;
+
 
 public class ZekeIntakeOnAction extends Action {
     private ZekeIntakeSubsystem subsystem_;
@@ -50,13 +51,15 @@ public class ZekeIntakeOnAction extends Action {
                 }
             } else {
                 blocked_count++;
+                intake_state = States.BLOCKED;
             }
         } else {
-            if (subsystem_.getLeftBallColor() == BallColors.NOTHING && subsystem_.getRightBallColor() == BallColors.NOTHING) {
+            subsystem_.setCollectorPower(collector_motor_a_power_, collector_motor_b_power_);
+            if (subsystem_.getLeftBallColor() == CargoType.None && subsystem_.getRightBallColor() == CargoType.None) {
                 blocked_count = 0;
                 intake_state = States.EMPTY;
             } else {
-                if (subsystem_.getLeftBallColor() == BallColors.SAME || subsystem_.getRightBallColor() == BallColors.SAME ) {
+                if (subsystem_.getLeftBallColor() == CargoType.None || subsystem_.getRightBallColor() == CargoType.None) {
                     intake_state = States.COLLECT;
                 }
             }

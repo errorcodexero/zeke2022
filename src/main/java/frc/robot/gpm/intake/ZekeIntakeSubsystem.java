@@ -1,6 +1,5 @@
 package frc.robot.gpm.intake;
 
-import edu.wpi.first.wpilibj.Solenoid;
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorController;
@@ -9,15 +8,17 @@ import org.xero1425.base.pneumatics.XeroSolenoid;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 
+import edu.wpi.first.wpilibj.I2C;
+import frc.robot.zekecolorsensor.ZekeColorSensor;
+import frc.robot.zekecolorsensor.ZekeColorSensor.CargoType;
+
 public class ZekeIntakeSubsystem extends Subsystem {
   public static final String SubsystemName = "intake";
 
   private MotorController collector_a_;
   private MotorController collector_b_;
   private XeroSolenoid solenoid_;
-  private BallColors myColor;
-
-  public enum BallColors { SAME, OPPOSITE, NOTHING }
+  private ZekeColorSensor color_sensor_;
 
   public ZekeIntakeSubsystem(Subsystem parent) throws Exception {
     super(parent, SubsystemName);
@@ -30,6 +31,8 @@ public class ZekeIntakeSubsystem extends Subsystem {
 
     // TODO: get the channel from the settings file
     solenoid_ = new XeroSolenoid(getRobot(), 1);
+    color_sensor_ = new ZekeColorSensor(parent, I2C.Port.kMXP , 1);
+    
   }
 
   public void setCollectorPower(double pa, double pb)
@@ -46,11 +49,11 @@ public class ZekeIntakeSubsystem extends Subsystem {
   //
   public void setSolenoidPower(boolean v) { solenoid_.set(v); }
 
-  public BallColors getLeftBallColor() { return BallColors.SAME; }
-  public BallColors getRightBallColor() { return BallColors.OPPOSITE; }
+  public CargoType getLeftBallColor() { return color_sensor_.getCargoType(color_sensor_.getIntakeLeftIndex()); }
+  public CargoType getRightBallColor() { return color_sensor_.getCargoType(color_sensor_.getIntakeRightIndex()); }
   public boolean isIntakeBlocked() {
-    return getLeftBallColor() != BallColors.NOTHING &&
-        getRightBallColor() != BallColors.NOTHING;
+    return getLeftBallColor() != CargoType.None &&
+        getRightBallColor() != CargoType.None;
   }
 
   public void clearIntake()
@@ -67,32 +70,32 @@ public class ZekeIntakeSubsystem extends Subsystem {
       return;
     }
 
-    if (getRightBallColor() == BallColors.OPPOSITE &&
-        getLeftBallColor() == BallColors.OPPOSITE) {
+    if (getRightBallColor() == CargoType.Opposite&&
+        getLeftBallColor() == CargoType.Opposite) {
       setCollectorPower(-collector_motor_a_power_, -collector_motor_b_power_);
     }
 
-    if (getLeftBallColor() == BallColors.SAME &&
-        getRightBallColor() == BallColors.OPPOSITE) {
+    if (getLeftBallColor() == CargoType.Opposite &&
+        getRightBallColor() == CargoType.Opposite ) {
       setCollectorPower(collector_motor_a_power_, -collector_motor_b_power_);
     }
 
-    if (getLeftBallColor() == BallColors.OPPOSITE &&
-        getRightBallColor() == BallColors.SAME) {
+    if (getLeftBallColor() == CargoType.Opposite &&
+        getRightBallColor() == CargoType.Same) {
       setCollectorPower(-collector_motor_a_power_, collector_motor_b_power_);
     }
-    if (getLeftBallColor() == BallColors.OPPOSITE &&
-        getRightBallColor() == BallColors.NOTHING) {
+    if (getLeftBallColor() == CargoType.Opposite &&
+        getRightBallColor() == CargoType.None) {
       setCollectorPower(-collector_motor_a_power_, collector_motor_b_power_);
     }
 
-    if (getLeftBallColor() == BallColors.NOTHING &&
-        getRightBallColor() == BallColors.OPPOSITE) {
+    if (getLeftBallColor() == CargoType.None&&
+        getRightBallColor() == CargoType.Opposite) {
       setCollectorPower(collector_motor_a_power_, -collector_motor_b_power_);
     }
 
-    if (getLeftBallColor() == BallColors.SAME &&
-        getRightBallColor() == BallColors.SAME) {
+    if (getLeftBallColor() == CargoType.Same &&
+        getRightBallColor() == CargoType.Same) {
       setCollectorPower(-0.1, collector_motor_b_power_);
       getRobot().wait(15L);
       setCollectorPower(collector_motor_a_power_, collector_motor_b_power_);
