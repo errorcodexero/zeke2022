@@ -220,19 +220,23 @@
                 "solenoids" : {
                     "clamp_a_left" : {
                         "forward" : 2,
-                        "reverse" : 3
+                        "reverse" : 3,
+                        "openvalue" : 1
                     },
                     "clamp_b_left" : {
                         "forward" : 4,
-                        "reverse" : 5
+                        "reverse" : 5,
+                        "openvalue" : 1
                     },
                     "clamp_a_right" : {
                         "forward" : 6,
-                        "reverse" : 7
+                        "reverse" : 7,
+                        "openvalue" : 1
                     },
                     "clamp_b_right" : {
                         "forward" : 8,
-                        "reverse" : 9
+                        "reverse" : 9,
+                        "openvalue" : 1
                     }
                 },
                 "motors" : {

@@ -2,8 +2,8 @@ package frc.robot.climber;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.BadMotorRequestException;
-import org.xero1425.base.motors.MotorController;
 import org.xero1425.base.motors.MotorRequestFailedException;
+import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
 import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -15,8 +15,8 @@ public class ClimberSubsystem extends Subsystem {
 
     // 2 "windmills" whcih spin like windmills. 
     // 1 on left side of robot and 1 on right side 
-    private MotorController left_windmill_ ;
-    private MotorController right_windmill_ ;
+    private MotorEncoderSubsystem left_windmill_ ;
+    private MotorEncoderSubsystem right_windmill_ ;
 
     // 4 double-solenoids
     // 2 on each windmill; 1 on either end
@@ -24,6 +24,9 @@ public class ClimberSubsystem extends Subsystem {
     private XeroDoubleSolenoid clamp_b_left_ ;
     private XeroDoubleSolenoid clamp_a_right_ ;
     private XeroDoubleSolenoid clamp_b_right_ ;
+
+    private static DoubleSolenoid.Value GripperCloseState = DoubleSolenoid.Value.kForward ;
+    private static DoubleSolenoid.Value GripperOpenState = DoubleSolenoid.Value.kReverse ;
 
     // there are 6 touch-sensors; aka wobble switch sensors
     // there are 2 per each "a-clamp" and 1 per each "b-clamp"
@@ -38,17 +41,17 @@ public class ClimberSubsystem extends Subsystem {
 
     public ClimberSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
-        
-        left_windmill_ = getRobot().getMotorFactory().createMotor(SubsystemName, "subsystems:climber:hw:motors:left_windmill") ;
-        right_windmill_ = getRobot().getMotorFactory().createMotor(SubsystemName, "subsystems:climber:hw:motors:right_windmill") ;
+        int index ;
+
+        left_windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
+        right_windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
 
         clamp_a_left_ = new XeroDoubleSolenoid(this, "clamp_a_left") ;
         clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;
         clamp_a_right_ = new XeroDoubleSolenoid(this, "clamp_a_right") ;
         clamp_b_right_ = new XeroDoubleSolenoid(this, "clamp_b_right") ;
-
-        // TODO: make the channels into params
-        int index = getSettingsValue("hw:touchsensors:mid_left").getInteger() ;
+       
+        index = getSettingsValue("hw:touchsensors:mid_left").getInteger() ;
         mid_left_ = new DigitalInput(index) ;
         index = getSettingsValue("hw:touchsensors:mid_right").getInteger() ;
         mid_right_ = new DigitalInput(index) ;
@@ -78,20 +81,31 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     //windmills
-    public void setWindmill(double percent) throws BadMotorRequestException, MotorRequestFailedException {
-        left_windmill_.set(percent);
-        right_windmill_.set(percent);
+    // TODO get this percent from params file
+    public void setWindmill(double power) throws BadMotorRequestException, MotorRequestFailedException {
+        left_windmill_.setPower(power); 
+        right_windmill_.setPower(power); 
     }
-    
+
     //clamps. 
     // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the  windmill
-    public void setClampA(DoubleSolenoid.Value state_) {
-        clamp_a_left_.set(state_);
-        clamp_a_right_.set(state_);
+    public void setClampAClosed(boolean isToBeClosed) {
+        if (isToBeClosed == true) {
+            clamp_a_left_.set(GripperCloseState);
+            clamp_a_right_.set(GripperCloseState);
+        } else {
+            clamp_a_left_.set(GripperOpenState);
+            clamp_a_right_.set(GripperCloseState);
+        }
     }
-    public void setClampB(DoubleSolenoid.Value state_) {
-        clamp_b_left_.set(state_);
-        clamp_b_right_.set(state_);
+    public void setClampBClosed(boolean isToBeClosed) {
+        if (isToBeClosed == true) {
+            clamp_a_left_.set(GripperCloseState);
+            clamp_a_right_.set(GripperCloseState);
+        } else {
+            clamp_a_left_.set(GripperOpenState);
+            clamp_a_right_.set(GripperCloseState);
+        }
     }
  
     //touch sensors
