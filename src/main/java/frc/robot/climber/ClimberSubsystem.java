@@ -78,13 +78,11 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     //windmills
-    public void setLeftWindmill(double percent) throws BadMotorRequestException, MotorRequestFailedException {
+    public void setWindmill(double percent) throws BadMotorRequestException, MotorRequestFailedException {
         left_windmill_.set(percent);
-    }
-    public void setRightWindmill(double percent) throws BadMotorRequestException, MotorRequestFailedException {
         right_windmill_.set(percent);
     }
-
+    
     //clamps. 
     // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the  windmill
     public void setClampA(DoubleSolenoid.Value state_) {
