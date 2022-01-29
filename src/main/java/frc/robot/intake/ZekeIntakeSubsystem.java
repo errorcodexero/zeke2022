@@ -15,18 +15,18 @@ import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;;
 public class ZekeIntakeSubsystem extends Subsystem {
   public static final String SubsystemName = "intake";
 
-  private MotorController collector_a_;
-  private MotorController collector_b_;
+  private MotorController collector_left_;
+  private MotorController collector_right_;
   private XeroSolenoid solenoid_;
   private ZekeColorSensor color_sensor_;
 
   public ZekeIntakeSubsystem(Subsystem parent) throws Exception {
     super(parent, SubsystemName);
 
-    collector_a_ = getRobot().getMotorFactory().createMotor(
-        "intake-collector-a", "subsystems:intake:hw:collector:motor-a");
-    collector_b_ = getRobot().getMotorFactory().createMotor(
-        "intake-collecor-b", "subsystems:intake:hw:collector:motor-b");
+    collector_left_ = getRobot().getMotorFactory().createMotor(
+        "intake-collector-left", "subsystems:intake:hw:collector:motor-left");
+    collector_right_ = getRobot().getMotorFactory().createMotor(
+        "intake-collecor-right", "subsystems:intake:hw:collector:motor-right");
 
     solenoid_ = new XeroSolenoid(this, "deploy");
     color_sensor_ = new ZekeColorSensor(parent, I2C.Port.kMXP , 1);
@@ -35,15 +35,15 @@ public class ZekeIntakeSubsystem extends Subsystem {
 
   public void setCollectorPower(double pa, double pb)
       throws BadMotorRequestException, MotorRequestFailedException {
-    collector_a_.set(pa);
-    collector_b_.set(pb);
+    collector_left_.set(pa);
+    collector_right_.set(pb);
   }
 
   
-  public void deploySolenoid() {
+  public void deployIntake() {
     solenoid_.set(true);
   }
-  public void retractSolenoid() {
+  public void retractIntake() {
     solenoid_.set(false);
   }
 
@@ -58,50 +58,50 @@ public class ZekeIntakeSubsystem extends Subsystem {
       throws BadParameterTypeException, MissingParameterException,
              BadMotorRequestException, MotorRequestFailedException,
              InterruptedException {
-    double collector_motor_a_power_ =
-        getSettingsValue("hw:collector:motor-a:power").getDouble();
-    double collector_motor_b_power_ =
-        getSettingsValue("hw:collector:motor-b:power").getDouble();
+    double collector_motor_left_power_ =
+        getSettingsValue("hw:collector:motor-left:power").getDouble();
+    double collector_motor_right_power_ =
+        getSettingsValue("hw:collector:motor-right:power").getDouble();
 
     if (!isIntakeBlocked()) {
-      setCollectorPower(collector_motor_a_power_, collector_motor_b_power_);
+      setCollectorPower(collector_motor_left_power_, collector_motor_right_power_);
       return;
     }
 
     if (getRightBallColor() == CargoType.Opposite&&
         getLeftBallColor() == CargoType.Opposite) {
-      setCollectorPower(-collector_motor_a_power_, -collector_motor_b_power_);
+      setCollectorPower(-collector_motor_left_power_, -collector_motor_right_power_);
     }
 
     if (getLeftBallColor() == CargoType.Opposite &&
         getRightBallColor() == CargoType.Opposite ) {
-      setCollectorPower(collector_motor_a_power_, -collector_motor_b_power_);
+      setCollectorPower(collector_motor_left_power_, -collector_motor_right_power_);
     }
 
     if (getLeftBallColor() == CargoType.Opposite &&
         getRightBallColor() == CargoType.Same) {
-      setCollectorPower(-collector_motor_a_power_, collector_motor_b_power_);
+      setCollectorPower(-collector_motor_left_power_, collector_motor_right_power_);
     }
     if (getLeftBallColor() == CargoType.Opposite &&
         getRightBallColor() == CargoType.None) {
-      setCollectorPower(-collector_motor_a_power_, collector_motor_b_power_);
+      setCollectorPower(-collector_motor_left_power_, collector_motor_right_power_);
     }
 
     if (getLeftBallColor() == CargoType.None&&
         getRightBallColor() == CargoType.Opposite) {
-      setCollectorPower(collector_motor_a_power_, -collector_motor_b_power_);
+      setCollectorPower(collector_motor_left_power_, -collector_motor_right_power_);
     }
 
     if (getLeftBallColor() == CargoType.Same &&
         getRightBallColor() == CargoType.Same) {
-      setCollectorPower(-0.1, collector_motor_b_power_);
+      setCollectorPower(-0.1, collector_motor_right_power_);
       getRobot().wait(15L);
-      setCollectorPower(collector_motor_a_power_, collector_motor_b_power_);
+      setCollectorPower(collector_motor_left_power_, collector_motor_right_power_);
     }
   }
 
   @Override
   public void postHWInit() {
-    retractSolenoid();
+    retractIntake();
   }
 }
