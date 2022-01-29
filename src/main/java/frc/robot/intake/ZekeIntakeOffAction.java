@@ -1,4 +1,4 @@
-package frc.robot.gpm.intake;
+package frc.robot.intake;
 
 import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;
@@ -35,7 +35,7 @@ public class ZekeIntakeOffAction extends Action {
             subsystem_.setCollectorPower(collector_motor_a_power_,collector_motor_b_power_);
         else
             subsystem_.setCollectorPower(0.0, 0.0);
-            subsystem_.retractSolenoid();
+            subsystem_.retractIntake();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ZekeIntakeOffAction extends Action {
 
         if (isDone())
             subsystem_.setCollectorPower(0.0,0.0);
-            subsystem_.retractSolenoid();
+            subsystem_.retractIntake();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ZekeIntakeOffAction extends Action {
 
         try {
             subsystem_.setCollectorPower(0.0,0.0) ;
-            subsystem_.retractSolenoid();
+            subsystem_.retractIntake();
         }
         catch(Exception ex) {
         }

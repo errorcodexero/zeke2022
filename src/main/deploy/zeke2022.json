@@ -125,12 +125,12 @@
                     "deploy" : 1
                 },
                 "collector": {
-                    "motor-a": {
+                    "motor-left": {
                         "type": "sparkmax_brushless",
                         "canid": 11,
                         "power":0.5
                     },
-                    "motor-b": {
+                    "motor-right": {
                         "type": "sparkmax_brushless",
                         "canid": 12,
                         "power":0.8
@@ -209,7 +209,7 @@
             "network_latency" : 0.010,
             "camera_angle" : 20.08,
             "camera_height" : 21.5,
-            "target_height" : 88.0
+            "target_height" : 103.0
         },
         "targettracker" : {
             "camera_offset_angle" : -1.5,
@@ -218,10 +218,26 @@
         "climber": {
             "hw":{
                 "solenoids" : {
-                    "clamp_a_left" : 2,
-                    "clamp_b_left" : 3,
-                    "clamp_a_right" : 4,
-                    "clamp_b_right" : 5
+                    "clamp_a_left" : {
+                        "forward" : 2,
+                        "reverse" : 3,
+                        "openvalue" : 1
+                    },
+                    "clamp_b_left" : {
+                        "forward" : 4,
+                        "reverse" : 5,
+                        "openvalue" : 1
+                    },
+                    "clamp_a_right" : {
+                        "forward" : 6,
+                        "reverse" : 7,
+                        "openvalue" : 1
+                    },
+                    "clamp_b_right" : {
+                        "forward" : 8,
+                        "reverse" : 9,
+                        "openvalue" : 1
+                    }
                 },
                 "motors" : {
                     "left_windmill": {
@@ -235,8 +251,13 @@
                         "power" : 0.8
                     }
                 },
-                "sensors" : {
-                    
+                "touchsensors" : {
+                    "mid_left" : 0,
+                    "mid_right": 1,
+                    "high_left" : 2,
+                    "high_right" : 3,
+                    "traversal_left" : 4,
+                    "traversal_right" : 5
                 }
             }
         }

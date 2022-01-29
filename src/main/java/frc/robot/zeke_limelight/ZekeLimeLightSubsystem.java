@@ -21,9 +21,6 @@ public class ZekeLimeLightSubsystem extends LimeLightSubsystem {
         camera_height_ = getSettingsValue("camera_height").getDouble() ;
         target_height_ = getSettingsValue("target_height").getDouble() ;
         distance_ = 0 ;
-
-        setCamMode(CamMode.VisionProcessing) ;
-        setLedMode(LedMode.ForceOff) ;
     }
 
     @Override

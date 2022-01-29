@@ -3,7 +3,7 @@ package frc.robot.gpm;
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
-import frc.robot.gpm.intake.ZekeIntakeSubsystem;
+import frc.robot.intake.ZekeIntakeSubsystem;
 
 public class GPMSubsystem extends Subsystem {
   
