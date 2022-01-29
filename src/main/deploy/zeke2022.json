@@ -121,6 +121,9 @@
         },
         "intake": {
             "hw":{
+                "solenoids" : {
+                    "deploy" : 1
+                },
                 "collector": {
                     "motor-a": {
                         "type": "sparkmax_brushless",
