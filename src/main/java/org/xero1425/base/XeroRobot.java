@@ -210,28 +210,7 @@ public abstract class XeroRobot extends TimedRobot {
     /// \returns true if pneumatics were enabled sucessfully, otherwise false
     public boolean enablePneumatics() {
         SettingsValue v ;
-        boolean enabled = false ;
         PneumaticsModuleType type = PneumaticsModuleType.REVPH ;
-
-        v = settings_.getOrNull("system:pneumatics:enabled") ;
-        if (v == null) {
-            logger_.startMessage(MessageType.Error) ;
-            logger_.add("enablePneumatics() called but settings value 'system:pneumatics:enabled' was not found") ;
-            logger_.endMessage();
-            return false ;
-        }
-
-        if (!v.isBoolean()) {
-            logger_.startMessage(MessageType.Error) ;
-            logger_.add("enablePneumatics() called but settings value 'system:pneumatics:enabled' was not a boolean") ;
-            logger_.endMessage();
-            return false ;
-        }
-        try {
-            enabled = v.getBoolean() ;
-        } catch (BadParameterTypeException e) {
-            // Will never happen
-        }
 
         v = settings_.getOrNull("system:pneumatics:type") ;
         if (v == null) {
@@ -243,7 +222,7 @@ public abstract class XeroRobot extends TimedRobot {
 
         if (!v.isString()) {
             logger_.startMessage(MessageType.Error) ;
-            logger_.add("enablePneumatics() called but settings value 'system:pneumatics:type' was not a boolean") ;
+            logger_.add("enablePneumatics() called but settings value 'system:pneumatics:type' was not a string") ;
             logger_.endMessage();
             return false ;
         }
@@ -266,10 +245,8 @@ public abstract class XeroRobot extends TimedRobot {
             // Will never happen
         }
 
-        if (enabled) {
-            pneumatics_type_ = type ;
-            compressor_ = new Compressor(pneumatics_type_) ;
-        }
+        pneumatics_type_ = type ;
+        compressor_ = new Compressor(pneumatics_type_) ;
 
         return true ;
     }
