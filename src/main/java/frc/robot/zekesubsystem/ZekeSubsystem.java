@@ -6,8 +6,7 @@ import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
 import frc.robot.climber.ClimberSubsystem;
 import frc.robot.gpm.GPMSubsystem;
-import frc.robot.gpm.intake.ZekeIntakeOffAction;
-import frc.robot.gpm.intake.ZekeIntakeSubsystem;
+import frc.robot.intake.ZekeIntakeSubsystem;
 import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekeoi.ZekeOISubsystem;
@@ -52,7 +51,7 @@ public class ZekeSubsystem extends RobotSubsystem {
         addChild(climber_) ;
 
         intake_ = new ZekeIntakeSubsystem(this) ;
-        addChild(climber_) ;
+        addChild(intake_) ;
 
     }
 
