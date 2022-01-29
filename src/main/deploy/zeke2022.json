@@ -214,6 +214,31 @@
         "targettracker" : {
             "camera_offset_angle" : -1.5,
             "lost_count" : 10
+        },
+        "climber": {
+            "hw":{
+                "solenoids" : {
+                    "clamp_a_left" : 2,
+                    "clamp_b_left" : 3,
+                    "clamp_a_right" : 4,
+                    "clamp_b_right" : 5
+                },
+                "motors" : {
+                    "left_windmill": {
+                        "type" : "sparkmax_brushless",
+                        "canid" : 13,
+                        "power" : 0.5
+                    },
+                    "right_windmill": {
+                        "type" : "sparkmax_brushless",
+                        "canid" : 14,
+                        "power" : 0.8
+                    }
+                },
+                "sensors" : {
+                    
+                }
+            }
         }
     },
     "testmode": {

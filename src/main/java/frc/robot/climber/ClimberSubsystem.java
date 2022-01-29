@@ -13,8 +13,8 @@ public class ClimberSubsystem extends Subsystem {
     
     public static final String SubsystemName = "climber" ;
 
-    // two "windmills" whcih spin like windmills. 
-    // one on left side of robot and one on right side 
+    // 2 "windmills" whcih spin like windmills. 
+    // 1 on left side of robot and 1 on right side 
     private MotorController left_windmill_ ;
     private MotorController right_windmill_ ;
 
@@ -27,7 +27,7 @@ public class ClimberSubsystem extends Subsystem {
 
     // there are 6 touch-sensors; aka wobble switch sensors
     // there are 2 per each "a-clamp" and 1 per each "b-clamp"
-    // they are named after which bar they'll hit (medium, high, traversal)
+    // they are named after which bar they'll hit/sensee (medium, high, traversal)
     // they are also named after which side of the robot they're on (left or right)
     private DigitalInput mid_left_ ;
     private DigitalInput mid_right_ ;
@@ -43,10 +43,10 @@ public class ClimberSubsystem extends Subsystem {
         right_windmill_ = getRobot().getMotorFactory().createMotor(SubsystemName, "subsystems:climber:hw:motors:right_windmill") ;
 
         // TODO: make the integers into params
-        clamp_a_left_ = new XeroDoubleSolenoid(getRobot(), 1, -1) ;
-        clamp_b_left_ = new XeroDoubleSolenoid(getRobot(), 1, -1) ;
-        clamp_a_right_ = new XeroDoubleSolenoid(getRobot(), 1, -1) ;
-        clamp_b_right_ = new XeroDoubleSolenoid(getRobot(), 1, -1) ;
+        clamp_a_left_ = new XeroDoubleSolenoid(this, "clamp_a_left") ;
+        clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;
+        clamp_a_right_ = new XeroDoubleSolenoid(this, "clamp_a_right") ;
+        clamp_b_right_ = new XeroDoubleSolenoid(this, "clamp_b_right") ;
 
         // TODO: make the channels into params
         mid_left_ = new DigitalInput(0) ;
@@ -80,20 +80,17 @@ public class ClimberSubsystem extends Subsystem {
         right_windmill_.set(percent);
     }
 
-    //clamps
-    public void setClampALeft(DoubleSolenoid.Value state_) {
+    //clamps. 
+    // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the  windmill
+    public void setClampA(DoubleSolenoid.Value state_) {
         clamp_a_left_.set(state_);
-    }
-    public void setClampARight(DoubleSolenoid.Value state_) {
         clamp_a_right_.set(state_);
     }
-    public void setClampBLeft(DoubleSolenoid.Value state_) {
+    public void setClampB(DoubleSolenoid.Value state_) {
         clamp_b_left_.set(state_);
-    }
-    public void setClampBRight(DoubleSolenoid.Value state_) {
         clamp_b_right_.set(state_);
     }
-
+ 
     //touch sensors
     public boolean isMidLeftTouched() {
         if (mid_left_.get() == true)
