@@ -10,7 +10,7 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "comment" : "automode must be set to the correct testmode in droid param file",
+                        "comment" : "automode must be set to the correct testmode in robot settings file",
                         "start" : 1.0,
                         "autonomous" : 10.0,
                         "between" : 0.0,
