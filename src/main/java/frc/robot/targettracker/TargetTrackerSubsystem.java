@@ -60,11 +60,10 @@ public class TargetTrackerSubsystem extends Subsystem {
         //
         // Turn off the LEDs unless we are actually wanting to track a target
         //
-        enable(true) ;
+        enable(false) ;
     }
 
     public void enable(boolean b) {
-        b = true ;
         enabled_ = b ;
 
         if (b)
