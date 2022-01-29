@@ -181,7 +181,7 @@ public class LimeLightSubsystem extends Subsystem {
         putDashboard("ll-valid", DisplayType.Verbose, tv_);
     }
 
-    /// \brief Returns true if the limelight is detected
+    /// \brief Returns true if the limelight is detected. Currently only set in vision processing mode.
     /// \returns true if the limelight is detected
     public boolean isLimeLightConnected() {
         return connected_ ;

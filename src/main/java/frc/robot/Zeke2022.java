@@ -15,8 +15,8 @@ import frc.robot.zekesubsystem.ZekeSubsystem ;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Zeke extends XeroRobot {
-  public Zeke() {
+public class Zeke2022 extends XeroRobot {
+  public Zeke2022() {
     super(0.02) ;
   }
   

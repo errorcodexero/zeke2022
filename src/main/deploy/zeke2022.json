@@ -5,7 +5,8 @@
             "tankdrive": false,
             "pathmanager": false,
             "xerorobot": false,
-            "pathfollowing": false
+            "pathfollowing": false,
+            "zeke_limelight": false
         },
         "verbose": {
             "tankdrive": false
@@ -117,24 +118,101 @@
                     "manual_shoot_mode": 9,
                     "manual_shoot_fire": 7
                 }
-            },
-            "intake": {
-                "hw":{
-                    "collector": {
-                        "motor-a": {
-                            "type": "sparkmax_brushless",
-                            "canid": 11,
-                            "power":0.5
-                        },
-                        "motor-b": {
-                            "type": "sparkmax_brushless",
-                            "canid": 12,
-                            "power":0.8
-                        }
+            }
+        },
+        "intake": {
+            "hw":{
+                "collector": {
+                    "motor-a": {
+                        "type": "sparkmax_brushless",
+                        "canid": 11,
+                        "power":0.5
+                    },
+                    "motor-b": {
+                        "type": "sparkmax_brushless",
+                        "canid": 12,
+                        "power":0.8
                     }
                 }
             }
-        }        
+        },
+        "turret" : {
+            "hw" : {
+                "motors" : {
+                    "type" : "sparkmax_brushless",
+                    "canid" : 9,
+                    "inverted" : true                    
+                },
+                "encoder" : {
+                    "type" : "analog",
+                    "ainput" : 1,
+                    "rmin" : -180.0,
+                    "rmax" : 180.0,
+                    "emin" : 5.0,
+                    "emax" : 0.0,
+                    "ec" : {
+                        "COMPETITION" : 1.44653,
+                        "PRACTICE" : 0.62133
+                    },
+                    "rc" : 0.0
+                }
+            },
+            "goto" :{
+                "threshold" : 1.5,
+                "maxa" : 250,
+                "maxd" : -250, 
+                "maxv" : 250
+            },
+            "follower" : {
+                "up" : {
+                    "kp" : 0.0,
+                    "ka" : 0.0,
+                    "ki" : 0.0,
+                    "kd" : 0.0,
+                    "kv" : 0.003521127
+                },
+                "down" : {
+                    "kp" : 0.0,
+                    "ka" : 0.0,
+                    "ki" : 0.0,
+                    "kd" : 0.0,
+                    "kv" : 0.003521127
+                }
+            },
+            "follow": {
+                "kp" : 0.014084508,
+                "ki" : 0,
+                "kd" : 0,
+                "kf" : 0,
+                "min" : -1,
+                "max" : 1,
+                "imax" : 0.0   
+            },
+            "hold" : {
+                "kp" : 0.001,
+                "ki" : 0,
+                "kd" : 0,
+                "kf" : 0,
+                "min" : -0.3,
+                "max" : 0.3,
+                "imax" : 0.0                    
+            } ,
+            "min" : -100,
+            "max" : 100,
+            "fire_threshold" : 5.0
+        },
+        "zeke_limelight" : {
+            "timeout" : 8.0,
+            "camera_latency" : 0.011,
+            "network_latency" : 0.010,
+            "camera_angle" : 20.08,
+            "camera_height" : 21.5,
+            "target_height" : 88.0
+        },
+        "targettracker" : {
+            "camera_offset_angle" : -1.5,
+            "lost_count" : 10
+        }
     },
     "testmode": {
         "enabled": true,
