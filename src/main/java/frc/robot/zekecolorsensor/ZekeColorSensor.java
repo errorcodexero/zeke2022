@@ -42,6 +42,19 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         None
     }
 
+    // TODO: move to settings file
+    public int getIntakeLeftIndex() {
+        return 0 ;
+    }
+
+    public int getIntakeRightIndex() {
+        return 1 ;
+    }
+
+    public int getConveyorIndex() {
+        return 2 ;
+    }
+
     @Override
     public void computeMyState() {
         super.computeMyState(); 

@@ -1,5 +1,6 @@
 package org.xero1425.base.pneumatics;
 
+import org.xero1425.base.Subsystem;
 import org.xero1425.base.XeroRobot;
 
 import edu.wpi.first.hal.SimBoolean;
@@ -23,6 +24,9 @@ public class XeroSolenoid {
         else {
             solenoid_ = new Solenoid(module, robot.getPneumaticsType(), channel) ;
         }
+    }
+
+    public XeroSolenoid(Subsystem sub, String name) {
     }
 
     public XeroSolenoid(XeroRobot robot, int channel) {
