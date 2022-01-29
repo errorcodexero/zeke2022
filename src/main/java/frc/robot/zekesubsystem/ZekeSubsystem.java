@@ -5,6 +5,7 @@ import org.xero1425.base.XeroRobot;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
 import frc.robot.gpm.GPMSubsystem;
+import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekeoi.ZekeOISubsystem;
@@ -19,6 +20,7 @@ public class ZekeSubsystem extends RobotSubsystem {
     private ZekeLimeLightSubsystem limelight_ ;
     private TurretSubsystem turret_ ;
     private TargetTrackerSubsystem tracker_ ;
+    private ShooterSubsystem shooter_;
 
     public ZekeSubsystem(XeroRobot robot) throws Exception {
         super(robot, SubsystemName) ;
@@ -40,6 +42,9 @@ public class ZekeSubsystem extends RobotSubsystem {
 
         tracker_ = new TargetTrackerSubsystem(this, limelight_, turret_) ;
         addChild(tracker_) ;
+
+        shooter_ = new ShooterSubsystem(this);
+        addChild(shooter_);
     }
 
     public TankDriveSubsystem getTankDrive() {
