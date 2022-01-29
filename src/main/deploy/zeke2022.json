@@ -209,7 +209,7 @@
             "network_latency" : 0.010,
             "camera_angle" : 20.08,
             "camera_height" : 21.5,
-            "target_height" : 88.0
+            "target_height" : 103.0
         },
         "targettracker" : {
             "camera_offset_angle" : -1.5,
