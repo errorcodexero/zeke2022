@@ -9,8 +9,8 @@ import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 
 import edu.wpi.first.wpilibj.I2C;
-import frc.robot.zekecolorsensor.ZekeColorSensor;
-import frc.robot.zekecolorsensor.ZekeColorSensor.CargoType;
+import frc.robot.zeke_color_sensor.ZekeColorSensor;
+import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;;
 
 public class ZekeIntakeSubsystem extends Subsystem {
   public static final String SubsystemName = "intake";
@@ -23,14 +23,12 @@ public class ZekeIntakeSubsystem extends Subsystem {
   public ZekeIntakeSubsystem(Subsystem parent) throws Exception {
     super(parent, SubsystemName);
 
-    // Motor 2, explicitly create it
     collector_a_ = getRobot().getMotorFactory().createMotor(
         "intake-collector-a", "subsystems:intake:hw:collector:motor-a");
     collector_b_ = getRobot().getMotorFactory().createMotor(
         "intake-collecor-b", "subsystems:intake:hw:collector:motor-b");
 
-    // TODO: get the channel from the settings file
-    solenoid_ = new XeroSolenoid(getRobot(), 1);
+    solenoid_ = new XeroSolenoid(this, "deploy");
     color_sensor_ = new ZekeColorSensor(parent, I2C.Port.kMXP , 1);
     
   }
@@ -41,13 +39,13 @@ public class ZekeIntakeSubsystem extends Subsystem {
     collector_b_.set(pb);
   }
 
-  //
-  // TODO: names matter, you are not setting the power of the solenoid.  In fact
-  // what you are doing is putting the
-  //       intake up or down.  I would name setIntakeUp(boolean v).  In fact you
-  //       might think about two methods setIntakeUp() and setIntakeDown().
-  //
-  public void setSolenoidPower(boolean v) { solenoid_.set(v); }
+  
+  public void deploySolenoid() {
+    solenoid_.set(true);
+  }
+  public void retractSolenoid() {
+    solenoid_.set(false);
+  }
 
   public CargoType getLeftBallColor() { return color_sensor_.getCargoType(color_sensor_.getIntakeLeftIndex()); }
   public CargoType getRightBallColor() { return color_sensor_.getCargoType(color_sensor_.getIntakeRightIndex()); }
@@ -104,7 +102,6 @@ public class ZekeIntakeSubsystem extends Subsystem {
 
   @Override
   public void postHWInit() {
-
-    setSolenoidPower(false);
+    retractSolenoid();
   }
 }

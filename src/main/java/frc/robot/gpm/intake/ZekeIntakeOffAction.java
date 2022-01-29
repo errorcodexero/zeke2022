@@ -35,7 +35,7 @@ public class ZekeIntakeOffAction extends Action {
             subsystem_.setCollectorPower(collector_motor_a_power_,collector_motor_b_power_);
         else
             subsystem_.setCollectorPower(0.0, 0.0);
-            subsystem_.setSolenoidPower(false);
+            subsystem_.retractSolenoid();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ZekeIntakeOffAction extends Action {
 
         if (isDone())
             subsystem_.setCollectorPower(0.0,0.0);
-            subsystem_.setSolenoidPower(false);
+            subsystem_.retractSolenoid();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ZekeIntakeOffAction extends Action {
 
         try {
             subsystem_.setCollectorPower(0.0,0.0) ;
-            subsystem_.setSolenoidPower(false);
+            subsystem_.retractSolenoid();
         }
         catch(Exception ex) {
         }

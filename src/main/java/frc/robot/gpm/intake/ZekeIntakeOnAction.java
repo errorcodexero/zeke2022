@@ -4,8 +4,8 @@ import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 
-import frc.robot.zekecolorsensor.ZekeColorSensor.CargoType;
-
+import frc.robot.zeke_color_sensor.ZekeColorSensor;
+import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;;
 
 public class ZekeIntakeOnAction extends Action {
     private ZekeIntakeSubsystem subsystem_;
@@ -31,8 +31,7 @@ public class ZekeIntakeOnAction extends Action {
     @Override
     public void start() throws Exception {
         super.start() ;
-
-        subsystem_.setSolenoidPower(true);
+        subsystem_.deploySolenoid();
         subsystem_.setCollectorPower(collector_motor_a_power_, collector_motor_b_power_);
         blocked_count = 0;
         intake_state = States.EMPTY;
@@ -73,7 +72,7 @@ public class ZekeIntakeOnAction extends Action {
         super.cancel();
 
         try {
-            subsystem_.setSolenoidPower(false);
+            subsystem_.retractSolenoid();
             subsystem_.setCollectorPower(0.0,0.0);
         } 
         catch(Exception ex) {
