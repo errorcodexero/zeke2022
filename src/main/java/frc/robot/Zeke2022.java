@@ -5,6 +5,8 @@ import org.xero1425.base.controllers.AutoController;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 import org.xero1425.misc.SimArgs;
+import org.xero1425.simulator.engine.ModelFactory;
+import org.xero1425.simulator.engine.SimulationEngine;
 
 import frc.robot.automodes.ZekeAutoController;
 import frc.robot.zekesubsystem.ZekeSubsystem ;
@@ -44,6 +46,8 @@ public class Zeke2022 extends XeroRobot {
   }
 
   protected void addRobotSimulationModels() {
+    ModelFactory factory = SimulationEngine.getInstance().getModelFactory() ;
+    factory.registerModel("conveyor", "frc.models.ClimberModel");    
+ 
   }
-
 }
