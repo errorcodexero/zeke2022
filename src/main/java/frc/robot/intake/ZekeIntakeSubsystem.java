@@ -5,7 +5,6 @@ import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorController;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.pneumatics.XeroSolenoid;
-import edu.wpi.first.wpilibj.I2C;
 import frc.robot.zeke_color_sensor.ZekeColorSensor;
 import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;;
 
@@ -17,7 +16,7 @@ public class ZekeIntakeSubsystem extends Subsystem {
   private XeroSolenoid solenoid_;
   private ZekeColorSensor color_sensor_;
 
-  public ZekeIntakeSubsystem(Subsystem parent) throws Exception {
+  public ZekeIntakeSubsystem(Subsystem parent, ZekeColorSensor sensor) throws Exception {
     super(parent, SubsystemName);
 
     collector_left_ = getRobot().getMotorFactory().createMotor(
@@ -26,7 +25,7 @@ public class ZekeIntakeSubsystem extends Subsystem {
         "intake-collecor-right", "subsystems:intake:hw:collector:motor-right");
 
     solenoid_ = new XeroSolenoid(this, "deploy");
-    color_sensor_ = new ZekeColorSensor(parent, I2C.Port.kMXP , 1);
+    color_sensor_ = sensor ;
     
   }
 

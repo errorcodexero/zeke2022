@@ -3,6 +3,8 @@ package org.xero1425.simulator.engine;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.SettingsValue;
 
 public abstract class SimulationModel {
@@ -77,5 +79,81 @@ public abstract class SimulationModel {
     protected int getLoggerID() {
         return logger_id_ ;
     }
+
+    
+    protected int getIntProperty(String name) throws Exception {
+        MessageLogger logger = getEngine().getMessageLogger() ;
+
+        if (!hasProperty(name)) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" is missing required property").addQuoted(name);
+            logger.endMessage();
+            throw new Exception("getIntProperty failed") ;
+        }
+
+        SettingsValue value = getProperty(name) ;
+        if (!value.isInteger()) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" property ").addQuoted(name).add(" is not an integer");
+            logger.endMessage();   
+            throw new Exception("getIntProperty failed") ;         
+        }
+
+        return value.getInteger() ;
+    }
+
+    protected double getDoubleProperty(String name) throws Exception {
+        MessageLogger logger = getEngine().getMessageLogger() ;
+
+        if (!hasProperty(name)) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" is missing required property").addQuoted(name);
+            logger.endMessage();
+            throw new Exception("getDoubleProperty failed") ;
+        }
+
+        SettingsValue value = getProperty(name) ;
+        if (!value.isDouble()) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" property ").addQuoted(name).add(" is not an integer");
+            logger.endMessage();   
+            throw new Exception("getDoubleProperty failed") ;         
+        }
+
+        return value.getDouble() ;
+    }
+
+    protected String getStringProperty(String name) throws Exception {
+        MessageLogger logger = getEngine().getMessageLogger() ;
+
+        if (!hasProperty(name)) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" is missing required property").addQuoted(name);
+            logger.endMessage();
+            throw new Exception("getStringProperty failed") ;
+        }
+
+        SettingsValue value = getProperty(name) ;
+        if (!value.isString()) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" property ").addQuoted(name).add(" is not a string");
+            logger.endMessage();   
+            throw new Exception("getStringProperty failed") ;         
+        }
+
+        return value.getString() ;
+    }    
 
 }

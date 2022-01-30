@@ -1,9 +1,12 @@
 package frc.robot.zeke_color_sensor;
 
 import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.misc.ColorSensorSubsystem;
+import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MissingParameterException;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -20,8 +23,8 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
     private ColorMatch matcher_  ;
     final private Alliance alliance_ ;
 
-    public ZekeColorSensor(Subsystem parent, I2C.Port port, int muxaddr) {
-        super(parent, "ZekeColorSensor", port, muxaddr, 3) ;
+    public ZekeColorSensor(Subsystem parent, I2C.Port port) throws BadParameterTypeException, MissingParameterException {
+        super(parent, "zeke-color-sensor", port) ;
 
         matcher_ = new ColorMatch() ;
         matcher_.addColorMatch(red_);
@@ -57,7 +60,7 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
 
     @Override
     public void computeMyState() {
-        super.computeMyState(); 
+        super.computeMyState();
 
         for(int i = 0 ;i < count() ; i++) {
             String str = "none" ;
@@ -74,6 +77,7 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         CargoType type = CargoType.None ;
 
         Color c = getColor(which) ;
+        System.out.println("Color " + c.red + " " + c.green + " " + c.blue) ;
         CargoColor cc = colorToCargoColor(c) ;
 
         if (cc == CargoColor.Red) {
@@ -87,10 +91,13 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
     }
 
     private CargoColor colorToCargoColor(Color c) {
-        //
-        // TODO: used the color matcher, the confidence factor, and the proximity factor
-        //       to match a blue or red cargo
-        //
+
+        ColorMatchResult result = matcher_.matchClosestColor(c) ;
+        if (result.color == red_)
+            return CargoColor.Red ;
+        else if (result.color == blue_)
+            return CargoColor.Blue ;
+            
         return CargoColor.None ;
     }
 }

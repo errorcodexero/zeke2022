@@ -40,11 +40,12 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "climb";
+    return "intake";
   }
 
   protected void addRobotSimulationModels() {
     ModelFactory factory = SimulationEngine.getInstance().getModelFactory() ;
     factory.registerModel("climber", "frc.models.ClimberModel");    
+    factory.registerModel("color-sensor-model", "frc.models.ColorSensorModel") ;
   }
 }

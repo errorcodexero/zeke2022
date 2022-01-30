@@ -7,7 +7,8 @@
             "xerorobot": false,
             "pathfollowing": false,
             "zeke_limelight": false,
-            "climber" : true
+            "climber" : true,
+            "zeke-color-sensor" : true
         },
         "verbose": {
             "tankdrive": false
@@ -317,11 +318,19 @@
                     "b" : 0.0
                 }                
             }
-        }        
+        },
+        "zeke-color-sensor" : {
+            "hw" : {
+                "i2cmux" : {
+                    "address" : 112,
+                    "count" : 3
+                }
+            }
+        }
     },
     "testmode": {
         "enabled": true,
-        "which": 50,
+        "which": 10,
         "power": 0.5,
         "duration": 5.0,
         "distance": 0.0,

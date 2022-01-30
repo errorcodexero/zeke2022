@@ -104,7 +104,7 @@ public class ClimberModel extends SimulationModel {
 
     @Override
     public boolean create() {
-       
+               
         motor_ = new SimMotorController(this, "motor");
         if (!motor_.createMotor())
             return false;
@@ -119,7 +119,6 @@ public class ClimberModel extends SimulationModel {
             first_sensor_time_ = getDoubleProperty(FirstSensorDelayPropName) ;
             second_sensor_time_ = getDoubleProperty(SecondSensorDelayPropName) ;
             second_sencor_db_check_time_ = getDoubleProperty(SecondSensorDBCheckPropName) ;
-
 
             if (second_sensor_time_ <= second_sencor_db_check_time_) {
                 MessageLogger logger = getEngine().getMessageLogger() ;
@@ -322,79 +321,5 @@ public class ClimberModel extends SimulationModel {
 
         return SimDeviceDataJNI.getSimDeviceHandle(XeroDoubleSolenoid.SimDeviceName + "[" + index + "]") ;
     }
-
-    private int getIntProperty(String name) throws Exception {
-        MessageLogger logger = getEngine().getMessageLogger() ;
-
-        if (!hasProperty(name)) {
-            logger.startMessage(MessageType.Error);
-            logger.add("event: model ").addQuoted(getModelName());
-            logger.add(" instance ").addQuoted(getInstanceName());
-            logger.add(" is missing required property").addQuoted(name);
-            logger.endMessage();
-            throw new Exception("getIntProperty failed") ;
-        }
-
-        SettingsValue value = getProperty(name) ;
-        if (!value.isInteger()) {
-            logger.startMessage(MessageType.Error);
-            logger.add("event: model ").addQuoted(getModelName());
-            logger.add(" instance ").addQuoted(getInstanceName());
-            logger.add(" property ").addQuoted(name).add(" is not an integer");
-            logger.endMessage();   
-            throw new Exception("getIntProperty failed") ;         
-        }
-
-        return value.getInteger() ;
-    }
-
-    private double getDoubleProperty(String name) throws Exception {
-        MessageLogger logger = getEngine().getMessageLogger() ;
-
-        if (!hasProperty(name)) {
-            logger.startMessage(MessageType.Error);
-            logger.add("event: model ").addQuoted(getModelName());
-            logger.add(" instance ").addQuoted(getInstanceName());
-            logger.add(" is missing required property").addQuoted(name);
-            logger.endMessage();
-            throw new Exception("getDoubleProperty failed") ;
-        }
-
-        SettingsValue value = getProperty(name) ;
-        if (!value.isDouble()) {
-            logger.startMessage(MessageType.Error);
-            logger.add("event: model ").addQuoted(getModelName());
-            logger.add(" instance ").addQuoted(getInstanceName());
-            logger.add(" property ").addQuoted(name).add(" is not an integer");
-            logger.endMessage();   
-            throw new Exception("getDoubleProperty failed") ;         
-        }
-
-        return value.getDouble() ;
-    }
-
-    private String getStringProperty(String name) throws Exception {
-        MessageLogger logger = getEngine().getMessageLogger() ;
-
-        if (!hasProperty(name)) {
-            logger.startMessage(MessageType.Error);
-            logger.add("event: model ").addQuoted(getModelName());
-            logger.add(" instance ").addQuoted(getInstanceName());
-            logger.add(" is missing required property").addQuoted(name);
-            logger.endMessage();
-            throw new Exception("getStringProperty failed") ;
-        }
-
-        SettingsValue value = getProperty(name) ;
-        if (!value.isString()) {
-            logger.startMessage(MessageType.Error);
-            logger.add("event: model ").addQuoted(getModelName());
-            logger.add(" instance ").addQuoted(getInstanceName());
-            logger.add(" property ").addQuoted(name).add(" is not a string");
-            logger.endMessage();   
-            throw new Exception("getStringProperty failed") ;         
-        }
-
-        return value.getString() ;
-    }       
+   
 }

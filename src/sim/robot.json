@@ -1,94 +1,99 @@
 {
-    "models" :
-    [
+    "models": [
         {
-            "model" : "navx",
-            "instance" : "1"
+            "model": "navx",
+            "instance": "1"
         },
         {
-            "model" : "limelight",
-            "instance" : "1",
-            "props" : {
-                "create_early" : true
+            "model": "limelight",
+            "instance": "1",
+            "props": {
+                "create_early": true
             }
         },
         {
-            "model" : "fms",
-            "instance" : "1",
-            "props" : {
-                "start" : 1.0,
-                "autonomous" : 15.0,
-                "between" : 2.0,
-                "teleop" : 135.0,
-                "create_early" : true                
-            }            
+            "model": "fms",
+            "instance": "1",
+            "props": {
+                "start": 1.0,
+                "autonomous": 15.0,
+                "between": 2.0,
+                "teleop": 135.0,
+                "create_early": true
+            }
         },
-                {
-            "model" : "climber",
+        {
+            "model" : "color-sensor-model",
             "instance" : "1",
             "props" : {
-                "ticks_per_second_per_volt" : 2200,
-                "climber:motor:1:index" : 13,
-                "climber:motor:1:type" : "sparkmax-brushless",
-                "climber:motor:2:index" : 14,
-                "climber:motor:2:type" : "sparkmax-brushless",
-                "dbmodel" : "tankdrive",
-                "dbinst" : "1",
+                "count" : 3
+            }
+        },
+        {
+            "model": "climber",
+            "instance": "1",
+            "props": {
+                "ticks_per_second_per_volt": 2200,
+                "climber:motor:1:index": 13,
+                "climber:motor:1:type": "sparkmax-brushless",
+                "climber:motor:2:index": 14,
+                "climber:motor:2:type": "sparkmax-brushless",
+                "dbmodel": "tankdrive",
+                "dbinst": "1",
                 "first_sensor_delay": 0.5,
                 "second_sensor_delay": 0.5,
-                "second_sensor_db_check" : 0.1,
-                "touch_left_mid_io": 4, 
-                "touch_left_high_io": 5, 
-                "touch_left_traverse_io": 6, 
-                "touch_right_mid_io": 7, 
-                "touch_right_high_io": 8, 
+                "second_sensor_db_check": 0.1,
+                "touch_left_mid_io": 4,
+                "touch_left_high_io": 5,
+                "touch_left_traverse_io": 6,
+                "touch_right_mid_io": 7,
+                "touch_right_high_io": 8,
                 "touch_right_traverse_io": 9,
-                "left_a_module" : 0,
-                "left_a_channel" : 2,
-                "left_b_module" : 0,
-                "left_b_channel" : 4,
-                "right_a_module" : 0,
-                "right_a_channel" : 6,
-                "right_b_module" : 0,
-                "right_b_channel" : 6
+                "left_a_module": 0,
+                "left_a_channel": 2,
+                "left_b_module": 0,
+                "left_b_channel": 4,
+                "right_a_module": 0,
+                "right_a_channel": 6,
+                "right_b_module": 0,
+                "right_b_channel": 6
             }
         },
         {
-            "model" : "tankdrive",
-            "instance" : "1",
-            "props" :
-            {
-                "navx:model" : "navx",
-                "navx:instance" : "1",
-                "left:motor:1:index" : 1,
-                "left:motor:1:type" : "talonfx",
-                "left:motor:2:index" : 2,
-                "left:motor:2:type" : "talonfx",
-                "right:motor:1:index" : 3,
-                "right:motor:1:type" : "talonfx",
-                "right:motor:2:index" : 4,
-                "right:motor:2:type" : "talonfx",
-                "right:motor:inverted" : true,
-                "use_motor_encoders" : true,
-                "right:encoder:inverted" : true,
-                "diameter" : 6.0,
-                "scrub" : 1.0,
-                "width" : 34.5,
-                "length" : 37.5,
-                "maxvelocity" : 90.0,
-                "maxacceleration" : 90.0,
-                "inches_per_tick" : 0.006
+            "model": "tankdrive",
+            "instance": "1",
+            "props": {
+                "navx:model": "navx",
+                "navx:instance": "1",
+                "left:motor:1:index": 1,
+                "left:motor:1:type": "talonfx",
+                "left:motor:2:index": 2,
+                "left:motor:2:type": "talonfx",
+                "right:motor:1:index": 3,
+                "right:motor:1:type": "talonfx",
+                "right:motor:2:index": 4,
+                "right:motor:2:type": "talonfx",
+                "right:motor:inverted": true,
+                "use_motor_encoders": true,
+                "right:encoder:inverted": true,
+                "diameter": 6.0,
+                "scrub": 1.0,
+                "width": 34.5,
+                "length": 37.5,
+                "maxvelocity": 90.0,
+                "maxacceleration": 90.0,
+                "inches_per_tick": 0.006
             }
         },
         {
-            "model" : "drivergamepad",
-            "instance" : "1",
-            "props" : {
-                "index" : 0,
-                "axes" : 6,
-                "buttons" : 10,
-                "povs" : 1,
-                "create_early" : true                
+            "model": "drivergamepad",
+            "instance": "1",
+            "props": {
+                "index": 0,
+                "axes": 6,
+                "buttons": 10,
+                "povs": 1,
+                "create_early": true
             }
         }
     ]

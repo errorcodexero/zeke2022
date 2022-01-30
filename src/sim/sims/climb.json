@@ -10,7 +10,7 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "comment" : "automode must be set to the correct testmode in robot settings file",
+                        "comment" : "test must be enabled and test set 50 in the zeke2022.json file",
                         "start" : 1.0,
                         "autonomous" : 30.0,
                         "between" : 0.0,

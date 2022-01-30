@@ -6,6 +6,9 @@ import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
 import frc.robot.climber.ClimberSubsystem;
+import frc.robot.intake.ZekeIntakeOffAction;
+import frc.robot.intake.ZekeIntakeOnAction;
+import frc.robot.intake.ZekeIntakeSubsystem;
 import frc.robot.climber.ClimbAction ;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
@@ -18,6 +21,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
         ZekeSubsystem zeke = (ZekeSubsystem) ctrl.getRobot().getRobotSubsystem();
         TankDriveSubsystem db = zeke.getTankDrive();
         ClimberSubsystem climber = zeke.getClimber() ;
+        ZekeIntakeSubsystem intake = zeke.getGPMSubsystem().getIntake() ;
 
         switch (getTestNumber()) {
             //
@@ -35,7 +39,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
             // Numbers 10 - 19 are for the intake
             //
             case 10:        
-                //add action
+                addSubActionPair(intake, new ZekeIntakeOnAction(intake), true) ;
                 break ;
             
             //
