@@ -6,6 +6,14 @@ import java.util.Map;
 import org.xero1425.misc.SettingsValue;
 
 public abstract class SimulationModel {
+    
+    private SimulationEngine engine_ ;
+    private String model_ ;
+    private String instance_ ;
+    private Map<String, SettingsValue> props_ ;
+    private boolean created_ ;
+    private int logger_id_ ;
+    
     public SimulationModel(SimulationEngine engine, String model, String instance) {
         engine_ = engine ;
         model_ = model ;
@@ -70,10 +78,4 @@ public abstract class SimulationModel {
         return logger_id_ ;
     }
 
-    private SimulationEngine engine_ ;
-    private String model_ ;
-    private String instance_ ;
-    private Map<String, SettingsValue> props_ ;
-    private boolean created_ ;
-    private int logger_id_ ;
 }

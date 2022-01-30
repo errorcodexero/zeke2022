@@ -51,6 +51,7 @@ public class ZekeSubsystem extends RobotSubsystem {
 
         shooter_ = new ShooterSubsystem(this);
         addChild(shooter_);
+
         climber_ = new ClimberSubsystem(this) ;
         addChild(climber_) ;
 
@@ -67,4 +68,7 @@ public class ZekeSubsystem extends RobotSubsystem {
         return oi_ ;
     }
 
+    public ClimberSubsystem getClimber() {
+        return climber_ ;
+    }
 }

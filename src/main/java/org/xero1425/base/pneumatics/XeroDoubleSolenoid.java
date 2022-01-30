@@ -15,8 +15,8 @@ public class XeroDoubleSolenoid {
     private SimInt simstate_ ;
     private DoubleSolenoid.Value state_ ;
 
-    final private String SimDeviceName = "Solenoid" ;
-    final private String SimeStateName = "state" ;
+    static final public String SimDeviceName = "DoubleSolenoid" ;
+    static final public String SimeStateName = "state" ;
 
     public XeroDoubleSolenoid(XeroRobot robot, int module, int forward, int reverse) {
         if (XeroRobot.isSimulation()) {
@@ -101,7 +101,7 @@ public class XeroDoubleSolenoid {
         return ret ;
     }
 
-    private int calcIndex(int module, int channel) {
+    static public int calcIndex(int module, int channel) {
         return module * 32 + channel ;
     }
 }

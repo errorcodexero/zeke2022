@@ -159,6 +159,12 @@ public class TankDriveModel extends SimulationModel {
     private double speed_ ;
 
     //
+    // The current power
+    //
+    private double left_power_ ;
+    private double right_power_ ;
+
+    //
     // The encoder values
     //
     private int left_enc_value_ ;
@@ -218,6 +224,14 @@ public class TankDriveModel extends SimulationModel {
 
         left_encoder_index_ = -1 ;
         right_encoder_index_ = -1 ;
+    }
+
+    public double getLeftPower() {
+        return left_power_ ;
+    }
+
+    public double getRightPower() {
+        return right_power_ ;
     }
     
     /// \brief called once at the end of the simulator loop
@@ -532,14 +546,14 @@ public class TankDriveModel extends SimulationModel {
         //
         // Get the power from the motors
         //
-        double leftpower = left_.getPower() ;
-        double rightpower = right_.getPower() ;
+        left_power_ = left_.getPower() ;
+        right_power_ = right_.getPower() ;
 
         //
         // Calculated the desired left and right revolutions per second based on the motor power
         //
-        double desired_left_rps = left_rps_per_power_per_time_ * leftpower * left_motor_mult_ ;
-        double desired_right_rps = right_rps_per_power_per_time_ * rightpower * right_motor_mult_ ;
+        double desired_left_rps = left_rps_per_power_per_time_ * left_power_ * left_motor_mult_ ;
+        double desired_right_rps = right_rps_per_power_per_time_ * right_power_ * right_motor_mult_ ;
 
         //
         // Calculate the actual left and right revolutions per second based on the maximum allows acceleration
@@ -612,8 +626,8 @@ public class TankDriveModel extends SimulationModel {
 
         MessageLogger logger = getEngine().getRobot().getMessageLogger() ;
         logger.startMessage(MessageType.Debug, getLoggerID()) ;
-        logger.add("lp", leftpower) ;
-        logger.add("rp", rightpower) ;
+        logger.add("lp", left_power_) ;
+        logger.add("rp", right_power_) ;
         logger.add("lrps", current_left_rps_) ;
         logger.add("rrps", current_right_rps_) ;
         logger.add("dl", dleft) ;

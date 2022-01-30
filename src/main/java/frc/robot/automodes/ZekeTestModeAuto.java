@@ -4,6 +4,8 @@ import org.xero1425.base.controllers.TestAutoMode;
 import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
+
+import frc.robot.climber.ClimberSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeTestModeAuto extends TestAutoMode {
@@ -12,6 +14,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
 
         ZekeSubsystem zeke = (ZekeSubsystem) ctrl.getRobot().getRobotSubsystem();
         TankDriveSubsystem db = zeke.getTankDrive();
+        ClimberSubsystem climber = zeke.getClimber() ;
 
         switch (getTestNumber()) {
             //
@@ -63,8 +66,8 @@ public class ZekeTestModeAuto extends TestAutoMode {
             //
             // Numbers 100+ are for the whole-robot
             //
-            case 100:        
-                //add action
+            case 100:  
+                addSubActionPair(climber, new ClimbAction(), true);      
                 break ;
         }
     }
