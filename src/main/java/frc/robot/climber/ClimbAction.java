@@ -3,6 +3,7 @@ package frc.robot.climber;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
+import org.xero1425.base.motorsubsystem.MotorPowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
 public class ClimbAction extends Action {
@@ -10,10 +11,13 @@ public class ClimbAction extends Action {
     private ClimberSubsystem sub_ ;
     private TankDriveSubsystem db_ ;
 
+    private double drive_action_power_ ;
+
     // powers to windmills
     private double first_windmill_power_ ;
     private double second_windmill_power_ ;
 
+    // timer to judge following delays off of
     private double state_start_time_ ;
 
     // delay times between clamping/unclamping sections
@@ -45,13 +49,15 @@ public class ClimbAction extends Action {
     private ClimbingStates state_ = ClimbingStates.IDLE ;
 
     // TODO: grab the times/waits and windmill powers from params file
-    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, 
+    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, double driveActionPower,
                         double firstWindmillPower, double secondWindmillPower, 
                         double firstClampWait, double firstAlignWait, double firstSwingWait,
                         double secondClampWait, double secondAlignWait, double secondSwingWait) {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
         db_ = db ;
+        
+        drive_action_power_ = driveActionPower ;
 
         first_windmill_power_ = firstWindmillPower ;
         second_windmill_power_ = secondWindmillPower ;
@@ -129,7 +135,7 @@ public class ClimbAction extends Action {
         //waits for sensor to hit
         while (!sub_.isMidLeftTouched() || !sub_.isMidRightTouched()) {
             // TODO: refer to db and drive forward until this sensor is hit!
-            // db_.setAction(driveforward) ;
+            // db_.setPower(drive_action_power_, drive_action_power_) ;
         }
         return true;  
     }
