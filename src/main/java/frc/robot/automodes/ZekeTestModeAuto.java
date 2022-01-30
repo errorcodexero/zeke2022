@@ -6,9 +6,12 @@ import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
 import frc.robot.climber.ClimberSubsystem;
+import frc.robot.climber.ClimbAction ;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeTestModeAuto extends TestAutoMode {
+    ClimbAction caction_ = null ;
+
     public ZekeTestModeAuto(ZekeAutoController ctrl) throws Exception {
         super(ctrl, "Zeke2022-Test-Mode");
 
@@ -60,14 +63,16 @@ public class ZekeTestModeAuto extends TestAutoMode {
             // Numbers 50 - 59 are for the climber
             //
             case 50:        
-                //add action
+                if (caction_ == null) {
+                    caction_ = new ClimbAction(climber, db, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) ;
+                }
+                addSubActionPair(climber, caction_, true);      
                 break ;
 
             //
             // Numbers 100+ are for the whole-robot
             //
             case 100:  
-                addSubActionPair(climber, new ClimbAction(), true);      
                 break ;
         }
     }
