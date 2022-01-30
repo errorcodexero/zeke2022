@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.sym.Name;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.BadMotorRequestException;
-import org.xero1425.base.motors.MotorController;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
 import org.xero1425.base.motorsubsystem.MotorEncoderVelocityAction;

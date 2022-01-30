@@ -1,0 +1,37 @@
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "automode must be set to the correct testmode in robot settings file",
+                        "start" : 1.0,
+                        "autonomous" : 30.0,
+                        "between" : 0.0,
+                        "teleop" : 0.0,
+                        "fms" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 2.0,
+            "events" : [
+                {
+                    "model" : "climber",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "start the climber model sequencing",
+                        "start" : true
+                    }
+                }
+            ]
+        }
+    ]
+}

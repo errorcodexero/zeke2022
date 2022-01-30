@@ -26,8 +26,6 @@ public class Zeke2022 extends XeroRobot {
     return "zeke2022";
   }
 
-  // TODO: get all commented sections un-commented by adding the specific files/updates they depend on
-
   public AutoController createAutoController() throws MissingParameterException, BadParameterTypeException {
     return new ZekeAutoController(this);
   }
@@ -42,12 +40,11 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "testmode";
+    return "climb";
   }
 
   protected void addRobotSimulationModels() {
     ModelFactory factory = SimulationEngine.getInstance().getModelFactory() ;
-    factory.registerModel("conveyor", "frc.models.ClimberModel");    
- 
+    factory.registerModel("climber", "frc.models.ClimberModel");    
   }
 }

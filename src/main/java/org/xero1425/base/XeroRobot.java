@@ -141,7 +141,10 @@ public abstract class XeroRobot extends TimedRobot {
         logger_.startMessage(MessageType.Info).add("robot code starting").endMessage();
 
         if (RobotBase.isSimulation()) {
-            String str = getSimulationFileName() ;
+            String str = SimArgs.InputFileName;
+            if (str == null)
+                str = getSimulationFileName() ;
+                
             if (str == null) {
                 System.out.println("The code is setup to simulate, but the derived robot class did not provide a stimulus file") ;
                 System.out.println("Not initializing the Xero1425 Simulation engine - assuming Romi robot") ;
@@ -317,8 +320,7 @@ public abstract class XeroRobot extends TimedRobot {
         try {
             // Create the robot hardware
             hardwareInit();
-
-
+            
             if (RobotBase.isSimulation() && SimulationEngine.getInstance() != null)
             {
                 //

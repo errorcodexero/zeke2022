@@ -49,15 +49,9 @@ public class ZekeSubsystem extends RobotSubsystem {
         tracker_ = new TargetTrackerSubsystem(this, limelight_, turret_) ;
         addChild(tracker_) ;
 
-        shooter_ = new ShooterSubsystem(this);
-        addChild(shooter_);
 
         climber_ = new ClimberSubsystem(this) ;
         addChild(climber_) ;
-
-        intake_ = new ZekeIntakeSubsystem(this) ;
-        addChild(intake_) ;
-
     }
 
     public TankDriveSubsystem getTankDrive() {

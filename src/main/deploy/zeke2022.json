@@ -6,7 +6,8 @@
             "pathmanager": false,
             "xerorobot": false,
             "pathfollowing": false,
-            "zeke_limelight": false
+            "zeke_limelight": false,
+            "climber" : true
         },
         "verbose": {
             "tankdrive": false
@@ -127,14 +128,23 @@
                 "collector": {
                     "motor-left": {
                         "type": "sparkmax_brushless",
-                        "canid": 11,
+                        "canid": 7,
                         "power":0.5
                     },
                     "motor-right": {
                         "type": "sparkmax_brushless",
-                        "canid": 12,
+                        "canid": 8,
                         "power":0.8
                     }
+                }
+            }
+        },
+        "conveyor" : {
+            "hw" : {
+                "motor" : {
+                    "type": "sparkmax_brushless",
+                    "canid": 5,
+                    "power":0.8                    
                 }
             }
         },
@@ -142,7 +152,7 @@
             "hw" : {
                 "motors" : {
                     "type" : "sparkmax_brushless",
-                    "canid" : 9,
+                    "canid" : 11,
                     "inverted" : true                    
                 },
                 "encoder" : {
@@ -240,16 +250,21 @@
                     }
                 },
                 "motors" : {
-                    "left_windmill": {
+                    "1": {
                         "type" : "sparkmax_brushless",
                         "canid" : 13,
                         "power" : 0.5
                     },
-                    "right_windmill": {
+                    "2": {
                         "type" : "sparkmax_brushless",
                         "canid" : 14,
                         "power" : 0.8
                     }
+                },
+                "encoder" : { 
+                    "type" : "motor",
+                    "m" : 1.94714,
+                    "b" : 0.0
                 },
                 "touchsensors" : {
                     "mid_left" : 0,
@@ -260,11 +275,53 @@
                     "traversal_right" : 5
                 }
             }
-        }
+        },
+        "shooter-w1" : {
+            "hw" : {
+                "motors" : {
+                    "type" : "sparkmax_brushless",
+                    "canid" : 9,
+                    "inverted" : true                    
+                },
+                "encoder" : { 
+                    "type" : "motor",
+                    "m" : 1.94714,
+                    "b" : 0.0
+                }
+            }
+        },
+        "shooter-w2" : {
+            "hw" : {
+                "motors" : {
+                    "type" : "sparkmax_brushless",
+                    "canid" : 10,
+                    "inverted" : true                    
+                },
+                "encoder" : { 
+                    "type" : "motor",
+                    "m" : 1.94714,
+                    "b" : 0.0
+                }                
+            }
+        },
+        "shooter-h" : {
+            "hw" : {
+                "motors" : {
+                    "type" : "sparkmax_brushless",
+                    "canid" : 12,
+                    "inverted" : true                    
+                },
+                "encoder" : { 
+                    "type" : "motor",
+                    "m" : 1.94714,
+                    "b" : 0.0
+                }                
+            }
+        }        
     },
     "testmode": {
         "enabled": true,
-        "which": 1,
+        "which": 50,
         "power": 0.5,
         "duration": 5.0,
         "distance": 0.0,

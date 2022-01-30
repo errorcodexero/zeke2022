@@ -5,6 +5,8 @@ import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.motorsubsystem.MotorPowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 
 public class ClimbAction extends Action {
 
@@ -89,6 +91,8 @@ public class ClimbAction extends Action {
 
     @Override
     public void run() throws BadMotorRequestException, MotorRequestFailedException {
+        ClimbingStates prev = state_ ;
+
         switch (state_) {
             case IDLE:
                 doIdle() ;
@@ -117,6 +121,17 @@ public class ClimbAction extends Action {
             case CLAMP_THREE:
                 doClampThree() ;
                 break ;
+        }
+
+        //
+        // Butch: added this to print to the log file, we will need it plus I wanted to test
+        //        the start of the climber model
+        if (prev != state_) {
+            MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Debug, sub_.getLoggerID()) ;
+            logger.add("ClimberAction changed states: ") ;
+            logger.addQuoted(prev.toString()).add(" --> ").addQuoted(state_.toString()) ;
+            logger.endMessage();
         }
     }
 

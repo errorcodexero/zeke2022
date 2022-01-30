@@ -112,7 +112,6 @@ public class ClimberModel extends SimulationModel {
         String dbmodel ;
         String dbinst ;
 
-
         try {
             dbmodel = getStringProperty(DBModelPropName) ;
             dbinst = getStringProperty(DBInstPropName) ;
@@ -163,6 +162,7 @@ public class ClimberModel extends SimulationModel {
             return false ;
         }
 
+        setCreated();
         setSensors();
         return true;
     }
@@ -183,6 +183,10 @@ public class ClimberModel extends SimulationModel {
             case WaitingMidSecondSensor:      
                 doWaitingMidSecondSensor() ;        
                 break ;
+
+            case WaitForAGrabbersClosed:
+                doWaitForAGrabberClosed() ;
+                break ;
         }
     }
 
@@ -202,7 +206,20 @@ public class ClimberModel extends SimulationModel {
         // The climber model sequencing has been triggered.  We wait for an amount
         // of time given by the FirstSensorDelayPropName property.
         //
-        sensor_side_ = random_.nextInt(2);
+        double r = random_.nextDouble() ;
+        if (r > 0.9) {
+            // Both sensor at once, 10% of the time
+            sensor_side_ = 2 ;
+        }
+        else if (r > 0.45) {
+            // Right sensor
+            sensor_side_ = 1 ;
+        }
+        else {
+            // Left sensor
+            sensor_side_ = 0 ;
+        }
+
         phase_start_time_ = getRobotTime();
         state_ = State.WaitingMidFirstSensor;
     }
@@ -213,10 +230,14 @@ public class ClimberModel extends SimulationModel {
         // wait for the time given by the SecondSensorDelayPropName property.
         //
         if (getRobotTime() - phase_start_time_ > first_sensor_time_) {
-            if (sensor_side_ == 0)
+            if (sensor_side_ == 0) {
                 touch_left_mid_value_ = true;
-            else
+            } else if (sensor_side_ == 1) {
                 touch_right_mid_value_ = true;
+            } else if (sensor_side_ == 2) {
+                touch_right_mid_value_ = true;
+                touch_left_mid_value_ = true;
+            }
             setSensors();
 
             sensor_side_ = 1 - sensor_side_;
@@ -274,6 +295,10 @@ public class ClimberModel extends SimulationModel {
         }
     }
 
+    private void doWaitForAGrabberClosed() {
+        
+    }
+
     private void setSensors() {
         DIODataJNI.setValue(touch_left_mid_io_, touch_left_mid_value_);
         DIODataJNI.setValue(touch_left_traverse_io_, touch_left_traverse_value_);
@@ -323,7 +348,7 @@ public class ClimberModel extends SimulationModel {
         return value.getInteger() ;
     }
 
-    private int getDoubleProperty(String name) throws Exception {
+    private double getDoubleProperty(String name) throws Exception {
         MessageLogger logger = getEngine().getMessageLogger() ;
 
         if (!hasProperty(name)) {
