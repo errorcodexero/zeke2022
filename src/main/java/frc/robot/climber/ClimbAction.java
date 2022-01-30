@@ -211,7 +211,6 @@ public class ClimbAction extends Action {
         //wait for 2nd "swinging time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_swing_wait_) {
             sub_.setClampAClosed(true);
-            state_start_time_ = sub_.getRobot().getTime() ;
         }
         return true;
     }
