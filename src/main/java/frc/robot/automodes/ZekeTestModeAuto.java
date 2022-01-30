@@ -68,7 +68,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
             //
             case 50:        
                 if (caction_ == null) {
-                    caction_ = new ClimbAction(climber, db, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) ;
+                    caction_ = new ClimbAction(climber, db) ;
                 }
                 addSubActionPair(climber, caction_, true);      
                 break ;

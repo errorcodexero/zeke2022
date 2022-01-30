@@ -3,10 +3,11 @@ package frc.robot.climber;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
-import org.xero1425.base.motorsubsystem.MotorPowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
+import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
+import org.xero1425.misc.MissingParameterException;
 
 public class ClimbAction extends Action {
 
@@ -50,43 +51,29 @@ public class ClimbAction extends Action {
 
     private ClimbingStates state_ = ClimbingStates.IDLE ;
 
-    // TODO: grab the times/waits and windmill powers from params file
-    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, double driveActionPower,
-                        double firstWindmillPower, double secondWindmillPower, 
-                        double firstClampWait, double firstAlignWait, double firstSwingWait,
-                        double secondClampWait, double secondAlignWait, double secondSwingWait) {
-
-        //
-        // Butch: Let's not get all of these params from the constructor, but rather get them
-        //        from the settings file.  For example.
-        //
-        // drive_action_power_ = sub.getSettingsValue("climbaction:drive_action_power") ;
-        //
+    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db) throws BadParameterTypeException, MissingParameterException {
 
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
         db_ = db ;
         
-        drive_action_power_ = driveActionPower ;
+        drive_action_power_ = sub.getSettingsValue("climbaction:drive_action_power").getDouble() ;
 
-        first_windmill_power_ = firstWindmillPower ;
-        second_windmill_power_ = secondWindmillPower ;
+        first_windmill_power_ = sub.getSettingsValue("climbaction:first_windmill_power").getDouble() ;
+        second_windmill_power_ = sub.getSettingsValue("climbaction:second_windmill_power").getDouble() ;
 
-        first_clamp_wait_ = firstClampWait ;
-        first_align_wait_ = firstAlignWait ;
-        first_swing_wait_ = firstSwingWait ;
-        second_clamp_wait_ = secondClampWait ;
-        second_align_wait_ = secondAlignWait ;
-        second_swing_wait_ = secondSwingWait ;
+        first_clamp_wait_ = sub.getSettingsValue("climbaction:first_clamp_wait").getDouble() ;
+        first_align_wait_ = sub.getSettingsValue("climbaction:first_align_wait").getDouble() ;
+        first_swing_wait_ = sub.getSettingsValue("climbaction:first_swing_wait").getDouble() ;
+        second_clamp_wait_ = sub.getSettingsValue("climbaction:second_clamp_wait").getDouble() ;
+        second_align_wait_ = sub.getSettingsValue("climbaction:second_align_wait").getDouble() ;
+        second_swing_wait_ = sub.getSettingsValue("climbaction:second_swing_wait").getDouble() ;
 
     }
 
     @Override
     public void start() throws Exception {
         super.start() ;
-
-        // Butch: calling setDone() here will finish the action and it will do nothing.
-        setDone() ;
     }
 
     @Override
@@ -120,6 +107,7 @@ public class ClimbAction extends Action {
                 break ;
             case CLAMP_THREE:
                 doClampThree() ;
+                // setDone() ;
                 break ;
         }
 
