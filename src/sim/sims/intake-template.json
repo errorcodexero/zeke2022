@@ -1,0 +1,46 @@
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "automode must be set to the correct testmode in robot settings file",
+                        "start" : 1.0,
+                        "autonomous" : 8.0,
+                        "between" : 0.0,
+                        "teleop" : 0.0,
+                        "fms" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.0,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "color-0" : "0.0, 0.0, 0.0",
+                        "proximity-0" : 25,
+                        "ir-0" : 26,
+                        "color-1" : "0.0, 0.0, 0.0",
+                        "proximity-1" : 50,
+                        "ir-1" : 51,
+                        "color-2" : "0.33, 0.33, 0.33",
+                        "proximity-2" : 75,
+                        "ir-2" : 76
+                    }
+                }
+            ]
+        }
+    ]
+}

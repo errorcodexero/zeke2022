@@ -1,5 +1,7 @@
 package org.xero1425.simulator.models;
 
+import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 
 import org.xero1425.simulator.engine.SimulationModel;
@@ -47,19 +49,49 @@ public class FMSModel extends SimulationModel {
         state_ = FMSState.Initializing ;
 
         if (hasProperty("autonomous")) {
-            auto_time_ = setProperty("autonomous", getProperty("autonomous"), auto_time_) ;
+            auto_time_ = getDoublePropertyWithDefault("autonomous", null, auto_time_) ;
         }
-        else if (hasProperty("start")) {
-            start_time_ = setProperty("start", getProperty("start"), start_time_) ;
+        
+        if (hasProperty("start")) {
+            start_time_ = getDoublePropertyWithDefault("start", null, start_time_) ;
         }        
-        else if (hasProperty("between")) {
-            between_time_ = setProperty("between", getProperty("between"), between_time_) ;
+        
+        if (hasProperty("between")) {
+            between_time_ = getDoublePropertyWithDefault("between", null, between_time_) ;
         }     
-        else if (hasProperty("teleop")) {
-            teleop_time_ = setProperty("teleop", getProperty("teleop"), teleop_time_) ;
+        
+        if (hasProperty("teleop")) {
+            teleop_time_ = getDoublePropertyWithDefault("teleop", null, teleop_time_) ;
         }
-        else if (hasProperty("test")) {
-            teleop_time_ = setProperty("test", getProperty("test"), test_time_) ;
+        
+        if (hasProperty("test")) {
+            teleop_time_ = getDoublePropertyWithDefault("test", null, test_time_) ;
+        }
+
+        if (hasProperty("alliance")) {
+            AllianceStationID id = AllianceStationID.Red1 ;
+            SettingsValue v = getProperty("alliance") ;
+            if (v.isString()) {
+                try {
+                    if (v.getString().equals("red1"))
+                        id = AllianceStationID.Red1 ;
+                    else if (v.getString().equals("red2"))
+                        id = AllianceStationID.Red2 ;
+                    else if (v.getString().equals("red3"))
+                        id = AllianceStationID.Red3 ;
+                    else if (v.getString().equals("blue1"))
+                        id = AllianceStationID.Blue1 ;
+                    else if (v.getString().equals("blue2"))
+                        id = AllianceStationID.Blue2 ;
+                    else if (v.getString().equals("blue3"))
+                        id = AllianceStationID.Blue3 ;                                                
+                } 
+                catch(Exception ex) {
+                    id = AllianceStationID.Red1 ;
+                }
+            }
+            DriverStationSim.setAllianceStationId(id) ;
+            DriverStation.Alliance a = DriverStation.getAlliance() ;
         }
 
         setCreated();
@@ -183,23 +215,23 @@ public class FMSModel extends SimulationModel {
         boolean ret = false;
 
         if (name.equals("autonomous")) {
-            auto_time_ = setProperty(name, value, auto_time_) ;
+            auto_time_ = getDoublePropertyWithDefault(name, value, auto_time_) ;
             ret = true ;
         }
         else if (name.equals("start")) {
-            start_time_ = setProperty(name, value, start_time_) ;
+            start_time_ = getDoublePropertyWithDefault(name, value, start_time_) ;
             ret = true ;
         }
         else if (name.equals("between")) {
-            between_time_ = setProperty(name, value, between_time_) ;
+            between_time_ = getDoublePropertyWithDefault(name, value, between_time_) ;
             ret = true ;
         }
         else if (name.equals("teleop")) {
-            teleop_time_ = setProperty(name, value, teleop_time_) ;
+            teleop_time_ = getDoublePropertyWithDefault(name, value, teleop_time_) ;
             ret = true ;
         }
         else if (name.equals("test")) {
-            test_time_ = setProperty(name, value, test_time_) ;
+            test_time_ = getDoublePropertyWithDefault(name, value, test_time_) ;
             ret = true ;
         }
         else if (name.equals("fms")) {
@@ -218,24 +250,46 @@ public class FMSModel extends SimulationModel {
                 }
             }
         }
+        else if (name.equals("alliance")) {
+            AllianceStationID id = AllianceStationID.Red1 ;
+            if (value.isString()) {
+                try {
+                    if (value.getString().equals("red1"))
+                        id = AllianceStationID.Red1 ;
+                    else if (value.getString().equals("red2"))
+                        id = AllianceStationID.Red2 ;
+                    else if (value.getString().equals("red3"))
+                        id = AllianceStationID.Red3 ;
+                    else if (value.getString().equals("blue1"))
+                        id = AllianceStationID.Blue1 ;
+                    else if (value.getString().equals("blue2"))
+                        id = AllianceStationID.Blue2 ;
+                    else if (value.getString().equals("blue3"))
+                        id = AllianceStationID.Blue3 ;                                                
+                } 
+                catch(Exception ex) {
+                    id = AllianceStationID.Red1 ;
+                }
+            }
+            DriverStationSim.setAllianceStationId(id) ;
+        }
 
         return ret ;
     }
 
-    private double setProperty(final String name, final SettingsValue v, double ret) {
-        if (!v.isDouble()) {
+    private double getDoublePropertyWithDefault(final String name, SettingsValue v, double ret) {
+
+        try {
+            if (v == null)
+                v = getProperty(name) ;
+            ret = v.getDouble();
+        } catch (final BadParameterTypeException e) {
             final MessageLogger logger = getEngine().getMessageLogger() ;
             logger.startMessage(MessageType.Error) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
             logger.add(" event name ").addQuoted(name);
             logger.add(" value is not a double").endMessage();
-        }
-        else {
-            try {
-                ret = v.getDouble();
-            } catch (final BadParameterTypeException e) {
-            }
         }
 
         return ret ;

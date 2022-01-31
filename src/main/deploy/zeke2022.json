@@ -8,7 +8,8 @@
             "pathfollowing": false,
             "zeke_limelight": false,
             "climber" : true,
-            "zeke-color-sensor" : true
+            "zeke-color-sensor" : false,
+            "intake" : true
         },
         "verbose": {
             "tankdrive": false
@@ -325,6 +326,26 @@
                     "address" : 112,
                     "count" : 3
                 }
+            },
+            "intake-left-index" : 0,
+            "intake-right-index" : 1,
+            "conveyor-index" : 2,
+            "colors" : {
+                "red-ball" : {
+                    "r" : 1.0,
+                    "g" : 0.0,
+                    "b" : 0.0
+                },
+                "blue-ball" : {
+                    "r" : 0.0,
+                    "g" : 0.0,
+                    "b" : 1.0
+                },
+                "no-ball" : {
+                    "r" : 0.5,
+                    "g" : 0.5,
+                    "b" : 0.5
+                }                  
             }
         }
     },
