@@ -19,10 +19,6 @@ public class ColorSensorModel extends SimulationModel {
 
     private byte mux_data_ ;
     private int sensor_handle_ ;
-    private int mux_handle_ ;
-    private Color [] colors_ ;
-    private int [] proximity_ ;
-    private int [] irvalues_ ;
 
     public ColorSensorModel(SimulationEngine engine, String model, String inst) {
         super(engine, model, inst);
@@ -31,33 +27,15 @@ public class ColorSensorModel extends SimulationModel {
     }
 
     public boolean create() {
-        int count ;
-
-        sensor_handle_ = SimDeviceDataJNI.getSimDeviceHandle("REV Color Sensor V3[1,82]") ;
-        mux_handle_ = SimDeviceDataJNI.getSimDeviceHandle(ColorSensorSubsystem.I2CMuxSimDevName) ;
-        
-        try {
-            count = getIntProperty("count") ;
-        }
-        catch(Exception ex) {
-            return false ;
-        }
-
-        colors_ = new Color[count] ;
-        proximity_ = new int[count] ;
-        irvalues_ = new int[count] ;
-        for(int i = 0 ; i < count ; i++) {
-            colors_[i] = Color.kBlack ;
-            proximity_[i] = 0 ;
-            irvalues_[i] = 0 ;
-        }
-
+        sensor_handle_ = SimDeviceDataJNI.getSimDeviceHandle(ColorSensorSubsystem.ColorSensorMuxSimDevName) ;
         setCreated();
         
         return true ;
     }
 
     public boolean processEvent(String name, SettingsValue value) {
+        int handle ;
+
         if (name.startsWith(ColorPrefix)) {
             int which = Integer.parseInt(name.substring(ColorPrefix.length())) ;
             if (value.isString()) {
@@ -98,78 +76,48 @@ public class ColorSensorModel extends SimulationModel {
                     return true ;
                 }
 
-                colors_[which] = new Color(r, g, b) ;
+                handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, ColorSensorSubsystem.ColorSensorSimRedValueName + which) ;
+                SimDeviceJNI.setSimValue(handle, HALValue.makeDouble(r)) ;
+                handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, ColorSensorSubsystem.ColorSensorSimGreenValueName + which) ;
+                SimDeviceJNI.setSimValue(handle, HALValue.makeDouble(g)) ;
+                handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, ColorSensorSubsystem.ColorSensorSimBlueValueName + which) ;
+                SimDeviceJNI.setSimValue(handle, HALValue.makeDouble(b)) ;
+
             }
         }
         else if (name.startsWith(ProximityPrefix)) {
+            int v  = 0 ;
             int which = Integer.parseInt(name.substring(ProximityPrefix.length())) ;
             if (value.isInteger()) {
                 try {
-                    proximity_[which] = value.getInteger() ;
+                   v  = value.getInteger() ;
                 }
                 catch(Exception ex) {
 
                 }
             }
+
+            handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, ColorSensorSubsystem.ColorSensorSimProximityValueName + which) ;
+            SimDeviceJNI.setSimValue(handle, HALValue.makeInt(v)) ;
         }
         else if (name.startsWith(IRPrefix)) {
+            int v = 0 ;
             int which = Integer.parseInt(name.substring(IRPrefix.length())) ;
             if (value.isInteger()) {
                 try {
-                    irvalues_[which] = value.getInteger() ;
+                   v  = value.getInteger() ;
                 }
                 catch(Exception ex) {
-                    
+
                 }
             }
+
+            handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, ColorSensorSubsystem.ColorSensorSimIRValueName + which) ;
+            SimDeviceJNI.setSimValue(handle, HALValue.makeInt(v)) ;
         }
         return true;
     }
 
     public void run(double dt) {
-        int vhandle = SimDeviceDataJNI.getSimValueHandle(mux_handle_, ColorSensorSubsystem.I2CMuxSimValueName) ;
-        HALValue v = SimDeviceJNI.getSimValue(vhandle) ;
-
-        if (v.getType() == HALValue.kInt) {
-            byte b = (byte)v.getLong() ;
-            if (b != mux_data_) {
-                mux_data_ = b ;
-                int which = bitmaskToWhich(mux_data_) ;
-
-                // System.out.println("Color sensor model running, which " + which) ;
-
-                if (which != -1) {
-                    //System.out.print("Setting color sensor values for index " + which) ;
-                    //System.out.print(" RGB: " + colors_[which].red + ", " + colors_[which].green + ", " + colors_[which].blue) ;
-                    //System.out.println(", prox " + proximity_[which] + ", ir " + irvalues_[which]) ;
-
-                    int handle ;
-                    
-                    handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, "Red") ;
-                    SimDeviceJNI.setSimValue(handle, HALValue.makeDouble(colors_[which].red)) ;
-
-                    handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, "Green") ;
-                    SimDeviceJNI.setSimValue(handle, HALValue.makeDouble(colors_[which].red)) ;
-
-                    handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, "Blue") ;
-                    SimDeviceJNI.setSimValue(handle, HALValue.makeDouble(colors_[which].red)) ;
-
-                    handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, "Proximity") ;
-                    SimDeviceJNI.setSimValue(handle, HALValue.makeInt(proximity_[which])) ;
-
-                    handle = SimDeviceDataJNI.getSimValueHandle(sensor_handle_, "IR") ;
-                    SimDeviceJNI.setSimValue(handle, HALValue.makeInt(irvalues_[which])) ;
-                }
-            }
-        }
-    }
-
-    private int bitmaskToWhich(byte mask) {
-        for(int i = 0 ; i < 8 ; i++) {
-            if ((mask & (1 << i)) != 0)
-                return i ;
-        }
-
-        return -1 ;
     }
 }

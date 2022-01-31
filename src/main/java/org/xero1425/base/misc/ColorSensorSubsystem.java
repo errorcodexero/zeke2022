@@ -6,15 +6,21 @@ import org.xero1425.base.Subsystem;
 import org.xero1425.base.XeroRobot;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
+import org.xero1425.simulator.engine.SimulationEngine;
 
 import edu.wpi.first.hal.SimDevice;
+import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.SimInt;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class ColorSensorSubsystem extends Subsystem {
-    static public final String I2CMuxSimDevName = "i2c-mux" ;
-    static public final String I2CMuxSimValueName = "i2c-mux-value" ;
+    static public final String ColorSensorMuxSimDevName = "sensor-mux" ;
+    static public final String ColorSensorSimRedValueName = "sensor-mux-red" ;
+    static public final String ColorSensorSimGreenValueName = "sensor-mux-green" ;
+    static public final String ColorSensorSimBlueValueName = "sensor-mux-blue" ;
+    static public final String ColorSensorSimProximityValueName = "sensor-mux-proximity" ;
+    static public final String ColorSensorSimIRValueName = "sensor-mux-ir" ;
 
     private I2C.Port port_ ;
     private int which_ ;
@@ -27,26 +33,41 @@ public class ColorSensorSubsystem extends Subsystem {
     private int[] proximity_ ;
     private int[] ir_ ;
     private Color [] colors_ ;
-    private int current_sensor_ ;
+    private boolean running_ ;
 
     private SimDevice i2c_mux_ ;
-    private SimInt i2c_mux_value_ ;
+    private SimDouble[] i2c_mux_red_value_ ;
+    private SimDouble[] i2c_mux_green_value_ ;
+    private SimDouble[] i2c_mux_blue_value_ ;
+    private SimInt[] i2c_mux_proximity_value_ ;
+    private SimInt[] i2c_mux_ir_value_ ;
 
     public ColorSensorSubsystem(Subsystem parent, String name, I2C.Port port) throws BadParameterTypeException, MissingParameterException {
         super(parent, name) ;
 
         port_ = port ;
         which_ = -1 ;    
+        running_ = false ;
 
         count_ = getSettingsValue("hw:i2cmux:count").getInteger() ;
         muxaddr_ = getSettingsValue("hw:i2cmux:address").getInteger() ;
        
         if (XeroRobot.isSimulation()) {
-            i2c_mux_ = SimDevice.create(I2CMuxSimDevName) ;
-            i2c_mux_value_ = i2c_mux_.createInt(I2CMuxSimValueName, SimDevice.Direction.kBidir, 0) ;
-        } else {
-            i2c_mux_ = null ;
-            i2c_mux_value_ = null ;
+            i2c_mux_ = SimDevice.create(ColorSensorMuxSimDevName) ;
+
+            i2c_mux_red_value_ = new SimDouble[count_] ;
+            i2c_mux_green_value_ = new SimDouble[count_] ;
+            i2c_mux_blue_value_ = new SimDouble[count_] ;
+            i2c_mux_proximity_value_ = new SimInt[count_] ;
+            i2c_mux_ir_value_ = new SimInt[count_] ;
+
+            for(int i = 0 ;i < count_ ; i++) {
+                i2c_mux_red_value_[i] = i2c_mux_.createDouble(ColorSensorSimRedValueName + i, SimDevice.Direction.kBidir, 0) ;
+                i2c_mux_green_value_[i] = i2c_mux_.createDouble(ColorSensorSimGreenValueName + i, SimDevice.Direction.kBidir, 0) ;
+                i2c_mux_blue_value_[i] = i2c_mux_.createDouble(ColorSensorSimBlueValueName + i, SimDevice.Direction.kBidir, 0) ;
+                i2c_mux_proximity_value_[i] = i2c_mux_.createInt(ColorSensorSimProximityValueName + i, SimDevice.Direction.kBidir, 0) ;
+                i2c_mux_ir_value_[i] = i2c_mux_.createInt(ColorSensorSimIRValueName + i, SimDevice.Direction.kBidir, 0) ;
+            }
         }
 
         muxdev_ = new I2C(port_, muxaddr_)  ;
@@ -61,10 +82,10 @@ public class ColorSensorSubsystem extends Subsystem {
         proximity_ = new int[count_] ;
         ir_ = new int[count_] ;
 
-        for(int i = 0 ; i < count_ ; i++)
-            init(i) ;
-
-        current_sensor_ = 0 ;
+        if (!XeroRobot.isSimulation()) {
+            for(int i = 0 ; i < count_ ; i++)
+                init(i) ;
+        }
     }
 
     public int count() {
@@ -85,18 +106,17 @@ public class ColorSensorSubsystem extends Subsystem {
 
     @Override
     public void computeMyState() {
-        
-        if ((sample_ & (1 << current_sensor_)) != 0) {
-            select(current_sensor_) ;
+        running_ = true ;
 
-            colors_[current_sensor_] = sensor_.getColor() ;
-            proximity_[current_sensor_] = sensor_.getProximity() ;
-            ir_[current_sensor_] = sensor_.getIR() ;
+        for(int i = 0 ; i < count_ ; i++) {
+            if ((sample_ & (1 << i)) != 0) {
+                select(i) ;
+
+                colors_[i] = getColor() ;
+                proximity_[i] = getProximity();
+                ir_[i] = getIR() ;
+            }
         }
-
-        current_sensor_++ ;
-        if (current_sensor_ == count_)
-            current_sensor_ = 0 ;
     }
 
     public void enableSensor(int which) throws Exception {
@@ -138,6 +158,54 @@ public class ColorSensorSubsystem extends Subsystem {
         return ColorSensorV3.GainFactor.kGain18x ;
     }
 
+    private Color getColor() {
+        Color c = Color.kBlack ;
+
+        if (XeroRobot.isSimulation()) {
+            if (running_) {
+                double r = i2c_mux_red_value_[which_].get() ;
+                double g = i2c_mux_green_value_[which_].get() ;
+                double b = i2c_mux_blue_value_[which_].get() ;
+                c = new Color(r, g, b) ;
+            }
+        }
+        else {
+            c = sensor_.getColor() ;
+        }
+
+        return c ;
+    }
+
+    private int getProximity() {
+        int p = 0 ;
+
+        if (XeroRobot.isSimulation()) {
+            if (running_) {
+                p = i2c_mux_proximity_value_[which_].get() ;
+            }
+        }
+        else {
+            p = sensor_.getProximity() ;
+        }
+
+        return p ;
+    }
+
+    private int getIR() {
+        int p = 0 ;
+
+        if (XeroRobot.isSimulation()) {
+            if (running_) {
+                p = i2c_mux_ir_value_[which_].get() ;
+            }
+        }
+        else {
+            p = sensor_.getIR() ;
+        }
+
+        return p ;
+    }
+
     private void init(int which) {
         select(which) ;
 
@@ -148,15 +216,8 @@ public class ColorSensorSubsystem extends Subsystem {
     }
 
     private void select(int which) {
-        data_[0] = (byte)(0x01 << which) ;
-
-        if (i2c_mux_value_ != null) {
-            i2c_mux_value_.set(data_[0]) ;
-        }
-        System.out.println() ;
-
         if (muxdev_ != null && which != which_) {
-
+            data_[0] = (byte)(0x01 << which) ;
             muxdev_.writeBulk(data_);
             which_ = which ;
         }

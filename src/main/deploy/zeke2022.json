@@ -135,7 +135,7 @@
                     "motor-right": {
                         "type": "sparkmax_brushless",
                         "canid": 8,
-                        "power":0.8
+                        "power":0.5
                     }
                 }
             }

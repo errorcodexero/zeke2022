@@ -20,6 +20,8 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
     //
     final private Color red_ = new Color(1.0, 0.0, 0.0) ;
     final private Color blue_ = new Color(0.0, 0.0, 1.0) ;
+    final private Color background_ = new Color(0.5, 0.5, 0.5) ;
+
     private ColorMatch matcher_  ;
     final private Alliance alliance_ ;
 
@@ -29,6 +31,7 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         matcher_ = new ColorMatch() ;
         matcher_.addColorMatch(red_);
         matcher_.addColorMatch(blue_);
+        matcher_.addColorMatch(background_);
 
         alliance_ = DriverStation.getAlliance() ;
     }
@@ -77,7 +80,6 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         CargoType type = CargoType.None ;
 
         Color c = getColor(which) ;
-        System.out.println("Color " + c.red + " " + c.green + " " + c.blue) ;
         CargoColor cc = colorToCargoColor(c) ;
 
         if (cc == CargoColor.Red) {
