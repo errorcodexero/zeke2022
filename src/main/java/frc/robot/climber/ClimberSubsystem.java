@@ -44,6 +44,14 @@ public class ClimberSubsystem extends Subsystem {
     private DigitalInput traversal_left_ ;
     private DigitalInput traversal_right_ ;
 
+    public static enum ChangeClampTo {
+        OPEN, 
+        CLOSED, 
+        UNKNOWN
+    }
+    private ChangeClampTo changeClampA = ChangeClampTo.UNKNOWN ;
+    private ChangeClampTo changeClampB = ChangeClampTo.UNKNOWN ;
+
     public ClimberSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
         int index ;
@@ -93,21 +101,22 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     //clamps. 
-    // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the  windmill
-    public void setClampAClosed(boolean isToBeClosed) {
-        if (isToBeClosed == true) {
+    // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the windmill
+    // also, set the clamp to neither open nor closed if passed in parameter is "UNKNWOWN" 
+    public void setClampAClosed(ChangeClampTo ChangeClampA) {
+        if (ChangeClampA == ChangeClampTo.CLOSED) {
             clamp_a_left_.set(GripperCloseState);
             clamp_a_right_.set(GripperCloseState);
-        } else {
+        } else if (ChangeClampA == ChangeClampTo.OPEN) {
             clamp_a_left_.set(GripperOpenState);
             clamp_a_right_.set(GripperCloseState);
-        }
+        } 
     }
-    public void setClampBClosed(boolean isToBeClosed) {
-        if (isToBeClosed == true) {
+    public void setClampBClosed(ChangeClampTo ChangeClampB) {
+        if (ChangeClampB == ChangeClampTo.CLOSED) {
             clamp_a_left_.set(GripperCloseState);
             clamp_a_right_.set(GripperCloseState);
-        } else {
+        } else if (ChangeClampB == ChangeClampTo.OPEN) {
             clamp_a_left_.set(GripperOpenState);
             clamp_a_right_.set(GripperCloseState);
         }
