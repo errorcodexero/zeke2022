@@ -14,13 +14,15 @@ public class XeroDoubleSolenoid {
     private SimDevice simdev_ ;
     private SimInt simstate_ ;
     private DoubleSolenoid.Value state_ ;
+    private int index_ ;
 
     static final public String SimDeviceName = "DoubleSolenoid" ;
     static final public String SimeStateName = "state" ;
 
     public XeroDoubleSolenoid(XeroRobot robot, int module, int forward, int reverse) {
         if (XeroRobot.isSimulation()) {
-            simdev_ = SimDevice.create(SimDeviceName, calcIndex(module, forward)) ;
+            index_ = calcIndex(module, forward) ;
+            simdev_ = SimDevice.create(SimDeviceName, index_) ;
             simstate_ = simdev_.createInt(SimeStateName, SimDevice.Direction.kBidir, 0) ;
         }
         else {
@@ -32,7 +34,8 @@ public class XeroDoubleSolenoid {
 
     public XeroDoubleSolenoid(XeroRobot robot, int forward, int reverse) {
         if (XeroRobot.isSimulation()) {
-            simdev_ = SimDevice.create(SimDeviceName, calcIndex(0, forward)) ;
+            index_ = calcIndex(0, forward) ;
+            simdev_ = SimDevice.create(SimDeviceName, index_) ;
             simstate_ = simdev_.createInt(SimeStateName, SimDevice.Direction.kBidir, 0) ;
         }
         else {

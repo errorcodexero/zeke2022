@@ -44,12 +44,14 @@
                 "first_sensor_delay": 0.5,
                 "second_sensor_delay": 0.5,
                 "second_sensor_db_check": 0.1,
+
                 "touch_left_mid_io": 4,
-                "touch_left_high_io": 5,
-                "touch_left_traverse_io": 6,
-                "touch_right_mid_io": 7,
-                "touch_right_high_io": 8,
+                "touch_left_high_io": 6,
+                "touch_left_traverse_io": 8,
+                "touch_right_mid_io": 5,
+                "touch_right_high_io": 7,
                 "touch_right_traverse_io": 9,
+
                 "left_a_module": 0,
                 "left_a_channel": 2,
                 "left_b_module": 0,
@@ -57,7 +59,7 @@
                 "right_a_module": 0,
                 "right_a_channel": 6,
                 "right_b_module": 0,
-                "right_b_channel": 6
+                "right_b_channel": 8
             }
         },
         {

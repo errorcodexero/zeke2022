@@ -2,7 +2,6 @@ package frc.robot.automodes;
 
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.controllers.AutoMode;
-import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
@@ -53,7 +52,7 @@ public class ZekeAutoMode extends AutoMode {
     // Add a sequence to move the turret to a specific angle and then set it up to track the
     // target.
     //
-    private SequenceAction setTurretToTrack(double angle) throws Exception {
+    protected SequenceAction setTurretToTrack(double angle) throws Exception {
         SequenceAction seq = new SequenceAction(getAutoController().getRobot().getMessageLogger()) ;
         // still need to write stuff here :)
         return seq ;

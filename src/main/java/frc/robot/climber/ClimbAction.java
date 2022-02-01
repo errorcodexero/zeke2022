@@ -77,12 +77,13 @@ public class ClimbAction extends Action {
         second_clamp_wait_ = sub.getSettingsValue("climbaction:second_clamp_wait").getDouble() ;
         second_align_wait_ = sub.getSettingsValue("climbaction:second_align_wait").getDouble() ;
         second_swing_wait_ = sub.getSettingsValue("climbaction:second_swing_wait").getDouble() ;
-
     }
 
     @Override
     public void start() throws Exception {
         super.start() ;
+
+        state_ = ClimbingStates.IDLE ;
     }
 
     @Override

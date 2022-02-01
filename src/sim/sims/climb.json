@@ -11,8 +11,8 @@
                     "values" : 
                     {
                         "comment" : "test must be enabled and test set 50 in the zeke2022.json file",
-                        "start" : 1.0,
-                        "autonomous" : 30.0,
+                        "start" : 0.2,
+                        "autonomous" : 300.0,
                         "between" : 0.0,
                         "teleop" : 0.0,
                         "fms" : false

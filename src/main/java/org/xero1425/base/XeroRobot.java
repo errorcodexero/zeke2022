@@ -297,7 +297,7 @@ public abstract class XeroRobot extends TimedRobot {
         if (DriverStation.isFMSAttached())
             logger_.add(" - FMS connected") ;
         else
-            logger_.add(" - No FMS, practice mode") ;
+            logger_.add(" - no FMS") ;
         logger_.endMessage();
 
         /// Initialize the plotting subsystem

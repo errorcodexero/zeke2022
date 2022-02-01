@@ -12,8 +12,11 @@ import org.xero1425.simulator.engine.SimulationModel;
 import org.xero1425.simulator.models.SimMotorController;
 import org.xero1425.simulator.models.TankDriveModel;
 
+import edu.wpi.first.hal.SimDeviceJNI;
 import edu.wpi.first.hal.simulation.DIODataJNI;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.hal.HALValue ;
 
 public class ClimberModel extends SimulationModel {
     private enum State {
@@ -36,8 +39,18 @@ public class ClimberModel extends SimulationModel {
 
         // Both sensor have hit the bar.  We wait for the grabbers to close around
         // the bar.
-        WaitForAGrabbersClosed,
+        WaitForMidGrabbersClosed,
+
+        // Waiting on the windmill motor to start running
+        WaitForWindMillOne,
+
+        // Wait on the switches on the high bar
+        WaitForHighSensors,
     };
+
+    static private final String LoggerName = "climber-model" ;
+    static private final DoubleSolenoid.Value GrabberClosedValue = DoubleSolenoid.Value.kForward ;
+    static private final DoubleSolenoid.Value GrabberOpenValue = DoubleSolenoid.Value.kReverse ;
 
     static private final String DBModelPropName = "dbmodel" ;
     static private final String DBInstPropName = "dbinst" ;
@@ -95,15 +108,23 @@ public class ClimberModel extends SimulationModel {
     private double second_sensor_time_ ;
     private double second_sencor_db_check_time_ ;
 
+    private int logger_id_ ;
+
+    private int msg_count_ ;
+
     public ClimberModel(SimulationEngine engine, String model, String inst) {
         super(engine, model, inst);
 
         random_ = new Random();
         state_ = State.Idle;
+
+        msg_count_ = 0 ;
     }
 
     @Override
     public boolean create() {
+
+        logger_id_ = getEngine().getRobot().getMessageLogger().registerSubsystem(LoggerName) ;
                
         motor_ = new SimMotorController(this, "motor");
         if (!motor_.createMotor())
@@ -183,8 +204,8 @@ public class ClimberModel extends SimulationModel {
                 doWaitingMidSecondSensor() ;        
                 break ;
 
-            case WaitForAGrabbersClosed:
-                doWaitForAGrabberClosed() ;
+            case WaitForMidGrabbersClosed:
+                doWaitForMidGrabberClosed() ;
                 break ;
         }
     }
@@ -209,15 +230,26 @@ public class ClimberModel extends SimulationModel {
         if (r > 0.9) {
             // Both sensor at once, 10% of the time
             sensor_side_ = 2 ;
+
         }
         else if (r > 0.45) {
             // Right sensor
             sensor_side_ = 1 ;
+
         }
         else {
             // Left sensor
             sensor_side_ = 0 ;
         }
+
+        sensor_side_ = 0 ;
+
+        MessageLogger logger = getEngine().getMessageLogger() ;
+        logger.startMessage(MessageType.Info, logger_id_) ;
+        logger.add("event: model ").addQuoted(getModelName());
+        logger.add("instance ").addQuoted(getInstanceName());
+        logger.add(":starting the climber model, waiting on delay to first sensor switch") ;
+        logger.endMessage();
 
         phase_start_time_ = getRobotTime();
         state_ = State.WaitingMidFirstSensor;
@@ -229,19 +261,34 @@ public class ClimberModel extends SimulationModel {
         // wait for the time given by the SecondSensorDelayPropName property.
         //
         if (getRobotTime() - phase_start_time_ > first_sensor_time_) {
+            String which  = null ;
+
             if (sensor_side_ == 0) {
                 touch_left_mid_value_ = true;
+                which = ": the left side" ;
             } else if (sensor_side_ == 1) {
+                which = ": the right side" ;
                 touch_right_mid_value_ = true;
             } else if (sensor_side_ == 2) {
+                which = ": both sides" ;
                 touch_right_mid_value_ = true;
                 touch_left_mid_value_ = true;
             }
             setSensors();
 
+            if (which != null) {
+                MessageLogger logger = getEngine().getMessageLogger() ;
+                logger.startMessage(MessageType.Info, logger_id_) ;
+                logger.add("event: model ").addQuoted(getModelName());
+                logger.add(" instance ").addQuoted(getInstanceName());
+                logger.add(which).add(" of the climber hit the bar (sensor 1)") ;
+                logger.endMessage();
+            }
+
             sensor_side_ = 1 - sensor_side_;
             phase_start_time_ = getRobotTime();
             state_ = State.WaitingMidSecondSensor;
+            msg_count_ = 0 ;
         }
     }
 
@@ -255,56 +302,96 @@ public class ClimberModel extends SimulationModel {
         if (getRobotTime() - phase_start_time_ > second_sencor_db_check_time_) {
             MessageLogger logger = getEngine().getMessageLogger() ;
 
-            // Check the DB
-            if (sensor_side_ == 0) {
-                // We are waiting on the left side of the robot
-                if (dbmodel_.getLeftPower() <= 0.01) {
-                    logger.startMessage(MessageType.Error);
-                    logger.add("event: model ").addQuoted(getModelName());
-                    logger.add(" instance ").addQuoted(getInstanceName());
-                    logger.add(" the left side of the drive base is not powered when expected") ;
-                    logger.endMessage();
-                    getEngine().addAssertError();
-                    getEngine().exitSimulator();
+            if (msg_count_ < 1) {
+                // Check the DB
+                if (sensor_side_ == 0) {
+                    // We are waiting on the left side of the robot
+                    if (dbmodel_.getLeftPower() <= 0.01) {
+                        logger.startMessage(MessageType.Error);
+                        logger.add("event: model ").addQuoted(getModelName());
+                        logger.add(" instance ").addQuoted(getInstanceName());
+                        logger.add(" the left side of the drive base is not powered when expected") ;
+                        logger.endMessage();
+                        getEngine().addAssertError();
+                    }
                 }
-            }
-            else {
-                // We are waiting on the right side of the robot
-                if (dbmodel_.getRightPower() <= 0.01) {
-                    logger.startMessage(MessageType.Error);
-                    logger.add("event: model ").addQuoted(getModelName());
-                    logger.add(" instance ").addQuoted(getInstanceName());
-                    logger.add(" the right side of the drive base is not powered when expected") ;
-                    logger.endMessage();
-                    getEngine().addAssertError();
-                    getEngine().exitSimulator();
+                else {
+                    // We are waiting on the right side of the robot
+                    if (dbmodel_.getRightPower() <= 0.01) {
+                        logger.startMessage(MessageType.Error);
+                        logger.add("event: model ").addQuoted(getModelName());
+                        logger.add(" instance ").addQuoted(getInstanceName());
+                        logger.add(" the right side of the drive base is not powered when expected") ;
+                        logger.endMessage();
+                        getEngine().addAssertError();
+                    }
                 }
+                msg_count_++ ;
             }
         }
 
         // Check the time for the second sensor
         if (getRobotTime() - phase_start_time_ > second_sensor_time_) {
-            if (sensor_side_ == 0)
+            String which = null ;
+
+            if (sensor_side_ == 0) {
                 touch_left_mid_value_ = true;
-            else
+                which = "left" ;
+            }
+            else {
                 touch_right_mid_value_ = true;
+                which = "right" ;
+            }
+
+            if (which != null) {
+                MessageLogger logger = getEngine().getMessageLogger() ;
+                logger.startMessage(MessageType.Info, logger_id_) ;
+                logger.add("event: model ").addQuoted(getModelName());
+                logger.add(" instance ").addQuoted(getInstanceName());
+                logger.add(": the " ) ;
+                logger.add(which).add(" side of the climber hit the bar (sensor 2)") ;
+                logger.endMessage();
+            }
 
             setSensors();
-            state_ = State.WaitingMidFirstSensor;
+            state_ = State.WaitForMidGrabbersClosed ;
+            msg_count_ = 0 ;
         }
     }
 
-    private void doWaitForAGrabberClosed() {
-        
+    private void doWaitForMidGrabberClosed() {
+        if (msg_count_ < 1) {
+            MessageLogger logger = getEngine().getMessageLogger() ;
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": waiting for the grabber A to grab mid bar") ;
+            logger.endMessage();
+            msg_count_++ ;
+        }
+
+        if (getGrabberState(grabber_left_a_) == GrabberClosedValue && getGrabberState(grabber_right_a_) == GrabberClosedValue) {
+            MessageLogger logger = getEngine().getMessageLogger() ;
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": both left and right A grabbers closed on the bar") ;
+            logger.endMessage();
+
+            state_ = State.WaitForWindMillOne ;
+            msg_count_= 0 ;
+        }
     }
 
     private void setSensors() {
         DIODataJNI.setValue(touch_left_mid_io_, touch_left_mid_value_);
-        DIODataJNI.setValue(touch_left_traverse_io_, touch_left_traverse_value_);
         DIODataJNI.setValue(touch_right_mid_io_, touch_right_mid_value_);
-        DIODataJNI.setValue(touch_right_traverse_io_, touch_right_traverse_value_);
+
         DIODataJNI.setValue(touch_left_high_io_, touch_left_high_value_);
         DIODataJNI.setValue(touch_right_high_io_, touch_right_high_value_);
+
+        DIODataJNI.setValue(touch_left_traverse_io_, touch_left_traverse_value_);
+        DIODataJNI.setValue(touch_right_traverse_io_, touch_right_traverse_value_);
     }
 
     private int createGrabber(String modname, String channame) throws Exception {
@@ -321,5 +408,11 @@ public class ClimberModel extends SimulationModel {
 
         return SimDeviceDataJNI.getSimDeviceHandle(XeroDoubleSolenoid.SimDeviceName + "[" + index + "]") ;
     }
-   
+
+    private DoubleSolenoid.Value getGrabberState(int handle) {
+        HALValue v = SimDeviceJNI.getSimValue(handle) ;
+        DoubleSolenoid.Value value = DoubleSolenoid.Value.values()[(int)(v.getLong())] ;
+
+        return value ;
+    }
 }

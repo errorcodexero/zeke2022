@@ -9,7 +9,8 @@
             "zeke_limelight": false,
             "climber" : true,
             "zeke-color-sensor" : false,
-            "intake" : true
+            "intake" : true,
+            "climber-model" : true
         },
         "verbose": {
             "tankdrive": false
@@ -232,23 +233,19 @@
                 "solenoids" : {
                     "clamp_a_left" : {
                         "forward" : 2,
-                        "reverse" : 3,
-                        "openvalue" : 1
+                        "reverse" : 3
                     },
                     "clamp_b_left" : {
                         "forward" : 4,
-                        "reverse" : 5,
-                        "openvalue" : 1
+                        "reverse" : 5
                     },
                     "clamp_a_right" : {
                         "forward" : 6,
-                        "reverse" : 7,
-                        "openvalue" : 1
+                        "reverse" : 7
                     },
                     "clamp_b_right" : {
                         "forward" : 8,
-                        "reverse" : 9,
-                        "openvalue" : 1
+                        "reverse" : 9
                     }
                 },
                 "motors" : {
@@ -269,13 +266,24 @@
                     "b" : 0.0
                 },
                 "touchsensors" : {
-                    "mid_left" : 0,
-                    "mid_right": 1,
-                    "high_left" : 2,
-                    "high_right" : 3,
-                    "traversal_left" : 4,
-                    "traversal_right" : 5
+                    "mid_left" : 4,
+                    "mid_right": 5,
+                    "high_left" : 6,
+                    "high_right" : 7,
+                    "traversal_left" : 8,
+                    "traversal_right" : 9
                 }
+            },
+            "climbaction" : {
+                "drive_action_power" : 0.2,
+                "first_windmill_power" : 0.7,
+                "second_windmill_power" : 0.7,
+                "first_clamp_wait" : 0.5,
+                "second_clamp_wait" : 0.5,
+                "first_align_wait" : 0.5,
+                "second_align_wait" : 0.5,
+                "first_swing_wait" : 0.5,
+                "second_swing_wait" : 0.5
             }
         },
         "shooter-w1" : {
@@ -351,7 +359,7 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 10,
+        "which": 50,
         "power": 0.5,
         "duration": 5.0,
         "distance": 0.0,
