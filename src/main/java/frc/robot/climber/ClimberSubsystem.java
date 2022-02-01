@@ -3,7 +3,9 @@ package frc.robot.climber;
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
+import org.xero1425.base.motorsubsystem.MotorEncoderPowerAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
+import org.xero1425.base.motorsubsystem.MotorPowerAction;
 import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -12,16 +14,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class ClimberSubsystem extends Subsystem {
     
     public static final String SubsystemName = "climber" ;
-    
-    // Butch: both of these motors should 100% be controlled together with one
-    //        being a follower of the other.  THis means you only need a single subsystem
-    //        and it will control both.  To get the simulator running I removed the right_windmill_
-    //        MotorEncoderSubsystem and used the left one as the single subsystem.
 
     // 2 "windmills" whcih spin like windmills. 
     // 1 on left side of robot and 1 on right side 
-    private MotorEncoderSubsystem left_windmill_ ;
-    private MotorEncoderSubsystem right_windmill_ ;
+    // CONTROLLED BY A SINGLE MOTORENCODERSUBSYSTEM!
+    private MotorEncoderSubsystem windmill_ ;
 
     // 4 double-solenoids
     // 2 on each windmill; 1 on either end
@@ -52,12 +49,15 @@ public class ClimberSubsystem extends Subsystem {
     private ChangeClampTo changeClampA = ChangeClampTo.UNKNOWN ;
     private ChangeClampTo changeClampB = ChangeClampTo.UNKNOWN ;
 
+    private MotorEncoderPowerAction windmill_power_; 
+
     public ClimberSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
         int index ;
 
-        left_windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
-        // right_windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
+        windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
+        index = getSettingsValue("hw:motors:windmill:power").getInteger() ;
+        windmill_power_ = new MotorEncoderPowerAction(windmill_, index) ;
 
         clamp_a_left_ = new XeroDoubleSolenoid(this, "clamp_a_left") ;
         clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;
@@ -96,8 +96,7 @@ public class ClimberSubsystem extends Subsystem {
     //windmills
     // TODO get this percent from params file
     public void setWindmill(double power) throws BadMotorRequestException, MotorRequestFailedException {
-        left_windmill_.setPower(power); 
-        right_windmill_.setPower(power); 
+        windmill_.setPower(power); 
     }
 
     //clamps. 
