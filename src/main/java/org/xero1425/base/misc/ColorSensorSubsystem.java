@@ -27,7 +27,6 @@ public class ColorSensorSubsystem extends Subsystem {
     private I2C muxdev_ ;
     private int muxaddr_ ;
     private byte [] data_ = new byte[1] ;
-    private byte sample_ ;
     private int count_ ;
     private ColorSensorV3 sensor_ ;
     private int[] proximity_ ;
@@ -73,10 +72,6 @@ public class ColorSensorSubsystem extends Subsystem {
         muxdev_ = new I2C(port_, muxaddr_)  ;
         select(0) ;
 
-        sample_ = 0 ;
-        for(int i = 0 ; i < count_ ; i++)
-            sample_ |= (byte)(1 << i) ;
-
         sensor_ = new ColorSensorV3(port_) ;
         colors_ = new Color[count_] ;
         proximity_ = new int[count_] ;
@@ -109,38 +104,12 @@ public class ColorSensorSubsystem extends Subsystem {
         running_ = true ;
 
         for(int i = 0 ; i < count_ ; i++) {
-            if ((sample_ & (1 << i)) != 0) {
-                select(i) ;
+            select(i) ;
 
-                colors_[i] = getColor() ;
-                proximity_[i] = getProximity();
-                ir_[i] = getIR() ;
-            }
+            colors_[i] = getColor() ;
+            proximity_[i] = getProximity();
+            ir_[i] = getIR() ;
         }
-    }
-
-    public void enableSensor(int which) throws Exception {
-        if (which >= count_) {
-            throw new Exception("invalid sensor number in ColorSensorSubsystem.enableSensor(int which)") ;
-        }
-
-        sample_ |= (1 << which) ;
-    }
-
-    public void disableSensor(int which) throws Exception {
-        if (which >= count_) {
-            throw new Exception("invalid sensor number in ColorSensorSubsystem.enableSensor(int which)") ;
-        }
-
-        sample_ &= ~(1 << which) ;
-    }
-
-    public boolean isEnabled(int which) throws Exception {
-        if (which >= count_) {
-            throw new Exception("invalid sensor number in ColorSensorSubsystem.enableSensor(int which)") ;
-        }
-
-        return ((sample_ & (1 << which)) != 0) ;
     }
 
     // Derived class override this for different initialization
