@@ -46,18 +46,37 @@ public class ClimberSubsystem extends Subsystem {
         CLOSED, 
         UNKNOWN
     }
+
+    public static enum SetWindmillTo {
+        FORWARDS, 
+        BACKWARDS, 
+        OFF,
+        UNKNOWN
+    }
+
     private ChangeClampTo changeClampA = ChangeClampTo.UNKNOWN ;
     private ChangeClampTo changeClampB = ChangeClampTo.UNKNOWN ;
 
-    private MotorEncoderPowerAction windmill_power_; 
+    // perhaps rename these as "A to B" and "B to A"
+    private MotorEncoderPowerAction windmill_power_forwards_; 
+    private MotorEncoderPowerAction windmill_power_backwards_; 
+    private MotorEncoderPowerAction windmill_power_off_; 
+
+    private SetWindmillTo windmill_power_ ;
 
     public ClimberSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
         int index ;
 
         windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
-        index = getSettingsValue("hw:motors:windmill:power").getInteger() ;
-        windmill_power_ = new MotorEncoderPowerAction(windmill_, index) ;
+
+        index = getSettingsValue("hw:motors:windmill:power:forwards").getInteger() ;
+        windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, index) ;
+        index = getSettingsValue("hw:motors:windmill:power:backwards").getInteger() ;
+        windmill_power_backwards_ = new MotorEncoderPowerAction(windmill_, index) ;
+        windmill_power_off_ = new MotorEncoderPowerAction(windmill_, 0.0) ;
+
+        windmill_power_ = SetWindmillTo.UNKNOWN ;
 
         clamp_a_left_ = new XeroDoubleSolenoid(this, "clamp_a_left") ;
         clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;
@@ -94,9 +113,22 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     //windmills
-    // TODO get this percent from params file
-    public void setWindmill(double power) throws BadMotorRequestException, MotorRequestFailedException {
-        windmill_.setPower(power); 
+    public void setWindmill(SetWindmillTo windmill_power_) throws BadMotorRequestException, MotorRequestFailedException {
+        switch (windmill_power_) {
+            case OFF:
+                windmill_.setAction(windmill_power_off_);
+                break ;
+            case FORWARDS:
+                windmill_.setAction(windmill_power_forwards_);
+                break ;
+            case BACKWARDS:
+                windmill_.setAction(windmill_power_backwards_) ;
+                break ;
+            default:
+                windmill_.setAction(windmill_power_off_);
+                break ;
+
+        }
     }
 
     //clamps. 
@@ -123,40 +155,22 @@ public class ClimberSubsystem extends Subsystem {
  
     //touch sensors
     public boolean isMidLeftTouched() {
-        if (mid_left_.get() == true)
-            return true ;
-        else 
-            return false;
+        return mid_left_.get() ;
     }
-    public boolean isMidRightTouched() {
-        if (mid_right_.get() == true)
-            return true ;
-        else 
-            return false;
+    public boolean isMidRightTouched() {    
+        return mid_right_.get() ;
     }
     public boolean isHighLeftTouched() {
-        if (high_left_.get() == true)
-            return true ;
-        else 
-            return false;
+        return high_left_.get();
     }
     public boolean isHighRightTouched() {
-        if (high_right_.get() == true)
-            return true ;
-        else 
-            return false;
+        return high_right_.get();
     }
     public boolean isTraversalLeftTouched() {
-        if (traversal_left_.get() == true)
-            return true ;
-        else 
-            return false;
+        return traversal_left_.get();
     }
     public boolean isTraversalRightTouched() {
-        if (traversal_right_.get() == true)
-            return true ;
-        else 
-            return false;
+        return traversal_right_.get();
     }
 
 }

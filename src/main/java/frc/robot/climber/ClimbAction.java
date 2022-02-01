@@ -11,6 +11,7 @@ import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
 import frc.robot.climber.ClimberSubsystem.ChangeClampTo;
+import frc.robot.climber.ClimberSubsystem.SetWindmillTo;
 
 public class ClimbAction extends Action {
 
@@ -232,7 +233,7 @@ public class ClimbAction extends Action {
     private void doClampOne() throws BadMotorRequestException, MotorRequestFailedException {
         // clamping clamp A; wait for the 2st clamping time to pass
         if (sub_.getRobot().getTime() - state_start_time_ > first_clamp_wait_) {
-            sub_.setWindmill(first_windmill_power_) ;
+            sub_.setWindmill(SetWindmillTo.FORWARDS) ;
 
             state_ = ClimbingStates.WINDMILL_ONE ;
         }
@@ -252,7 +253,7 @@ public class ClimbAction extends Action {
         // wait for 1st "hooking/aligning time" of clamp B; then unclamp A
         // - waits for high sensor to hit
         if (sub_.isHighLeftTouched() && sub_.isHighRightTouched()) {
-            sub_.setWindmill(0.0) ;
+            sub_.setWindmill(SetWindmillTo.OFF) ;
             sub_.setClampB(ChangeClampTo.CLOSED);
             state_ = ClimbingStates.CLAMP_TWO ;
         }
@@ -290,7 +291,7 @@ public class ClimbAction extends Action {
     //
     private void doUnclampOne() throws BadMotorRequestException, MotorRequestFailedException {
         if (sub_.getRobot().getTime() - state_start_time_ > second_clamp_wait_) {
-            sub_.setWindmill(second_windmill_power_);
+        sub_.setWindmill(SetWindmillTo.BACKWARDS);
         }
         if (sub_.isTraversalLeftTouched() || sub_.isTraversalRightTouched()) {
             state_start_time_ = sub_.getRobot().getTime() ;
@@ -312,7 +313,7 @@ public class ClimbAction extends Action {
         // wait for 1st "hooking/aligning time" of clamp B; then unclamp A
         // - waits for high sensor to hit
         if (sub_.isTraversalLeftTouched() && sub_.isTraversalRightTouched()) {
-            sub_.setWindmill(0.0) ;
+            sub_.setWindmill(SetWindmillTo.OFF) ;
             sub_.setClampA(ChangeClampTo.CLOSED);
             state_ = ClimbingStates.CLAMP_THREE ;
         }
