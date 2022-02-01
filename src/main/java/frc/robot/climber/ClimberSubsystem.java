@@ -103,7 +103,7 @@ public class ClimberSubsystem extends Subsystem {
     //clamps. 
     // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the windmill
     // also, set the clamp to neither open nor closed if passed in parameter is "UNKNWOWN" 
-    public void setClampAClosed(ChangeClampTo ChangeClampA) {
+    public void setClampA(ChangeClampTo ChangeClampA) {
         if (ChangeClampA == ChangeClampTo.CLOSED) {
             clamp_a_left_.set(GripperCloseState);
             clamp_a_right_.set(GripperCloseState);
@@ -112,7 +112,7 @@ public class ClimberSubsystem extends Subsystem {
             clamp_a_right_.set(GripperCloseState);
         } 
     }
-    public void setClampBClosed(ChangeClampTo ChangeClampB) {
+    public void setClampB(ChangeClampTo ChangeClampB) {
         if (ChangeClampB == ChangeClampTo.CLOSED) {
             clamp_a_left_.set(GripperCloseState);
             clamp_a_right_.set(GripperCloseState);
