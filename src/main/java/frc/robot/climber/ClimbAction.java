@@ -58,7 +58,6 @@ public class ClimbAction extends Action {
 
     // todo: also take the gamepad/OI as a param so climber can disable it after it starts climbing
     public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db) throws BadParameterTypeException, MissingParameterException {
-
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
         db_ = db ;
@@ -221,12 +220,10 @@ public class ClimbAction extends Action {
 
     // doClampOne() - handles the CLAMP_ONE state
     //    Exit Condition:
-    //        Clamp A is closed
-    //        wait until one of the high sensors have been hit
+    //       todo
     //
     //    Activities while in the state:
-    //        Clamp A to be closed - wait for 1st clamping time to pass 
-    //        start up the windmill
+    //       todo
     //
     //    Activities when exit conditions are met:
     //        Go to the WINDMILL_ONE state
@@ -242,12 +239,10 @@ public class ClimbAction extends Action {
      
     // doWindmillOne() - handles the WINDMILL_ONE state
     //    Exit Condition:
-    //        Clamp A has unclamped
+    //       todo
     //
     //    Activities while in the state:
-    //        first windmill power is being set to the windmills
-    //        then wait for aligning/hooking time of clamp B
-    //        then stop windmill and unclamp A
+    //       todo
     //
     //    Activities when exit conditions are met:
     //        Go to the UNCLAMP_ONE state
@@ -265,11 +260,10 @@ public class ClimbAction extends Action {
 
     // doUnclampOne() - handles the UNCLAMP_ONE state
     //    Exit Condition:
-    //        Clamp B is set to closed
+    //       todo
     //
     //    Activities while in the state:
-    //        wait for the robot to "swing" a little on B's clamp's hook so it's comfortably hanging
-    //        close clamp B
+    //        todo
     //
     //    Activities when exit conditions are met:
     //        Go to the CLAMP_TWO state
@@ -285,11 +279,10 @@ public class ClimbAction extends Action {
     
     // doClampTwo() - handles the CLAMP_TWO state
     //    Exit Condition:
-    //        windmill is on; running at second_windmill_power
+    //        todo
     //
     //    Activities while in the state:
-    //        wait for the clamp B to fully close
-    //        turn on the windmill for the 2nd time
+    //        todo
     //
     //    Activities when exit conditions are met:
     //        Go to the WINDMILL_TWO state
@@ -306,12 +299,10 @@ public class ClimbAction extends Action {
 
     // doWindmillTwo() - handles the WINDMILL_TWO state
     //    Exit Condition:
-    //        unclamped/opened clamp b
+    //        todo
     //
     //    Activities while in the state:
-    //        wait for the sensors to touch traversal bar
-    //        wait for hooking/aligning clamp A onto traversal bar
-    //        open clamp B
+    //        todo
     //
     //    Activities when exit conditions are met:
     //        Go to the UNCLAMP_TWO state
@@ -328,11 +319,10 @@ public class ClimbAction extends Action {
     
     // doUnclampTwo() - handles the UNCLAMP_TWO state
     //    Exit Condition:
-    //        clamped/closed clamp A
+    //        todo
     //
     //    Activities while in the state:
-    //        wait for a swinging time so clamp A is comfortably hooked
-    //        close Clamp A
+    //        todo
     //
     //    Activities when exit conditions are met:
     //        Go to the CLAMP_THREE state
@@ -358,7 +348,7 @@ public class ClimbAction extends Action {
     //
     private void doUnclampTwo() throws BadMotorRequestException, MotorRequestFailedException {
         // basically do nothing and wait for match to end
-        
+
         // continuously set clamp A to "closed"?
     }
 

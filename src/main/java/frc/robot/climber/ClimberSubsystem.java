@@ -21,7 +21,7 @@ public class ClimberSubsystem extends Subsystem {
     // 2 "windmills" whcih spin like windmills. 
     // 1 on left side of robot and 1 on right side 
     private MotorEncoderSubsystem left_windmill_ ;
-    // private MotorEncoderSubsystem right_windmill_ ;
+    private MotorEncoderSubsystem right_windmill_ ;
 
     // 4 double-solenoids
     // 2 on each windmill; 1 on either end
@@ -97,7 +97,7 @@ public class ClimberSubsystem extends Subsystem {
     // TODO get this percent from params file
     public void setWindmill(double power) throws BadMotorRequestException, MotorRequestFailedException {
         left_windmill_.setPower(power); 
-        // right_windmill_.setPower(power); 
+        right_windmill_.setPower(power); 
     }
 
     //clamps. 
