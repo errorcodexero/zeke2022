@@ -234,7 +234,6 @@ public class ClimbAction extends Action {
         // clamping clamp A; wait for the 2st clamping time to pass
         if (sub_.getRobot().getTime() - state_start_time_ > first_clamp_wait_) {
             sub_.setWindmill(SetWindmillTo.FORWARDS) ;
-
             state_ = ClimbingStates.WINDMILL_ONE ;
         }
     }

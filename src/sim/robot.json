@@ -35,15 +35,18 @@
             "instance": "1",
             "props": {
                 "ticks_per_second_per_volt": 2200,
-                "climber:motor:1:index": 13,
-                "climber:motor:1:type": "sparkmax-brushless",
-                "climber:motor:2:index": 14,
-                "climber:motor:2:type": "sparkmax-brushless",
+                "windmill:motor:1:index": 13,
+                "windmill:motor:1:type": "sparkmax-brushless",
+                "windmill:motor:2:index": 14,
+                "windmill:motor:2:type": "sparkmax-brushless",
                 "dbmodel": "tankdrive",
                 "dbinst": "1",
+
                 "first_sensor_delay": 0.5,
                 "second_sensor_delay": 0.5,
                 "second_sensor_db_check": 0.1,
+                "windmill_check" : 0.7,
+                "windmill_done" : 2.0,
 
                 "touch_left_mid_io": 4,
                 "touch_left_high_io": 6,
@@ -53,13 +56,20 @@
                 "touch_right_traverse_io": 9,
 
                 "left_a_module": 0,
-                "left_a_channel": 2,
+                "left_a_forward": 2,
+                "left_a_reverse" : 3,
+
                 "left_b_module": 0,
-                "left_b_channel": 4,
+                "left_b_forward": 4,
+                "left_b_reverse" : 5,
+
                 "right_a_module": 0,
-                "right_a_channel": 6,
+                "right_a_forward": 6,
+                "right_a_reverse" : 7,
+                
                 "right_b_module": 0,
-                "right_b_channel": 8
+                "right_b_forward": 8,
+                "right_b_reverse" : 9
             }
         },
         {

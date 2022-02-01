@@ -17,7 +17,6 @@ public class ClimberSubsystem extends Subsystem {
 
     // 2 "windmills" whcih spin like windmills. 
     // 1 on left side of robot and 1 on right side 
-    // CONTROLLED BY A SINGLE MOTORENCODERSUBSYSTEM!
     private MotorEncoderSubsystem windmill_ ;
 
     // 4 double-solenoids
@@ -69,14 +68,6 @@ public class ClimberSubsystem extends Subsystem {
         int index ;
 
         windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
-
-        index = getSettingsValue("hw:motors:windmill:power:forwards").getInteger() ;
-        windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, index) ;
-        index = getSettingsValue("hw:motors:windmill:power:backwards").getInteger() ;
-        windmill_power_backwards_ = new MotorEncoderPowerAction(windmill_, index) ;
-        windmill_power_off_ = new MotorEncoderPowerAction(windmill_, 0.0) ;
-
-        windmill_power_ = SetWindmillTo.UNKNOWN ;
 
         clamp_a_left_ = new XeroDoubleSolenoid(this, "clamp_a_left") ;
         clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;

@@ -9,21 +9,20 @@ import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimInt;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-public class XeroDoubleSolenoid {
+public class XeroDoubleSolenoid extends XeroSolenoidBase {
     private DoubleSolenoid solenoid_ ;
-    private SimDevice simdev_ ;
+
     private SimInt simstate_ ;
     private DoubleSolenoid.Value state_ ;
-    private int index_ ;
 
-    static final public String SimDeviceName = "DoubleSolenoid" ;
-    static final public String SimeStateName = "state" ;
+    static final public String SimDeviceName = "SimSolenoid" ;
+    static final public String SimeStateNamePrefix = "double" ;
 
     public XeroDoubleSolenoid(XeroRobot robot, int module, int forward, int reverse) {
+        super(robot) ;
         if (XeroRobot.isSimulation()) {
-            index_ = calcIndex(module, forward) ;
-            simdev_ = SimDevice.create(SimDeviceName, index_) ;
-            simstate_ = simdev_.createInt(SimeStateName, SimDevice.Direction.kBidir, 0) ;
+            String name = getSimulatedName(module, forward, reverse) ;
+            simstate_ = getSimulatedDevice().createInt(name, SimDevice.Direction.kBidir, 0) ;
         }
         else {
             solenoid_ = new DoubleSolenoid(module, robot.getPneumaticsType(), forward, reverse) ;
@@ -33,10 +32,11 @@ public class XeroDoubleSolenoid {
     }
 
     public XeroDoubleSolenoid(XeroRobot robot, int forward, int reverse) {
+        super(robot) ;
+
         if (XeroRobot.isSimulation()) {
-            index_ = calcIndex(0, forward) ;
-            simdev_ = SimDevice.create(SimDeviceName, index_) ;
-            simstate_ = simdev_.createInt(SimeStateName, SimDevice.Direction.kBidir, 0) ;
+            String name = getSimulatedName(0, forward, reverse) ;
+            simstate_ = getSimulatedDevice().createInt(name, SimDevice.Direction.kBidir, 0) ;
         }
         else {
             solenoid_ = new DoubleSolenoid(robot.getPneumaticsType(), forward, reverse) ;
@@ -104,7 +104,7 @@ public class XeroDoubleSolenoid {
         return ret ;
     }
 
-    static public int calcIndex(int module, int channel) {
-        return module * 32 + channel ;
+    static public String getSimulatedName(int module, int forward, int reverse) {
+        return SimeStateNamePrefix + "-" + module + "-" + forward + "-" + reverse ;
     }
 }

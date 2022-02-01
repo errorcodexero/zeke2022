@@ -9,29 +9,29 @@ import edu.wpi.first.hal.SimBoolean;
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.wpilibj.Solenoid;
 
-public class XeroSolenoid {
+public class XeroSolenoid extends XeroSolenoidBase {
     private Solenoid solenoid_ ;
-    private SimDevice simdev_ ;
     private SimBoolean simstate_ ;
     private boolean state_ ;
 
-    final private String SimDeviceName = "Solenoid" ;
-    final private String SimeStateName = "state" ;
+    final static private String SimStateName = "single" ;
 
     public XeroSolenoid(XeroRobot robot, int module, int channel) {
+        super(robot) ;
+        solenoid_ = new Solenoid(module, robot.getPneumaticsType(), channel) ;
+
         if (XeroRobot.isSimulation()) {
-            simdev_ = SimDevice.create(SimDeviceName, calcIndex(module, channel)) ;
-            simstate_ = simdev_.createBoolean(SimeStateName, SimDevice.Direction.kBidir, false) ;
-        }
-        else {
-            solenoid_ = new Solenoid(module, robot.getPneumaticsType(), channel) ;
+            String name = getSimulatedName(module, channel) ;
+            simstate_ = getSimulatedDevice().createBoolean(name, SimDevice.Direction.kBidir, false) ;
         }
     }
 
     public XeroSolenoid(XeroRobot robot, int channel) {
+        super(robot) ;
+
         if (XeroRobot.isSimulation()) {
-            simdev_ = SimDevice.create(SimDeviceName, calcIndex(0, channel)) ;
-            simstate_ = simdev_.createBoolean(SimeStateName, SimDevice.Direction.kBidir, false) ;
+            String name = getSimulatedName(0, channel) ;
+            simstate_ = getSimulatedDevice().createBoolean(name, SimDevice.Direction.kBidir, false) ;
         }
         else {
             solenoid_ = new Solenoid(robot.getPneumaticsType(), channel) ;
@@ -81,7 +81,7 @@ public class XeroSolenoid {
         return ret ;
     }
 
-    private int calcIndex(int module, int channel) {
-        return module * 32 + channel ;
+    public static String getSimulatedName(int module, int channel) {
+        return SimStateName + "-" + module + "-" + channel ;
     }
 }

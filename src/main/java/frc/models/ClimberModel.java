@@ -2,7 +2,6 @@ package frc.models;
 
 import java.util.Random;
 
-import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
@@ -10,13 +9,11 @@ import org.xero1425.misc.SettingsValue;
 import org.xero1425.simulator.engine.SimulationEngine;
 import org.xero1425.simulator.engine.SimulationModel;
 import org.xero1425.simulator.models.SimMotorController;
+import org.xero1425.simulator.models.SolenoidModel;
 import org.xero1425.simulator.models.TankDriveModel;
 
-import edu.wpi.first.hal.SimDeviceJNI;
 import edu.wpi.first.hal.simulation.DIODataJNI;
-import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.hal.HALValue ;
 
 public class ClimberModel extends SimulationModel {
     private enum State {
@@ -45,7 +42,7 @@ public class ClimberModel extends SimulationModel {
         WaitForWindMillOne,
 
         // Wait on the switches on the high bar
-        WaitForHighSensors,
+        Complete,
     };
 
     static private final String LoggerName = "climber-model" ;
@@ -57,6 +54,8 @@ public class ClimberModel extends SimulationModel {
     static private final String FirstSensorDelayPropName = "first_sensor_delay" ;
     static private final String SecondSensorDelayPropName = "second_sensor_delay" ;
     static private final String SecondSensorDBCheckPropName = "second_sensor_db_check" ;
+    static private final String WindMillCheckTime = "windmill_check" ; 
+    static private final String WindMillDoneTime = "windmill_done" ;
 
     static private final String TouchLeftMidIO = "touch_left_mid_io" ;
     static private final String TouchLeftHighIO = "touch_left_high_io" ;
@@ -66,20 +65,26 @@ public class ClimberModel extends SimulationModel {
     static private final String TouchRightTraverseIO = "touch_right_traverse_io" ;
 
     static private final String LeftAModulePropName = "left_a_module" ;
-    static private final String LeftAChannelPropName = "left_a_channel" ;
+    static private final String LeftAForwardPropName = "left_a_forward" ;
+    static private final String LeftAReversePropName = "left_a_reverse" ;
 
     static private final String RightAModulePropName = "right_a_module" ;
-    static private final String RightAChannelPropName = "right_a_channel" ;
+    static private final String RightAForwardPropName = "right_a_forward" ;
+    static private final String RightAReversePropName = "right_a_reverse" ;
 
     static private final String LeftBModulePropName = "left_b_module" ;
-    static private final String LeftBChannelPropName = "left_b_channel" ;        
+    static private final String LeftBForwardPropName = "left_b_forward" ;        
+    static private final String LeftBReversePropName = "left_b_forward" ;       
 
     static private final String RightBModulePropName = "right_b_module" ;
-    static private final String RightBChannelPropName = "right_b_channel" ;        
+    static private final String RightBForwardPropName = "right_b_forward" ;        
+    static private final String RightBReversePropName = "right_b_reverse" ;    
 
     private Random random_;
     private State state_;
     private SimMotorController motor_;
+
+    private SolenoidModel solenoid_model_ ;
 
     private int grabber_left_a_;
     private int grabber_left_b_;
@@ -107,6 +112,8 @@ public class ClimberModel extends SimulationModel {
     private double first_sensor_time_ ;
     private double second_sensor_time_ ;
     private double second_sencor_db_check_time_ ;
+    private double windmill_check_time_ ;
+    private double windmill_done_time_ ;
 
     private int logger_id_ ;
 
@@ -124,9 +131,11 @@ public class ClimberModel extends SimulationModel {
     @Override
     public boolean create() {
 
+        solenoid_model_ = SolenoidModel.getInstance(getEngine().getMessageLogger()) ;
+
         logger_id_ = getEngine().getRobot().getMessageLogger().registerSubsystem(LoggerName) ;
                
-        motor_ = new SimMotorController(this, "motor");
+        motor_ = new SimMotorController(this, "windmill");
         if (!motor_.createMotor())
             return false;
 
@@ -140,6 +149,8 @@ public class ClimberModel extends SimulationModel {
             first_sensor_time_ = getDoubleProperty(FirstSensorDelayPropName) ;
             second_sensor_time_ = getDoubleProperty(SecondSensorDelayPropName) ;
             second_sencor_db_check_time_ = getDoubleProperty(SecondSensorDBCheckPropName) ;
+            windmill_check_time_ = getDoubleProperty(WindMillCheckTime) ;
+            windmill_done_time_ = getDoubleProperty(WindMillDoneTime) ;
 
             if (second_sensor_time_ <= second_sencor_db_check_time_) {
                 MessageLogger logger = getEngine().getMessageLogger() ;
@@ -152,10 +163,10 @@ public class ClimberModel extends SimulationModel {
                 return false ;
             }
 
-            grabber_left_a_ = createGrabber(LeftAModulePropName, LeftAChannelPropName) ;
-            grabber_left_b_ = createGrabber(RightAModulePropName, RightAChannelPropName) ;
-            grabber_right_a_ = createGrabber(LeftBModulePropName, LeftBChannelPropName) ;
-            grabber_right_b_ = createGrabber(RightBModulePropName, RightBChannelPropName) ;
+            grabber_left_a_ = createGrabber(LeftAModulePropName, LeftAForwardPropName, LeftAReversePropName) ;
+            grabber_left_b_ = createGrabber(LeftBModulePropName, LeftBForwardPropName, LeftBReversePropName) ;
+            grabber_right_a_ = createGrabber(RightAModulePropName, RightAForwardPropName, RightAReversePropName) ;
+            grabber_right_b_ = createGrabber(RightBModulePropName, RightBForwardPropName, RightBReversePropName) ;
 
             touch_left_mid_io_ = getIntProperty(TouchLeftMidIO) ;
             touch_left_high_io_ = getIntProperty(TouchLeftHighIO) ;
@@ -206,6 +217,13 @@ public class ClimberModel extends SimulationModel {
 
             case WaitForMidGrabbersClosed:
                 doWaitForMidGrabberClosed() ;
+                break ;
+
+            case WaitForWindMillOne:
+                doWaitForWindMillOne() ;
+                break ;
+
+            case Complete:
                 break ;
         }
     }
@@ -370,7 +388,8 @@ public class ClimberModel extends SimulationModel {
             msg_count_++ ;
         }
 
-        if (getGrabberState(grabber_left_a_) == GrabberClosedValue && getGrabberState(grabber_right_a_) == GrabberClosedValue) {
+        if (solenoid_model_.getDoubleSolenoidState(grabber_left_a_) == GrabberClosedValue && 
+                solenoid_model_.getDoubleSolenoidState(grabber_right_a_) == GrabberClosedValue) {
             MessageLogger logger = getEngine().getMessageLogger() ;
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
@@ -379,7 +398,44 @@ public class ClimberModel extends SimulationModel {
             logger.endMessage();
 
             state_ = State.WaitForWindMillOne ;
+            phase_start_time_ = getRobotTime() ;
             msg_count_= 0 ;
+        }
+    }
+
+    private void doWaitForWindMillOne() {
+        double t = getRobotTime() - phase_start_time_ ;
+
+        if (getRobotTime() - phase_start_time_ > windmill_check_time_) {
+
+            if (motor_.getPower() < 0.01 && msg_count_ < 1) {
+                //
+                // The windmill is turning
+                //
+                MessageLogger logger = getEngine().getMessageLogger() ;
+                logger.startMessage(MessageType.Error, logger_id_) ;
+                logger.add("event: model ").addQuoted(getModelName());
+                logger.add(" instance ").addQuoted(getInstanceName());
+                logger.add(": windmill motor not running when expected") ;
+                logger.endMessage();
+
+                msg_count_++ ;
+            }
+        }
+
+        if (getRobotTime() - phase_start_time_ > windmill_done_time_) {
+            MessageLogger logger = getEngine().getMessageLogger() ;
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": windmill phase one complete, setting high sensors") ;
+            logger.endMessage();
+
+            touch_left_high_value_ = true ;
+            touch_right_high_value_ = true ;
+            setSensors();
+            msg_count_ = 0 ;
+            state_ = State.Complete ;
         }
     }
 
@@ -394,25 +450,18 @@ public class ClimberModel extends SimulationModel {
         DIODataJNI.setValue(touch_right_traverse_io_, touch_right_traverse_value_);
     }
 
-    private int createGrabber(String modname, String channame) throws Exception {
-        int module, channel, index ;
+    private int createGrabber(String modname, String forname, String revname) throws Exception {
+        int module = 0, forward = 0, reverse = 0 ;
 
         try {
             module = getIntProperty(modname) ;
-            channel = getIntProperty(channame) ;
-            index = XeroDoubleSolenoid.calcIndex(module, channel) ;
+            forward = getIntProperty(forname) ;
+            reverse = getIntProperty(revname) ;
         }
         catch(Exception ex) {
             return -1 ;
         }
 
-        return SimDeviceDataJNI.getSimDeviceHandle(XeroDoubleSolenoid.SimDeviceName + "[" + index + "]") ;
-    }
-
-    private DoubleSolenoid.Value getGrabberState(int handle) {
-        HALValue v = SimDeviceJNI.getSimValue(handle) ;
-        DoubleSolenoid.Value value = DoubleSolenoid.Value.values()[(int)(v.getLong())] ;
-
-        return value ;
+        return solenoid_model_.getDoubleSolenoid(module, forward, reverse) ;
     }
 }

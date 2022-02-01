@@ -251,18 +251,16 @@
                 "motors" : {
                     "1": {
                         "type" : "sparkmax_brushless",
-                        "canid" : 13,
-                        "power" : 0.5
+                        "canid" : 13
                     },
                     "2": {
                         "type" : "sparkmax_brushless",
-                        "canid" : 14,
-                        "power" : 0.8
+                        "canid" : 14
                     }
                 },
                 "encoder" : { 
                     "type" : "motor",
-                    "m" : 1.94714,
+                    "m" : 1,
                     "b" : 0.0
                 },
                 "touchsensors" : {
