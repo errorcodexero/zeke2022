@@ -51,6 +51,7 @@ public class ClimbAction extends Action {
 
     private ClimbingStates state_ = ClimbingStates.IDLE ;
 
+    // todo: also take the gamepad/OI as a param so climber can disable it after it starts climbing
     public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db) throws BadParameterTypeException, MissingParameterException {
 
         super(sub.getRobot().getMessageLogger()) ;
@@ -143,10 +144,10 @@ public class ClimbAction extends Action {
     // this for each method in the state machine (e.g. doIdle(), doSquaring(), etc.)
     //
 
-    // my notes on states/actions
+    // notes on climber's states/actions
     // https://docs.google.com/spreadsheets/d/1VQvMyQ1WbQQrf9r2D5Rkg1IVWN1o5F0aYZadMqYttAs/edit#gid=0
 
-    //
+
     // doIdle() - handles the IDLE state
     //    Exit Condition: 
     //        Either the left or right mid sensors (or both) are triggered
@@ -166,6 +167,7 @@ public class ClimbAction extends Action {
             // touched in the same robot loop.  Unlikely, but it could happen.
             // Do:
             // - disable game pad
+            // - turn off db
             // - goto CLAMP_ONE state (we skip SQUARING)
         }
         else if (sub_.isMidLeftTouched() || sub_.isMidRightTouched()) {
@@ -173,6 +175,7 @@ public class ClimbAction extends Action {
             // robot loop.
             // Do: 
             //   - disable driving from gamepad
+            //   - turn off db
             //   - turn on motor on side of drivebase that has not hit the sensor
             //   - go to the SQUARING state
         }
@@ -182,7 +185,7 @@ public class ClimbAction extends Action {
         }
     }
 
-    // Butch:
+    // doSquaring() - handles the SQUARING state
     //    Exit Condition:
     //        Both mid sensors are triggered (we are squared to the bar)
     //
@@ -200,36 +203,57 @@ public class ClimbAction extends Action {
         }
     }
 
+    
+    // doClampOne() - handles the CLAMP_ONE state
+    //    Exit Condition:
+    //        Clamp A is set to be closed
+    //
+    //    Activities while in the state:
+    //        set Clamp A to be closed
+    //
+    //    Activities when exit conditions are met:
+    //        Go to the WINDMILL_ONE state
+    //
     private void doClampOne() {
-        if (sub_.isMidLeftTouched()) {
-            while(!sub_.isMidRightTouched()) {
-                // TODO: refer to db and drive opp wheel forward until this sensor is hit!
-            }
-        }
-        else if (sub_.isMidRightTouched()) {
-            while(!sub_.isMidLeftTouched()) {
-                // TODO: refer to db and drive opp wheel forward until this sensor is hit!
-            }
-        }
-        // TODO: turn off db
         sub_.setClampAClosed(true);
         state_start_time_ = sub_.getRobot().getTime() ;
     }
      
+    // doWindmillOne() - handles the WINDMILL_ONE state
+    //    Exit Condition:
+    //        first windmill power is set to the windmills
+    //
+    //    Activities while in the state:
+    //        wait for 1st clamping time to pass; first windmill power is set to the windmills
+    //
+    //    Activities when exit conditions are met:
+    //        Go to the UNCLAMP_ONE state
+    //
     private void doWindmillOne() throws BadMotorRequestException, MotorRequestFailedException {
-        // waits for 1st "clamping time"
+        // waits for 1st "clamping time" to pass before setting windmill power
         if (sub_.getRobot().getTime() - state_start_time_ > first_clamp_wait_) {
-            sub_.setWindmill(first_windmill_power_);
+            sub_.setWindmill(first_windmill_power_) ;
         }
     }
 
+    // doUnclampOne() - handles the UNCLAMP_ONE state
+    //    Exit Condition:
+    //        Clamp A is set to open
+    //
+    //    Activities while in the state:
+    //        wait for one of the sensors to hit
+    //        then wait for aligning/hooking time of clamp B
+    //        then stop windmill and unclamp A
+    //
+    //    Activities when exit conditions are met:
+    //        Go to the CLAMP_TWO state
+    //
     private void doUnclampOne() throws BadMotorRequestException, MotorRequestFailedException {
         //waits for sensor to hit
-        while (!sub_.isHighLeftTouched() || !sub_.isHighRightTouched()) {
-
+        if (sub_.isHighLeftTouched() || sub_.isHighRightTouched()) {
+            state_start_time_ = sub_.getRobot().getTime() ;
         }
-        state_start_time_ = sub_.getRobot().getTime() ;
-        
+
         // wait for 1st "hooking/aligning time"
         if (sub_.getRobot().getTime() - state_start_time_ > first_align_wait_) {
             sub_.setWindmill(0.0) ;
@@ -238,6 +262,18 @@ public class ClimbAction extends Action {
         state_start_time_ = sub_.getRobot().getTime() ;
     }
     
+    
+    // doClampTwo() - handles the CLAMP_TWO state
+    //    Exit Condition:
+    //        Clamp B is set to closed
+    //
+    //    Activities while in the state:
+    //        wait for the robot to "swing" a little on B's hook so it's comfortably hanging
+    //        close clamp B
+    //
+    //    Activities when exit conditions are met:
+    //        Go to the WINDMILL_TWO state
+    //
     private void doClampTwo() {
         //wait for 1st "swinging time"
         if (sub_.getRobot().getTime() - state_start_time_ > first_swing_wait_) {
@@ -245,19 +281,42 @@ public class ClimbAction extends Action {
         }
         state_start_time_ = sub_.getRobot().getTime() ;
     }
-    
+
+    // doWindmillTwo() - handles the WINDMILL_TWO state
+    //    Exit Condition:
+    //        windmill is on; running at second_windmill_power
+    //
+    //    Activities while in the state:
+    //        wait for the clamp B to fully close
+    //        turn on the windmill for the 2nd time
+    //
+    //    Activities when exit conditions are met:
+    //        Go to the UNCLAMP_TWO state
+    //
     private void doWindmillTwo() throws BadMotorRequestException, MotorRequestFailedException {
         if (sub_.getRobot().getTime() - state_start_time_ > second_clamp_wait_) {
             sub_.setWindmill(second_windmill_power_);
         }
     }
     
+    // doUnclampTwo() - handles the UNCLAMP_TWO state
+    //    Exit Condition:
+    //        unclamped/opened clamp b
+    //
+    //    Activities while in the state:
+    //        wait for the sensors to touch traversal bar
+    //        wait for hooking/aligning clamp A onto traversal bar
+    //        open clamp B
+    //
+    //    Activities when exit conditions are met:
+    //        Go to the CLAMP_THREE state
+    //
     private void doUnclampTwo() throws BadMotorRequestException, MotorRequestFailedException {
-        while (!sub_.isTraversalLeftTouched() || !sub_.isTraversalRightTouched()) {
-
+        if (sub_.isTraversalLeftTouched() || sub_.isTraversalRightTouched()) {
+            state_start_time_ = sub_.getRobot().getTime() ;
+            // todo fix following code that relies on this state_start_time
         }
-        state_start_time_ = sub_.getRobot().getTime() ;
-
+        
         // wait for 2nd "hooking/aligning time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_align_wait_) {
             sub_.setWindmill(0.0) ;
@@ -265,6 +324,17 @@ public class ClimbAction extends Action {
         }
     }
      
+    // doClampThree() - handles the CLAMP_THREE state
+    //    Exit Condition:
+    //        clamped/closed clamp A
+    //
+    //    Activities while in the state:
+    //        wait for a swinging time so clamp A is comfortably hooked
+    //        close Clamp A
+    //
+    //    Activities when exit conditions are met:
+    //        Go to the DONE state
+    //
     private void doClampThree() {
         //wait for 2nd "swinging time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_swing_wait_) {
