@@ -228,7 +228,8 @@
         },
         "targettracker" : {
             "camera_offset_angle" : -1.5,
-            "lost_count" : 10
+            "lost_count" : 10,
+            "track_method" : "vf"
         },
         "climber": {
             "hw":{

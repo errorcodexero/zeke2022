@@ -25,10 +25,19 @@ public class TargetTrackerSubsystem extends Subsystem {
     private int lost_count_ ;
     private int max_lost_count_ ;
     boolean has_target_ ;
+    TrackMethod track_method_ ;
 
     private double camera_offset_angle_ ;
 
     public static final String SubsystemName = "targettracker" ;
+
+    /// \brief What method to use for target tracking
+    public enum TrackMethod
+    {
+        VisionOrFieldPosition,   ///< (vf) Use limelight if vision seen, else use drivebase field position tracker
+        VisionOnly,              ///< (v)  Limelight only
+        FieldPositionOnly        ///< (f)  Drivebase field position tracker only
+    } ;
 
     public TargetTrackerSubsystem(Subsystem parent, ZekeLimeLightSubsystem ll, TurretSubsystem turret)
             throws BadParameterTypeException, MissingParameterException {
@@ -56,6 +65,18 @@ public class TargetTrackerSubsystem extends Subsystem {
         // without a target do we actually consider the target lost and stop the firing operation.
         //
         max_lost_count_ = getSettingsValue("lost_count").getInteger() ;
+
+        // Assign track method from settings file
+        String method = getSettingsValue("track_method").getString();
+        if (method.equals("vf")) {
+            track_method_ = TrackMethod.VisionOrFieldPosition;
+        } else if (method.equals("v")) {
+            track_method_ = TrackMethod.VisionOnly;
+        } else if (method.equals("f")) {
+            track_method_ = TrackMethod.FieldPositionOnly;
+        } else {
+           // TODO: Add error
+        }
 
         //
         // Turn off the LEDs unless we are actually wanting to track a target
