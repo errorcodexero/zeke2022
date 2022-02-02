@@ -131,14 +131,16 @@
                 "collector": {
                     "motor-left": {
                         "type": "sparkmax_brushless",
-                        "canid": 7,
-                        "power":0.5
+                        "canid": 7
                     },
                     "motor-right": {
                         "type": "sparkmax_brushless",
-                        "canid": 8,
-                        "power":0.5
-                    }
+                        "canid": 8
+                    },
+                    "in_speed": 1,
+                    "out_slow": 0.3,
+                    "out_fast": -1,
+                    "stopped": 0
                 }
             }
         },
@@ -357,7 +359,7 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 50,
+        "which": 10,
         "power": 0.5,
         "duration": 5.0,
         "distance": 0.0,
