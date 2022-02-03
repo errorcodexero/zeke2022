@@ -82,21 +82,6 @@ public class ClimberSubsystem extends Subsystem {
         traversal_right_ = new DigitalInput(index) ;
     }
 
-    @Override
-    public void run() throws Exception {
-        super.run() ;
-    }
-
-    @Override
-    public void postHWInit() {
-        // setDefaultAction(new ClimberStopAction(this));
-    }
-
-    @Override
-    public void computeMyState() throws Exception {
-
-    }
-
     //windmills
     public void setWindmill(SetWindmillTo windmill_power_) throws BadMotorRequestException, MotorRequestFailedException {
         switch (windmill_power_) {

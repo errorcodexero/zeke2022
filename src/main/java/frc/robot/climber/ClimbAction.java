@@ -101,10 +101,10 @@ public class ClimbAction extends Action {
                 doWindmillTwo() ;
                 break ;
             case UNCLAMP_TWO:
-                doClampThree() ;
+                doUnclampTwo() ;
                 break ;
             case CLAMP_THREE:
-                doUnclampTwo() ;
+                doClampThree();
                 // setDone() ;
                 break ;
         }
@@ -202,8 +202,9 @@ public class ClimbAction extends Action {
             // - get a time stamp to use in next method; this is to give time for clamp A to be closed
             state_start_time_ = sub_.getRobot().getTime() ;
             // - go to CLAMP_ONE state
-            state_ = ClimbingStates.CLAMP_ONE ;;
+            state_ = ClimbingStates.CLAMP_ONE ;
         }
+        // if one sensor is touching ... 
     }
 
     // doClampOne() - handles the CLAMP_ONE state
@@ -280,7 +281,7 @@ public class ClimbAction extends Action {
     private void doUnclampOne() throws BadMotorRequestException, MotorRequestFailedException {
         // wait for clamp A to completely unclamp
         if (sub_.getRobot().getTime() - state_start_time_ > first_unclamp_wait_) {
-            sub_.setWindmill(SetWindmillTo.BACKWARDS);
+            sub_.setWindmill(SetWindmillTo.FORWARDS);
         }
         if (sub_.isTraversalLeftTouched() || sub_.isTraversalRightTouched()) {
             
