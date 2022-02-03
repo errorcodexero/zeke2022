@@ -404,8 +404,6 @@ public class ClimberModel extends SimulationModel {
     }
 
     private void doWaitForWindMillOne() {
-        double t = getRobotTime() - phase_start_time_ ;
-
         if (getRobotTime() - phase_start_time_ > windmill_check_time_) {
 
             if (motor_.getPower() < 0.01 && msg_count_ < 1) {

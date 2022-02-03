@@ -8,6 +8,7 @@ import org.xero1425.misc.SimArgs;
 import org.xero1425.simulator.engine.ModelFactory;
 import org.xero1425.simulator.engine.SimulationEngine;
 
+import edu.wpi.first.wpilibj.Compressor;
 import frc.robot.automodes.ZekeAutoController;
 import frc.robot.zekesubsystem.ZekeSubsystem ;
 
@@ -31,6 +32,10 @@ public class Zeke2022 extends XeroRobot {
   }
   
   protected void hardwareInit() throws Exception {
+    enablePneumatics() ;
+    Compressor comp = getCompressor() ;
+    comp.enableAnalog(110, 120);
+
     ZekeSubsystem robotsub = new ZekeSubsystem(this) ;
     setRobotSubsystem(robotsub) ;
   }

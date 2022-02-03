@@ -45,9 +45,9 @@
                         "2": {
                             "type": "talon_fx",
                             "canid": 4
-                        }
-                    },
-                    "invert": true
+                        },
+                        "inverted": true
+                    }
                 }
             },
             "width": 30,
@@ -357,9 +357,9 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 50,
-        "power": 0.5,
-        "duration": 5.0,
+        "which": 1,
+        "power": 0.1,
+        "duration": 20.0,
         "distance": 0.0,
         "name": "Test_Straight"
     }
