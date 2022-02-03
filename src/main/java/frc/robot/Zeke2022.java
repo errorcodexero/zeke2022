@@ -32,9 +32,7 @@ public class Zeke2022 extends XeroRobot {
   }
   
   protected void hardwareInit() throws Exception {
-    enablePneumatics() ;
-    Compressor comp = getCompressor() ;
-    comp.enableAnalog(110, 120);
+    enablePneumaticsAnalog() ;
 
     ZekeSubsystem robotsub = new ZekeSubsystem(this) ;
     setRobotSubsystem(robotsub) ;

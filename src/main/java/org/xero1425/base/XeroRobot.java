@@ -209,9 +209,27 @@ public abstract class XeroRobot extends TimedRobot {
         return compressor_ ;
     }
 
+    /// \brief enable pneumatics for this robot using a REVPH and an analog sensor
+    protected void enablePneumaticsAnalog() throws Exception {
+        enablePneumatics() ;
+
+        if (getPneumaticsType() != PneumaticsModuleType.REVPH) {
+            logger_.startMessage(MessageType.Error) ;
+            logger_.add("calling enablePneumaticsAnalog with a 'CTREPCM' is not allowed") ;
+            logger_.endMessage();
+
+            throw new Exception("Bad call to enablePneumaticsAnalog") ;
+        }
+
+        double minp = settings_.get("system:pneumatics:min-pressure").getDouble();
+        double maxp = settings_.get("system:pneumatics:max-pressure").getDouble();
+
+        compressor_.enableAnalog(minp, maxp);
+    }
+
     /// \brief enable pneumatics for this robot
     /// \returns true if pneumatics were enabled sucessfully, otherwise false
-    public boolean enablePneumatics() {
+    protected boolean enablePneumatics() {
         SettingsValue v ;
         PneumaticsModuleType type = PneumaticsModuleType.REVPH ;
 

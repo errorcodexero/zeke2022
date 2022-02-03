@@ -17,7 +17,9 @@
         },
         "plotting": true,
         "pneumatics": {
-            "type": "REVPH"
+            "type": "REVPH",
+            "min-pressure" : 105.0,
+            "max-pressure" : 120.0
         }
     },
     "subsystems": {
