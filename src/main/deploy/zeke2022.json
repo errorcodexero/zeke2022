@@ -131,14 +131,16 @@
                 "collector": {
                     "motor-left": {
                         "type": "sparkmax_brushless",
-                        "canid": 7,
-                        "power":0.5
+                        "canid": 7
                     },
                     "motor-right": {
                         "type": "sparkmax_brushless",
-                        "canid": 8,
-                        "power":0.5
-                    }
+                        "canid": 8
+                    },
+                    "in_speed": 1,
+                    "out_slow": 0.3,
+                    "out_fast": -1,
+                    "stopped": 0
                 }
             }
         },
@@ -226,7 +228,8 @@
         },
         "targettracker" : {
             "camera_offset_angle" : -1.5,
-            "lost_count" : 10
+            "lost_count" : 10,
+            "track_method" : "vf"
         },
         "climber": {
             "hw":{
@@ -357,9 +360,9 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 1,
-        "power": 0.1,
-        "duration": 20.0,
+        "which": 10,
+        "power": 0.5,
+        "duration": 5.0,
         "distance": 0.0,
         "name": "Test_Straight"
     }

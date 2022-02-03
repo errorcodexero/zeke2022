@@ -8,15 +8,19 @@ import org.xero1425.misc.MissingParameterException;
 
 public class ZekeIntakeOffAction extends Action {
     private ZekeIntakeSubsystem subsystem_;
-    private double collector_motor_a_power_;
-    private double collector_motor_b_power_;
+    private double in_speed_;
+    private double out_slow_;
+    private double out_fast_;
+    private double stopped_;
 
     public ZekeIntakeOffAction(ZekeIntakeSubsystem subsystem) throws BadParameterTypeException, MissingParameterException {
         super(subsystem.getRobot().getMessageLogger());
         subsystem_ = subsystem;
-        collector_motor_a_power_ = subsystem_.getSettingsValue("hw:collector:motor-a:power").getDouble();
-        collector_motor_b_power_ = subsystem_.getSettingsValue("hw:collector:motor-b:power").getDouble();
 
+        in_speed_ = subsystem_.getSettingsValue("hw:collector:in_speed").getDouble();
+        out_slow_ = subsystem_.getSettingsValue("hw:collector:out_slow").getDouble();
+        out_fast_ = subsystem_.getSettingsValue("hw:collector:out_fast").getDouble();
+        stopped_ = subsystem_.getSettingsValue("hw:collector:stopped").getDouble();
         
     }
 
@@ -32,9 +36,9 @@ public class ZekeIntakeOffAction extends Action {
         logger.endMessage();
 
         if (!isDone())
-            subsystem_.setCollectorPower(collector_motor_a_power_,collector_motor_b_power_);
+            subsystem_.setCollectorPower(in_speed_,in_speed_);
         else
-            subsystem_.setCollectorPower(0.0, 0.0);
+            subsystem_.setCollectorPower(stopped_, stopped_);
             subsystem_.retractIntake();
     }
 
@@ -50,7 +54,7 @@ public class ZekeIntakeOffAction extends Action {
         logger.endMessage();
 
         if (isDone())
-            subsystem_.setCollectorPower(0.0,0.0);
+            subsystem_.setCollectorPower(stopped_,stopped_);
             subsystem_.retractIntake();
     }
 
@@ -66,7 +70,7 @@ public class ZekeIntakeOffAction extends Action {
         logger.endMessage();
 
         try {
-            subsystem_.setCollectorPower(0.0,0.0) ;
+            subsystem_.setCollectorPower(stopped_,stopped_) ;
             subsystem_.retractIntake();
         }
         catch(Exception ex) {

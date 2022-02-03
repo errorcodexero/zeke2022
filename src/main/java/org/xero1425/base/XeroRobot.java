@@ -231,10 +231,10 @@ public abstract class XeroRobot extends TimedRobot {
         }
         
         try {
-            if (v.getString() == "CTREPCM") {
+            if (v.getString().equals("CTREPCM")) {
                 type = PneumaticsModuleType.CTREPCM ;
             }
-            else if (v.getString() == "REVPH") {
+            else if (v.getString().equals("REVPH")) {
                 type = PneumaticsModuleType.REVPH ;
             }
             else {
