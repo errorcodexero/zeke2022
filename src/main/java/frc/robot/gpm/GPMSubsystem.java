@@ -3,6 +3,7 @@ package frc.robot.gpm;
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
+import frc.robot.conveyor.ConveyorSubsystem;
 import frc.robot.intake.ZekeIntakeSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.zeke_color_sensor.ZekeColorSensor;
@@ -13,6 +14,8 @@ public class GPMSubsystem extends Subsystem {
 
     // add the conveyor and shooter as they get created...
     private ZekeIntakeSubsystem intake_ ;
+    private ZekeColorSensor color_sensor_ ;
+    private ConveyorSubsystem conveyor_ ;
     private ShooterSubsystem shooter_ ;
 
     public GPMSubsystem(Subsystem parent, TankDriveSubsystem db, ZekeColorSensor color) throws Exception {
@@ -20,6 +23,13 @@ public class GPMSubsystem extends Subsystem {
 
         intake_ = new ZekeIntakeSubsystem(this, color) ;
         addChild(intake_) ;
+
+        // // properly declare color sensor!
+        // color_sensor_ = new ZekeColorSensor(this, new I2C.Port) ;
+        // addChild(color_sensor_) ;
+
+        conveyor_ = new ConveyorSubsystem(this) ;
+        addChild(conveyor_) ;
         
         shooter_ = new ShooterSubsystem(this);
         addChild(shooter_);
@@ -27,6 +37,10 @@ public class GPMSubsystem extends Subsystem {
 
     public ZekeIntakeSubsystem getIntake() {
         return intake_ ;
+    }
+
+    public ConveyorSubsystem getConveyor() {
+        return conveyor_ ;
     }
 
     public ShooterSubsystem getShooter() {
