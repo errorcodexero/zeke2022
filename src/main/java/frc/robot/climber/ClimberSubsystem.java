@@ -59,7 +59,6 @@ public class ClimberSubsystem extends Subsystem {
 
     public ClimberSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
-        int index ;
 
         windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
 
@@ -67,7 +66,16 @@ public class ClimberSubsystem extends Subsystem {
         clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;
         clamp_a_right_ = new XeroDoubleSolenoid(this, "clamp_a_right") ;
         clamp_b_right_ = new XeroDoubleSolenoid(this, "clamp_b_right") ;
-       
+
+        double doublyindex ;
+        doublyindex = getSettingsValue("hw:windmill:windmill_power_forwards").getDouble() ;
+        windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
+        doublyindex = getSettingsValue("hw:windmill:windmill_power_backwards").getDouble() ;
+        windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
+        doublyindex = getSettingsValue("hw:windmill:windmill_power_off").getDouble() ;
+        windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
+
+        int index ;
         index = getSettingsValue("hw:touchsensors:mid_left").getInteger() ;
         mid_left_ = new DigitalInput(index) ;
         index = getSettingsValue("hw:touchsensors:mid_right").getInteger() ;

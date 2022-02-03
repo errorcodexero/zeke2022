@@ -275,12 +275,15 @@
                     "high_right" : 7,
                     "traversal_left" : 8,
                     "traversal_right" : 9
+                },
+                "windmill" : {
+                    "windmill_power_forwards" : 0.7,
+                    "windmill_power_backwards" : -0.7,
+                    "windmill_power_off" : 0.0
                 }
             },
             "climbaction" : {
                 "drive_action_power" : 0.2,
-                "first_windmill_power" : 0.7,
-                "second_windmill_power" : 0.7,
                 "first_clamp_wait" : 0.5,
                 "second_clamp_wait" : 0.5,
                 "first_align_wait" : 0.5,

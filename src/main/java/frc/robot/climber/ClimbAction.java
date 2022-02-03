@@ -283,11 +283,6 @@ public class ClimbAction extends Action {
         if (sub_.getRobot().getTime() - state_start_time_ > first_unclamp_wait_) {
             sub_.setWindmill(SetWindmillTo.FORWARDS);
         }
-        if (sub_.isTraversalLeftTouched() || sub_.isTraversalRightTouched()) {
-            
-            state_start_time_ = sub_.getRobot().getTime() ;
-            state_ = ClimbingStates.WINDMILL_TWO ;
-        }
     }
 
     // doWindmillTwo() - handles the WINDMILL_TWO state
