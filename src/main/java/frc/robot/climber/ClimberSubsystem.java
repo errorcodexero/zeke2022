@@ -5,7 +5,6 @@ import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.motorsubsystem.MotorEncoderPowerAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
-import org.xero1425.base.motorsubsystem.MotorPowerAction;
 import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -15,7 +14,7 @@ public class ClimberSubsystem extends Subsystem {
     
     public static final String SubsystemName = "climber" ;
 
-    // 2 "windmills" whcih spin like windmills. 
+    // 2 "windmills" which spin like windmills. 
     // 1 on left side of robot and 1 on right side 
     private MotorEncoderSubsystem windmill_ ;
 
@@ -39,6 +38,11 @@ public class ClimberSubsystem extends Subsystem {
     private DigitalInput high_right_ ;
     private DigitalInput traversal_left_ ;
     private DigitalInput traversal_right_ ;
+    
+    // perhaps rename these as "A to B" and "B to A"
+    private MotorEncoderPowerAction windmill_power_forwards_; 
+    private MotorEncoderPowerAction windmill_power_backwards_; 
+    private MotorEncoderPowerAction windmill_power_off_; 
 
     public static enum ChangeClampTo {
         OPEN, 
@@ -52,16 +56,6 @@ public class ClimberSubsystem extends Subsystem {
         OFF,
         UNKNOWN
     }
-
-    private ChangeClampTo changeClampA = ChangeClampTo.UNKNOWN ;
-    private ChangeClampTo changeClampB = ChangeClampTo.UNKNOWN ;
-
-    // perhaps rename these as "A to B" and "B to A"
-    private MotorEncoderPowerAction windmill_power_forwards_; 
-    private MotorEncoderPowerAction windmill_power_backwards_; 
-    private MotorEncoderPowerAction windmill_power_off_; 
-
-    private SetWindmillTo windmill_power_ ;
 
     public ClimberSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
@@ -118,7 +112,6 @@ public class ClimberSubsystem extends Subsystem {
             default:
                 windmill_.setAction(windmill_power_off_);
                 break ;
-
         }
     }
 
@@ -136,11 +129,11 @@ public class ClimberSubsystem extends Subsystem {
     }
     public void setClampB(ChangeClampTo ChangeClampB) {
         if (ChangeClampB == ChangeClampTo.CLOSED) {
-            clamp_a_left_.set(GripperCloseState);
-            clamp_a_right_.set(GripperCloseState);
+            clamp_b_left_.set(GripperCloseState);
+            clamp_b_right_.set(GripperCloseState);
         } else if (ChangeClampB == ChangeClampTo.OPEN) {
-            clamp_a_left_.set(GripperOpenState);
-            clamp_a_right_.set(GripperCloseState);
+            clamp_b_left_.set(GripperOpenState);
+            clamp_b_right_.set(GripperCloseState);
         }
     }
  

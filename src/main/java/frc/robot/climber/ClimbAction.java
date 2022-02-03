@@ -23,10 +23,6 @@ public class ClimbAction extends Action {
 
     private double drive_action_power_ ;
 
-    // powers to windmills
-    private double first_windmill_power_ ;
-    private double second_windmill_power_ ;
-
     // timer to judge following delays off of
     private double state_start_time_ ;
 
@@ -36,10 +32,8 @@ public class ClimbAction extends Action {
     // align = for hooking/aligning the next clamper on the "opposite" end of the windmill
     // swing = for the robot to swing a bit after un-clamping so the next clamp doesn't have too much tension in it
     private double first_clamp_wait_ ;
-    private double first_align_wait_ ;
     private double first_swing_wait_ ;
     private double second_clamp_wait_ ;
-    private double second_align_wait_ ;
     private double second_swing_wait_ ;
 
     
@@ -68,15 +62,9 @@ public class ClimbAction extends Action {
         right_wheel_ = new TankDrivePowerAction(db_, 0.0, drive_action_power_) ;
         stop_db_ = new TankDrivePowerAction(db_, 0.0, 0.0) ;
 
-
-        first_windmill_power_ = sub.getSettingsValue("climbaction:first_windmill_power").getDouble() ;
-        second_windmill_power_ = sub.getSettingsValue("climbaction:second_windmill_power").getDouble() ;
-
         first_clamp_wait_ = sub.getSettingsValue("climbaction:first_clamp_wait").getDouble() ;
-        first_align_wait_ = sub.getSettingsValue("climbaction:first_align_wait").getDouble() ;
         first_swing_wait_ = sub.getSettingsValue("climbaction:first_swing_wait").getDouble() ;
         second_clamp_wait_ = sub.getSettingsValue("climbaction:second_clamp_wait").getDouble() ;
-        second_align_wait_ = sub.getSettingsValue("climbaction:second_align_wait").getDouble() ;
         second_swing_wait_ = sub.getSettingsValue("climbaction:second_swing_wait").getDouble() ;
     }
 
