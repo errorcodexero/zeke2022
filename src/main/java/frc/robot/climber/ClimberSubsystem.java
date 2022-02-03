@@ -15,7 +15,8 @@ public class ClimberSubsystem extends Subsystem {
     public static final String SubsystemName = "climber" ;
 
     // 2 "windmills" which spin like windmills. 
-    // 1 on left side of robot and 1 on right side 
+    // 1 on left side of robot and 1 on right side
+    // they follow each other so only one motorencoder subsystem is defined here
     private MotorEncoderSubsystem windmill_ ;
 
     // 4 double-solenoids
