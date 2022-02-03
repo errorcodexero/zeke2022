@@ -6,8 +6,6 @@ import org.xero1425.base.motors.MotorController;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.pneumatics.XeroSolenoid;
 import org.xero1425.misc.SettingsValue;
-import org.xero1425.misc.SettingsValue.SettingsType;
-
 import frc.robot.zeke_color_sensor.ZekeColorSensor;
 import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;;
 
@@ -18,26 +16,14 @@ public class ZekeIntakeSubsystem extends Subsystem {
   private MotorController collector_right_;
   private XeroSolenoid solenoid_;
   private ZekeColorSensor color_sensor_;
-  public int motor_left_state_count_;
-  public int motor_right_state_count_;
-  public MovementState motor_left_state_;
-  public MovementState motor_right_state_;
   private double left_motor_power_;
   private double right_motor_power_;
+  private CargoType left_intake_color_;
+  private CargoType right_intake_color_;
+  private int left_count_;
+  private int right_count_;
 
-  public enum MotorSpeed {
-    IN,
-    OUTSLOW,
-    OUTFAST,
-    STOPPED
-  }
-
-  public enum MovementState {
-    STOPPED,
-    CONVEYOR,
-    EJECT,
-    UNBLOCK
-  }
+  
 
   public ZekeIntakeSubsystem(Subsystem parent, ZekeColorSensor sensor) throws Exception {
     super(parent, SubsystemName);
@@ -49,17 +35,38 @@ public class ZekeIntakeSubsystem extends Subsystem {
 
     solenoid_ = new XeroSolenoid(this, "deploy");
     color_sensor_ = sensor ;
-    motor_left_state_count_ = 0;
-    motor_right_state_count_= 0;
+    left_intake_color_ = CargoType.None;
+    right_intake_color_ = CargoType.None;
+    left_count_ = 0;
+    right_count_ = 0;
     
   }
 
-  public void setCollectorPower(double pa, double pb)
-      throws BadMotorRequestException, MotorRequestFailedException {
-    collector_left_.set(pa);
-    collector_right_.set(pb);
-    left_motor_power_ = pa;
-    right_motor_power_ = pb;
+  public void setLeftCollectorPower(double power) throws BadMotorRequestException, MotorRequestFailedException {
+    collector_left_.set(power);
+    left_motor_power_= power;
+  }
+  public void setRightCollectorPower(double power) throws BadMotorRequestException, MotorRequestFailedException {
+    collector_right_.set(power);
+    right_motor_power_ = power;
+  }
+
+  @Override
+  public void computeMyState() {
+    CargoType left = color_sensor_.getCargoType(color_sensor_.getIntakeLeftIndex()); 
+    CargoType right = color_sensor_.getCargoType(color_sensor_.getIntakeRightIndex()); 
+    if (right == right_intake_color_) {
+      right_count_++;
+    } else {
+      right_intake_color_ = left;
+      right_count_ = 1;
+    }
+    if (left == left_intake_color_) {
+      left_count_++;
+    } else {
+      left_intake_color_ = left;
+      left_count_ = 1;
+    }
   }
 
   
@@ -70,18 +77,18 @@ public class ZekeIntakeSubsystem extends Subsystem {
     solenoid_.set(false);
   }
 
-  public CargoType getLeftBallColor() { return color_sensor_.getCargoType(color_sensor_.getIntakeLeftIndex()); }
-  public CargoType getRightBallColor() { return color_sensor_.getCargoType(color_sensor_.getIntakeRightIndex()); }
+  public CargoType getLeftBallColor() { 
+    return left_intake_color_;
+  }
+  public CargoType getRightBallColor() {
+     return right_intake_color_;
+  }
 
   public int getLeftCount() {
-    return motor_left_state_count_;
-
+    return left_count_;
   }
   public int getRightCount() {
-    return motor_right_state_count_;
-  }
-  public boolean isIntakeBlocked() {
-    return motor_left_state_ == MovementState.STOPPED && motor_right_state_ == MovementState.STOPPED;
+    return right_count_;
   }
 
   @Override

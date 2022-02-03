@@ -1,12 +1,9 @@
 package frc.robot.intake;
 
 import org.xero1425.base.actions.Action;
-import org.xero1425.base.motors.BadMotorRequestException;
-import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 
-import frc.robot.intake.ZekeIntakeSubsystem.MovementState;
 import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;;
 
 public class ZekeIntakeOnAction extends Action {
@@ -14,129 +11,96 @@ public class ZekeIntakeOnAction extends Action {
     private double in_speed_;
     private double out_slow_;
     private double out_fast_;
-    private double stopped_;
-    
+    private double motor_left_begin_time_;
+    private double motor_right_begin_time_;
+    private int blocked_count_;
+    private double eject_duration_;
+    private double blocked_duration_;
+    private double left_move_duration_;
+    private MovementState motor_left_state_;
+    private MovementState motor_right_state_;
+
+    private enum MovementState {
+        STOPPED,
+        CONVEYOR,
+        EJECT,
+        UNBLOCK
+    }
+
     public ZekeIntakeOnAction(ZekeIntakeSubsystem subsystem)
             throws BadParameterTypeException, MissingParameterException {
         super(subsystem.getRobot().getMessageLogger());
         subsystem_ = subsystem;
-        in_speed_ = subsystem_.getSettingsValue("hw:collector:in_speed").getDouble();
-        out_slow_ = subsystem_.getSettingsValue("hw:collector:out_slow").getDouble();
-        out_fast_ = subsystem_.getSettingsValue("hw:collector:out_fast").getDouble();
-        stopped_ = subsystem_.getSettingsValue("hw:collector:stopped").getDouble();
+        in_speed_ = subsystem_.getSettingsValue("intake-on:in_speed").getDouble();
+        out_slow_ = subsystem_.getSettingsValue("intake-on:out_slow").getDouble();
+        out_fast_ = subsystem_.getSettingsValue("intake-on:out_fast").getDouble();
+        blocked_count_ = subsystem_.getSettingsValue("intake-on:blocked_count").getInteger();
+        blocked_duration_ = subsystem_.getSettingsValue("intake-on:blocked_duration").getDouble();
+        left_move_duration_ = subsystem_.getSettingsValue("intake-on:move_left_duration").getDouble();
+        eject_duration_ = subsystem_.getSettingsValue("intake-on:eject_duration").getInteger();
 
-    }
-
-    private void clearIntake()
-            throws BadParameterTypeException, MissingParameterException,
-            BadMotorRequestException, MotorRequestFailedException,
-            InterruptedException {
-        double collector_motor_left_power_ = subsystem_.getSettingsValue("hw:collector:motor-left:power").getDouble();
-        double collector_motor_right_power_ = subsystem_.getSettingsValue("hw:collector:motor-right:power").getDouble();
-
-        if (!subsystem_.isIntakeBlocked()) {
-            subsystem_.setCollectorPower(collector_motor_left_power_, collector_motor_right_power_);
-            return;
-        }
-
-        if (subsystem_.getRightBallColor() == CargoType.Opposite &&
-                subsystem_.getLeftBallColor() == CargoType.Opposite) {
-            subsystem_.setCollectorPower(-collector_motor_left_power_, -collector_motor_right_power_);
-        }
-
-        if (subsystem_.getLeftBallColor() == CargoType.Opposite &&
-                subsystem_.getRightBallColor() == CargoType.Opposite) {
-            subsystem_.setCollectorPower(collector_motor_left_power_, -collector_motor_right_power_);
-        }
-
-        if (subsystem_.getLeftBallColor() == CargoType.Opposite &&
-                subsystem_.getRightBallColor() == CargoType.Same) {
-            subsystem_.setCollectorPower(-collector_motor_left_power_, collector_motor_right_power_);
-        }
-        if (subsystem_.getLeftBallColor() == CargoType.Opposite &&
-                subsystem_.getRightBallColor() == CargoType.None) {
-            subsystem_.setCollectorPower(-collector_motor_left_power_, collector_motor_right_power_);
-        }
-
-        if (subsystem_.getLeftBallColor() == CargoType.None &&
-                subsystem_.getRightBallColor() == CargoType.Opposite) {
-            subsystem_.setCollectorPower(collector_motor_left_power_, -collector_motor_right_power_);
-        }
-
-        if (subsystem_.getLeftBallColor() == CargoType.Same &&
-                subsystem_.getRightBallColor() == CargoType.Same) {
-            subsystem_.setCollectorPower(-0.1, collector_motor_right_power_);
-            subsystem_.getRobot().wait(15L);
-            subsystem_.setCollectorPower(collector_motor_left_power_, collector_motor_right_power_);
-        }
     }
 
     @Override
     public void start() throws Exception {
         super.start();
         subsystem_.deployIntake();
-        subsystem_.setCollectorPower(in_speed_, in_speed_);
-        subsystem_.motor_left_state_ = MovementState.CONVEYOR;
-        subsystem_.motor_right_state_ = MovementState.CONVEYOR;
+        subsystem_.setLeftCollectorPower(in_speed_);
+        subsystem_.setRightCollectorPower(in_speed_);
+        motor_left_state_ = MovementState.CONVEYOR;
+        motor_right_state_ = MovementState.CONVEYOR;
     }
 
     @Override
     public void run() throws Exception {
         super.run();
+        subsystem_.computeMyState();
 
         CargoType left_color_ = subsystem_.getLeftBallColor();
         CargoType right_color_ = subsystem_.getRightBallColor();
-        if (left_color_ == CargoType.Opposite) {
-            subsystem_.motor_left_state_ = MovementState.EJECT;
-            subsystem_.setCollectorPower(out_fast_, in_speed_);
-        }
 
-        if (!subsystem_.isIntakeBlocked()) {
-            subsystem_.setCollectorPower(in_speed_, in_speed_);
-        }
+        if (left_color_ == CargoType.Same && right_color_ == CargoType.Same
+                && subsystem_.getLeftCount() >= blocked_count_ && subsystem_.getRightCount() >= blocked_count_
+                && motor_left_state_ == MovementState.CONVEYOR && motor_right_state_ == MovementState.CONVEYOR) {
+            motor_left_state_ = MovementState.UNBLOCK;
+            motor_right_state_ = MovementState.UNBLOCK;
+            motor_left_begin_time_ = subsystem_.getRobot().getTime();
+            motor_right_begin_time_ = subsystem_.getRobot().getTime();
 
-        if (subsystem_.getRightBallColor() == CargoType.Opposite &&
-                subsystem_.getLeftBallColor() == CargoType.Opposite) {
-            subsystem_.setCollectorPower(out_fast_, out_fast_);
-        }
+            subsystem_.setLeftCollectorPower(out_slow_);
 
-        if (subsystem_.getLeftBallColor() == CargoType.Same &&
-                subsystem_.getRightBallColor() == CargoType.Opposite) {
-            subsystem_.setCollectorPower(in_speed_, out_fast_);
-        }
+        } else if (motor_left_state_ == MovementState.UNBLOCK && motor_right_state_ == MovementState.UNBLOCK) {
+            if (subsystem_.getRobot().getTime() - motor_right_begin_time_ > blocked_duration_
+                    && subsystem_.getRightBallColor() != CargoType.Same) {
+                double t = subsystem_.getRobot().getTime();
+                motor_right_state_ = MovementState.CONVEYOR;
+                motor_left_state_ = MovementState.CONVEYOR;
+                subsystem_.setLeftCollectorPower(in_speed_);
+            } else if (subsystem_.getRobot().getTime() - motor_left_begin_time_ > left_move_duration_) {
+                subsystem_.setLeftCollectorPower(0);
+            }
+        } else {
+            if (motor_left_state_ == MovementState.CONVEYOR && subsystem_.getLeftBallColor() == CargoType.Opposite) {
+                motor_left_state_ = MovementState.EJECT;
+                subsystem_.setLeftCollectorPower(out_fast_);
+                motor_left_begin_time_ = subsystem_.getRobot().getTime();
+            } else if (motor_left_state_ == MovementState.EJECT
+                    && subsystem_.getRobot().getTime() - motor_left_begin_time_ > eject_duration_
+                    && subsystem_.getLeftBallColor() != CargoType.Opposite) {
+                motor_left_state_ = MovementState.CONVEYOR;
+                subsystem_.setLeftCollectorPower(in_speed_);
+            }
+            if (motor_right_state_ == MovementState.CONVEYOR && subsystem_.getRightBallColor() == CargoType.Opposite) {
+                motor_right_state_ = MovementState.EJECT;
+                subsystem_.setRightCollectorPower(out_fast_);
+                motor_right_begin_time_ = subsystem_.getRobot().getTime();
+            } else if (motor_right_state_ == MovementState.EJECT
+                    && subsystem_.getRobot().getTime() - motor_right_begin_time_ > eject_duration_
+                    && subsystem_.getLeftBallColor() != CargoType.Opposite) {
+                motor_left_state_ = MovementState.CONVEYOR;
+                subsystem_.setRightCollectorPower(in_speed_);
+            }
 
-        if (subsystem_.getLeftBallColor() == CargoType.Opposite &&
-                subsystem_.getRightBallColor() == CargoType.Same) {
-            subsystem_.setCollectorPower(out_fast_, in_speed_);
-        }
-        if (subsystem_.getLeftBallColor() == CargoType.Opposite &&
-                subsystem_.getRightBallColor() == CargoType.None) {
-            subsystem_.setCollectorPower(out_fast_, in_speed_);
-        }
-
-        if (subsystem_.getLeftBallColor() == CargoType.None &&
-                subsystem_.getRightBallColor() == CargoType.Opposite) {
-            subsystem_.setCollectorPower(in_speed_, out_fast_);
-        }
-
-        if (subsystem_.isIntakeBlocked()) {
-                    int motor_left_state_count_ = subsystem_.motor_left_state_count_;
-                    int motor_right_state_count_ = subsystem_.motor_right_state_count_;
-                    if (motor_left_state_count_ >= 10 && motor_right_state_count_ >= 10) {
-                        subsystem_.motor_left_state_ = MovementState.UNBLOCK;
-                        subsystem_.motor_right_state_ = MovementState.UNBLOCK;
-                        subsystem_.setCollectorPower(out_slow_, in_speed_);
-                        while (subsystem_.getRightBallColor() != CargoType.None) {}
-                        subsystem_.setCollectorPower(in_speed_, in_speed_);
-                        subsystem_.motor_left_state_ = MovementState.CONVEYOR;
-                        subsystem_.motor_right_state_ = MovementState.CONVEYOR;
-                        subsystem_.motor_left_state_count_ = 0;
-                        subsystem_.motor_right_state_count_ = 0;
-                    }
-                    subsystem_.motor_left_state_ = MovementState.STOPPED;
-                    subsystem_.motor_right_state_ = MovementState.STOPPED;
-                    subsystem_.motor_right_state_count_++;
-                    subsystem_.motor_left_state_count_++;
         }
 
     }
@@ -146,10 +110,9 @@ public class ZekeIntakeOnAction extends Action {
         super.cancel();
 
         try {
-            subsystem_.retractIntake();
-            subsystem_.setCollectorPower(0.0, 0.0);
-        } catch (Exception ex) {
-        }
+            subsystem_.setRightCollectorPower(0);
+            subsystem_.setLeftCollectorPower(0);
+        } catch(Exception ignored) {}
     }
 
     @Override

@@ -1,7 +1,5 @@
 package frc.robot.shooter;
 
-import com.fasterxml.jackson.core.sym.Name;
-
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;

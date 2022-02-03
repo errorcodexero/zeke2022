@@ -124,6 +124,15 @@
             }
         },
         "intake": {
+            "intake-on": {
+                "in_speed": 1,
+                "out_slow": -0.2,
+                "out_fast": -1,
+                "blocked_count": 10,
+                "blocked_duration": 3,
+                "move_left_duration": 3,
+                "eject_duration":3
+            },
             "hw":{
                 "solenoids" : {
                     "deploy" : 1
