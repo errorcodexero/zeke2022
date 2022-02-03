@@ -7,10 +7,10 @@
             "xerorobot": false,
             "pathfollowing": false,
             "zeke_limelight": false,
-            "climber" : true,
-            "zeke-color-sensor" : false,
+            "climber" : false,
+            "zeke-color-sensor" : true,
             "intake" : true,
-            "climber-model" : true
+            "climber-model" : false
         },
         "verbose": {
             "tankdrive": false
@@ -131,9 +131,9 @@
                 "out_slow": -0.2,
                 "out_fast": -1,
                 "blocked_count": 10,
-                "blocked_duration": 3,
-                "move_left_duration": 3,
-                "eject_duration":3
+                "blocked_duration": 0.5,
+                "move_left_duration": 0.2,
+                "eject_duration": 0.3
             },
             "hw":{
                 "solenoids" : {

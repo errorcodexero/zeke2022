@@ -2,6 +2,8 @@ package frc.robot.intake;
 
 import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
 import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;;
@@ -37,7 +39,9 @@ public class ZekeIntakeOnAction extends Action {
         blocked_count_ = subsystem_.getSettingsValue("intake-on:blocked_count").getInteger();
         blocked_duration_ = subsystem_.getSettingsValue("intake-on:blocked_duration").getDouble();
         left_move_duration_ = subsystem_.getSettingsValue("intake-on:move_left_duration").getDouble();
-        eject_duration_ = subsystem_.getSettingsValue("intake-on:eject_duration").getInteger();
+
+        // butch: changed this line from getInteger() to getDouble()
+        eject_duration_ = subsystem_.getSettingsValue("intake-on:eject_duration").getDouble();
 
     }
 
@@ -54,7 +58,13 @@ public class ZekeIntakeOnAction extends Action {
     @Override
     public void run() throws Exception {
         super.run();
-        subsystem_.computeMyState();
+
+        // Butch: added for debugging
+        MovementState prevleft = motor_left_state_ ;
+        MovementState prevright = motor_right_state_ ;
+
+        // Butch: This is called automatically from the framework.  You don't need this
+        // subsystem_.computeMyState();
 
         CargoType left_color_ = subsystem_.getLeftBallColor();
         CargoType right_color_ = subsystem_.getRightBallColor();
@@ -101,6 +111,22 @@ public class ZekeIntakeOnAction extends Action {
                 subsystem_.setRightCollectorPower(in_speed_);
             }
 
+        }
+
+        if (prevleft != motor_left_state_ || prevright != motor_right_state_) {
+            MessageLogger logger = subsystem_.getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Debug, subsystem_.getLoggerID()) ;
+            logger.add("ZekeIntakeOnAction:").add("time", subsystem_.getRobot().getTime()) ;
+            
+            if (prevleft != motor_left_state_) {
+                logger.add(" left ").add(prevleft.toString()).add(" --> ").add(motor_left_state_.toString()) ;
+            }
+
+            if (prevright != motor_right_state_) {
+                logger.add(" right ").add(prevright.toString()).add(" --> ").add(motor_right_state_.toString()) ;
+            }
+
+            logger.endMessage();
         }
 
     }

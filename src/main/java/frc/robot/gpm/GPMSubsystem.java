@@ -14,7 +14,6 @@ public class GPMSubsystem extends Subsystem {
 
     // add the conveyor and shooter as they get created...
     private ZekeIntakeSubsystem intake_ ;
-    private ZekeColorSensor color_sensor_ ;
     private ConveyorSubsystem conveyor_ ;
     private ShooterSubsystem shooter_ ;
 
@@ -24,12 +23,8 @@ public class GPMSubsystem extends Subsystem {
         intake_ = new ZekeIntakeSubsystem(this, color) ;
         addChild(intake_) ;
 
-        // // properly declare color sensor!
-        // color_sensor_ = new ZekeColorSensor(this, new I2C.Port) ;
-        // addChild(color_sensor_) ;
-
-        conveyor_ = new ConveyorSubsystem(this) ;
-        addChild(conveyor_) ;
+        // conveyor_ = new ConveyorSubsystem(this) ;
+        // addChild(conveyor_) ;
         
         shooter_ = new ShooterSubsystem(this);
         addChild(shooter_);

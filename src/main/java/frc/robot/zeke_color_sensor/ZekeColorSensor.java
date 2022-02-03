@@ -29,6 +29,9 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
     private int right_intake_ ;
     private int conveyor_ ;
 
+    private CargoType [] cargo_ ;
+    private CargoType [] prevcargo_ ;
+
     final private Alliance alliance_ ;
 
     public ZekeColorSensor(Subsystem parent, I2C.Port port) throws BadParameterTypeException, MissingParameterException {
@@ -61,6 +64,13 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         matcher_.addColorMatch(none_);
 
         alliance_ = DriverStation.getAlliance() ;
+
+        cargo_ = new CargoType[3] ;
+        prevcargo_ = new CargoType[3] ;
+        for(int i = 0 ; i < cargo_.length ; i++) {
+            cargo_[i] = CargoType.None ;
+            prevcargo_[i] = CargoType.None ;
+        }
     }
 
     public enum CargoType {
@@ -91,17 +101,35 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
     public void computeMyState() {
         super.computeMyState();
 
-        MessageLogger logger = getRobot().getMessageLogger() ;
-        logger.startMessage(MessageType.Debug, getLoggerID()) ;
-        logger.add("Cargo Color:") ;
+        boolean changed = false ;
+
         for (int i = 0 ; i < count() ; i++) {
-            CargoType cargo = getCargoType(i) ;
-            logger.add(" ").add(cargo.toString()) ;
+            prevcargo_[i] = cargo_[i] ;
+            cargo_[i] = getCargoTypeInt(i) ;
+            if (prevcargo_[i] != cargo_[i])
+                changed = true ;
         }
-        logger.endMessage();
+
+        if (changed) {
+            MessageLogger logger = getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Debug, getLoggerID()) ;
+            logger.add("ZekeColorSensor:") ;
+            for(int i = 0 ; i < cargo_.length ; i++) {
+                if (prevcargo_[i] != cargo_[i]) {
+                    logger.add(" ", i) ;
+                    logger.add(" ").add(prevcargo_[i].toString()).add(" --> ").add(cargo_[i].toString()) ;
+                }
+            }
+            logger.endMessage();
+        }
+
     }
 
     public CargoType getCargoType(int which) {
+        return cargo_[which] ;
+    }
+
+    private CargoType getCargoTypeInt(int which) {
         CargoType type = CargoType.None ;
 
         Color c = getColor(which) ;
