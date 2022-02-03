@@ -41,9 +41,9 @@ function initmacos()
 function initlinux()
 {
     echo "initialzing for linux"
-    JPATH="-Djava.library.path=build/tmp/jniExtractDir:/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"
-    export JAVA_HOME=~/wpilib/2021/jdk
-    export LD_LIBRARY_PATH=build/tmp/jniExtractDir:$LD_LIBRARY_PATH
+    JPATH="-Djava.library.path=build/jni/release:/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"
+    export JAVA_HOME=~/wpilib/2022/jdk
+    export LD_LIBRARY_PATH=build/jni/release:$LD_LIBRARY_PATH
 }
 
 function init()
