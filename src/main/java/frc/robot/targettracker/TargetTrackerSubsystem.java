@@ -5,10 +5,15 @@ import frc.robot.turret.TurretSubsystem;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.limelight.LimeLightSubsystem.LedMode;
+import org.xero1425.base.utils.TargetTracker;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose2d;
+
 
 //
 // The purpose of the tracker class is to generate two things.  It generates
@@ -24,8 +29,9 @@ public class TargetTrackerSubsystem extends Subsystem {
     private double distance_ ;
     private int lost_count_ ;
     private int max_lost_count_ ;
-    boolean has_target_ ;
-    TrackMethod track_method_ ;
+    private boolean has_target_ ;
+    private TrackMethod track_method_ ;
+    private TargetTracker field_target_tracker_ ;
 
     private double camera_offset_angle_ ;
 
@@ -40,7 +46,7 @@ public class TargetTrackerSubsystem extends Subsystem {
     } ;
 
     public TargetTrackerSubsystem(Subsystem parent, ZekeLimeLightSubsystem ll, TurretSubsystem turret)
-            throws BadParameterTypeException, MissingParameterException {
+            throws BadParameterTypeException, MissingParameterException, Exception {
 
         super(parent, SubsystemName);
 
@@ -50,6 +56,9 @@ public class TargetTrackerSubsystem extends Subsystem {
         desired_turret_angle_ = 0.0 ;
         lost_count_ = 0 ;
         has_target_ = false;
+
+        Translation2d target_coordinates = new Translation2d(27*12, 13.5*12) ;
+        field_target_tracker_ = new TargetTracker(target_coordinates) ;
         
         //
         // Camera offset angle is determined empirically and deals with any angular offset in the
@@ -75,7 +84,11 @@ public class TargetTrackerSubsystem extends Subsystem {
         } else if (method.equals("f")) {
             track_method_ = TrackMethod.FieldPositionOnly;
         } else {
-           // TODO: Add error
+            MessageLogger logger = getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Error) ;
+            logger.add("paramater ").addQuoted("track_method").add(" has invalid value. Setting to vf.") ;
+            logger.endMessage() ;
+            track_method_ = TrackMethod.VisionOrFieldPosition;
         }
 
         //
@@ -115,7 +128,7 @@ public class TargetTrackerSubsystem extends Subsystem {
 
         if (enabled_)
         {
-            if (ll_.isTargetDetected())
+            if (ll_.isTargetDetected() && (track_method_ != TrackMethod.FieldPositionOnly))
             {
                 distance_ = ll_.getDistance() ;
                
@@ -130,7 +143,19 @@ public class TargetTrackerSubsystem extends Subsystem {
                 has_target_ = true ;
                 lost_count_ = 0 ;
             }
-            else
+            else if (track_method_ != TrackMethod.VisionOnly) 
+            {
+                // Use field position
+                Pose2d robot_pose = getRobot().getRobotSubsystem().getDB().getPose() ;
+                double target_angle = field_target_tracker_.getRelativeTargetAngle(robot_pose) ;
+                double safe_target_angle = turret_.limitAngleToSafeRange(target_angle) ;
+                desired_turret_angle_ = safe_target_angle ;
+
+                // TODO: Add debug information to logger
+            }
+
+            // Using track method that allows vision, but target is not detected
+            if (!ll_.isTargetDetected() && (track_method_ != TrackMethod.FieldPositionOnly))
             {
                 lost_count_++ ;
                 

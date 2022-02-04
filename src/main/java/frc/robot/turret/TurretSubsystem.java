@@ -27,6 +27,17 @@ public class TurretSubsystem extends MotorEncoderSubsystem {
         return max_safe_angle_ ;
     }
 
+    public double limitAngleToSafeRange(double angle) {
+        if (angle < getMinSafeAngle()) {
+            return getMinSafeAngle() ;
+        }
+        else if (angle > getMaxSafeAngle()) {
+            return getMaxSafeAngle() ;
+        } else {
+            return angle;
+        }
+    }
+
     public boolean isReadyToFire() {
         return is_ready_to_fire_ ;
     }
