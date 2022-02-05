@@ -23,41 +23,29 @@
                     "instance" : "1",
                     "values" :
                     {
-                        "comment" : "Collect/shoot mode switch set to collect",                        
-                        "button11" : false
+                        "comment" : "Collect/shoot mode switch set to shoot",                        
+                        "button11" : true
                     }
-                }                
-            ]
-        },
-        {
-            "time" : 3.0,
-            "events" :
-            [
+                },
                 {
-                    "model" : "zekeoi",
+                    "model" : "turret",
                     "instance" : "1",
                     "values" : 
                     {
-                        "comment" : "Collect button pressed",
-                        "button14" : true
+                        "comment" : "start the turret facing the target",
+                        "angle" : 60.0
+                    }
+                },   
+                {
+                    "model" : "tankdrive",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "xpos" : 162.0,
+                        "ypos" : 162.0,
+                        "angle" : 180.0
                     }
                 }
-            ]
-        },
-        {
-            "time" : 3.1,
-            "asserts" : 
-            [
-                {
-                    "subsystem" : "intake",
-                    "property" : "left-power",
-                    "value" : 1.0
-                },
-                {
-                    "subsystem" : "intake",
-                    "property" : "right-power",
-                    "value" : 1.0
-                }                
             ]
         }
     ]

@@ -76,18 +76,18 @@ public class SimulationAssertEvent extends SimulationEvent {
                 if (!pass) {
                     logger.startMessage(MessageType.Error);
                     logger.add("AssertFailed: ");
-                    logger.add("subsystem", subsystem_);
-                    logger.add(" property ", name_);
-                    logger.add(" expected ").addQuoted(value.toString());
-                    logger.add(" got ").addQuoted(v.toString());
+                    logger.add("subsystem").addQuoted(subsystem_) ;
+                    logger.add(", property ").addQuoted(name_) ;
+                    logger.add(", expected ").addQuoted(value.toString());
+                    logger.add(", got ").addQuoted(v.toString());
                     logger.endMessage();
                     engine.addAssertError();
                 } else {
                     logger.startMessage(MessageType.Info);
                     logger.add("AssertPassed: ");
                     logger.add("subsystem", subsystem_);
-                    logger.add(" property ", name_);
-                    logger.add(" value ").addQuoted(value.toString());
+                    logger.add(", property ").addQuoted(name_) ;
+                    logger.add(", value ").addQuoted(value.toString());
                     logger.endMessage();
                     engine.addAssertPassed();
                 }

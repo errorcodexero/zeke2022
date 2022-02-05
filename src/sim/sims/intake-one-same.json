@@ -10,18 +10,42 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "comment" : "automode must be set to the correct testmode in robot settings file",
-                        "start" : 1.0,
-                        "autonomous" : 5.0,
+                        "comment" : "Running simulation in teleop mode, OI is used to start operations",
+                        "start" : 0.1,
+                        "autonomous" : 0.0,
                         "between" : 0.0,
-                        "teleop" : 0.0,
+                        "teleop" : 5.0,
                         "fms" : false
+                    }
+                },
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
+                        "comment" : "Collect/shoot mode switch set to collect",                        
+                        "button11" : false
+                    }
+                }                
+            ]
+        },
+        {
+            "time" : 3.0,
+            "events" :
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Collect button pressed",
+                        "button14" : true
                     }
                 }
             ]
         },
         {
-            "time" : 3.0,
+            "time" : 3.1,
             "asserts" : 
             [
                 {
@@ -37,7 +61,7 @@
             ]
         },
         {
-            "time" : 3.1,
+            "time" : 3.2,
             "events" : 
             [
                 {
@@ -53,7 +77,7 @@
             ]
         },
         {
-            "time" : 3.2,
+            "time" : 3.3,
             "asserts" : 
             [
                 {
@@ -69,7 +93,7 @@
             ]
         },
         {
-            "time" : 3.3,
+            "time" : 3.4,
             "events" : 
             [
                 {
@@ -85,7 +109,7 @@
             ]
         },
         {
-            "time" : 3.8,
+            "time" : 3.5,
             "asserts" : 
             [
                 {

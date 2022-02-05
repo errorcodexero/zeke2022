@@ -54,6 +54,14 @@ public class ZekeSubsystem extends RobotSubsystem {
         addChild(climber_) ;
     }
 
+    public TurretSubsystem getTurret() {
+        return turret_ ;
+    }
+
+    public TargetTrackerSubsystem getTargetTracker() {
+        return tracker_ ;
+    }
+
     public TankDriveSubsystem getTankDrive() {
         return db_ ;
     }

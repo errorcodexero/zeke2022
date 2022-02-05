@@ -4,6 +4,7 @@ import org.xero1425.base.controllers.TestAutoMode;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import frc.robot.climber.ClimberSubsystem;
+import frc.robot.conveyor.ConveyorSubsystem;
 import frc.robot.intake.ZekeIntakeOnAction;
 import frc.robot.intake.ZekeIntakeSubsystem;
 import frc.robot.climber.ClimbAction ;

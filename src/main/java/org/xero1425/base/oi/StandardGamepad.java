@@ -36,7 +36,11 @@ public class StandardGamepad extends Gamepad {
     // The current right drivebase power
     private double right_ ;
 
+    // The deadband in the joysticks
     private double deadband_ ;
+
+    // The delta between the desired power and actual power before we update the drivebase
+    private double epslion_ ;
 
     /// \brief Create a new TankDrive gamepad device
     /// \param oi the subsystems that owns this device
@@ -53,9 +57,9 @@ public class StandardGamepad extends Gamepad {
     public void init(LoopType ltype) {
     }
 
-    public double getSum() {
-        return left_ + right_ ;
-    }
+    // public double getSum() {
+        // return left_ + right_ ;
+    // }
 
     public TankDriveSubsystem getDB() {
         return db_ ;
@@ -65,6 +69,7 @@ public class StandardGamepad extends Gamepad {
     @Override
     public void createStaticActions() throws BadParameterTypeException, MissingParameterException {
         deadband_ = getSubsystem().getSettingsValue(getName() + ":deadband").getDouble();
+        epslion_ = getSubsystem().getSettingsValue(getName() + ":epsilon").getDouble() ;
     }
 
     /// \brief generate the actions for the drivebase for the current robot loop
@@ -114,12 +119,14 @@ public class StandardGamepad extends Gamepad {
           rightSpeed /= maxMagnitude;
         }
 
-        TankDrivePowerAction act = new TankDrivePowerAction(db_, leftSpeed, rightSpeed) ;
-        try {
-            seq.addSubActionPair(db_, act, false);
-            left_ = leftSpeed ;
-            right_ = rightSpeed ;
-        } catch (InvalidActionRequest e) {
+        if (Math.abs(leftSpeed - left_) > epslion_ || Math.abs(rightSpeed - right_) > epslion_) {
+          TankDrivePowerAction act = new TankDrivePowerAction(db_, leftSpeed, rightSpeed) ;
+          try {
+              seq.addSubActionPair(db_, act, false);
+              left_ = leftSpeed ;
+              right_ = rightSpeed ;
+          } catch (InvalidActionRequest e) {
+          }
         }
     }
 }

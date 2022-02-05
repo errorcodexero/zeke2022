@@ -108,6 +108,60 @@
                 "povs": 1,
                 "create_early": true
             }
+        },
+        {
+            "model" : "zeke-limelight",
+            "instance" : "1",
+            "props" : {
+                "target_height" : 84.0,
+                "camera_height" : 16.0,
+                "camera_angle" : 20.08,
+                "limelight_model" : "limelight",
+                "limelight_instance" : "1",
+                "tankdrive_model" : "tankdrive",
+                "tankdrive_instance" : "1",
+                "turret_model" : "turret",
+                "turret_instance" : "1"
+            }
+        },
+        {
+            "model" : "turret",
+            "instance" : "1",
+            "props" : {
+                "turret:motor:type": "sparkmax-brushless",
+                "turret:motor:index": 11,
+                "degrees_per_second_per_volt" : 180,
+                "encoder" : 1,
+                "rmax" : 180.0,
+                "rmin" : -180.0,
+                "emax" : 0.0,
+                "emin" : 5.0,
+                "ec" : 1.33,
+                "rc" : 0                
+            }
+        },
+        {
+            "model" : "conveyor",
+            "instance" : "1",
+            "props" : {
+                "intake-sensor" : 1,
+                "chimney-sensor" : 2,
+                "shooter-sensor" : 3,
+                "exit-sensor" : 10
+            }
+        },
+        {
+            "model" : "zekeoi",
+            "instance" : "1",
+            "props" : {
+                "index" : 2,
+                "xbox" : false,
+                "name" : "Error Code Xero Custom OI",
+                "axes" : 8,
+                "buttons" : 16,
+                "povs" : 1,
+                "create_early" : true                
+            }
         }
     ]
 }

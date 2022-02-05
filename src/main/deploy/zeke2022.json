@@ -104,24 +104,17 @@
             },
             "standard_gamepad" : {
                 "index" : 0,
-                "deadband" : 0.05
+                "deadband" : 0.05,
+                "epsilon" : 0.05
             },
             "oi" : {
                 "index" : 2,
                 "gadgets" : {
                     "automode" : 0,
                     "shoot_collect_mode" : 11,
-                    "eject" : 8,
                     "collect_onoff" : 14, 
                     "climb_lock": 10,
-                    "climb_deploy": 5,
-                    "climb_secure": 8,
-                    "climb_up": 1,
-                    "climb_down": 2,
-                    "traverse_left": 3,
-                    "traverse_right": 4,
-                    "manual_shoot_mode": 9,
-                    "manual_shoot_fire": 7
+                    "climb": 5
                 }
             }
         },
@@ -157,10 +150,24 @@
         },
         "conveyor" : {
             "hw" : {
-                "motor" : {
-                    "type": "sparkmax_brushless",
-                    "canid": 5,
-                    "power":0.8                    
+                "collector" : {
+                    "horiz" : {
+                        "type": "sparkmax_brushless",
+                        "canid": 6
+                    },
+                    "vert" : {
+                        "type": "sparkmax_brushless",
+                        "canid": 5                        
+                    }
+                },
+                "solenoids" : {
+                    "exit" : 11
+                },
+                "sensors" : {
+                    "intake" : 1,
+                    "chimney" : 2,
+                    "shooter" : 3,
+                    "exit" : 10
                 }
             }
         },
@@ -298,7 +305,15 @@
                 "first_align_wait" : 0.5,
                 "second_align_wait" : 0.5,
                 "first_swing_wait" : 0.5,
-                "second_swing_wait" : 0.5
+                "second_swing_wait" : 0.5,
+                "first_unclamp_wait" : 0.2,
+                "second_unclamp_wait" : 0.2
+            }
+        },
+        "shooter" : {
+            "shooter-action" : {
+                "wheel-velocity-threshold" : 10,
+                "hood-position-threshold" : 10
             }
         },
         "shooter-w1" : {
@@ -310,7 +325,7 @@
                 },
                 "encoder" : { 
                     "type" : "motor",
-                    "m" : 1.94714,
+                    "m" : 0.0416666667,
                     "b" : 0.0
                 }
             }
@@ -324,7 +339,7 @@
                 },
                 "encoder" : { 
                     "type" : "motor",
-                    "m" : 1.94714,
+                    "m" : 0.0416666667,
                     "b" : 0.0
                 }                
             }
@@ -338,7 +353,7 @@
                 },
                 "encoder" : { 
                     "type" : "motor",
-                    "m" : 1.94714,
+                    "m" : 1,
                     "b" : 0.0
                 }                
             }

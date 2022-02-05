@@ -1,0 +1,226 @@
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Running simulation in teleop mode, OI is used to start operations",
+                        "start" : 0.1,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 5.0,
+                        "fms" : false
+                    }
+                },
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
+                        "comment" : "Collect/shoot mode switch set to collect",                        
+                        "button11" : false
+                    }
+                }                
+            ]
+        },
+        {
+            "time" : 1.0,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "intake" : false,
+                        "chimney" : false,
+                        "exit" : true,
+                        "shooter" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.0,
+            "events" :
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Collect button pressed",
+                        "button14" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.1,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }   
+            ]
+        },
+        {
+            "time" : 3.2,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "intake" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.3,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "intake" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.5,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "color-2" : "1.0, 0.0, 0.0",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.7,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "color-2" : "0.333, 0.333, 0.333",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.8,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : true
+                }  
+            ]
+        },
+        {
+            "time" : 3.9,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "exit" : false
+                    }
+                }
+            ]
+        }, 
+        {
+            "time" : 4.0,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "exit" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.1,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }                  
+            ]
+        }
+    ]
+}

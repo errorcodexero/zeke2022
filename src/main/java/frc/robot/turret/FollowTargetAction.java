@@ -106,6 +106,11 @@ public class FollowTargetAction extends MotorAction {
         super.cancel() ;
 
         //
+        // If we are being canceled, the turret will not be ready to fire
+        //
+        sub_.setReadyToFire(false) ;
+
+        //
         // Disable the target tracker, this turns off the LED lights
         //
         tracker_.enable(false);
