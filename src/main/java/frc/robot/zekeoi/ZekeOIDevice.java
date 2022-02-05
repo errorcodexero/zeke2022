@@ -17,23 +17,24 @@ import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeOIDevice extends OIPanel {
-    boolean has_climber_ ;
+    GPMCollectAction start_collect_action_ ;
+    GPMCollectAction stop_collect_action_ ;
+    GPMCollectAction fire_action_ ;
 
-    GPMCollectAction collect_ ;
     ClimbAction climb_ ;
     FollowTargetAction follow_ ;
 
+    int start_collect_gadget_ ;
+    int stop_collect_gadget_ ;
     int automode_gadget_ ;
     int collect_v_shoot_gadget_ ;
-    int collect_gadget_ ;
     int climb_gadget_ ;
     int climb_lock_gadget_ ;
 
-    public ZekeOIDevice(OISubsystem sub, String name, int index, boolean climber)
+    public ZekeOIDevice(OISubsystem sub, String name, int index)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
 
-        has_climber_ = climber ;
         initializeGadgets();
     }
 
@@ -41,7 +42,10 @@ public class ZekeOIDevice extends OIPanel {
         ZekeSubsystem zeke = (ZekeSubsystem)getSubsystem().getRobot().getRobotSubsystem() ;
         GPMSubsystem gpm = zeke.getGPMSubsystem() ;
 
-        collect_ = new GPMCollectAction(gpm) ;
+        start_collect_action_ = new GPMCollectAction(gpm) ;
+        stop_collect_action_ = new GPMCollectAction(gpm) ;
+        fire_action_ = new GPMCollectAction(gpm) ;
+
         climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive()) ;
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker()) ;
     }
@@ -52,35 +56,38 @@ public class ZekeOIDevice extends OIPanel {
         GPMSubsystem gpm = zeke.getGPMSubsystem() ;
         ClimberSubsystem climber = zeke.getClimber() ;
         TurretSubsystem turret = zeke.getTurret() ;
-        
-        if (getValue(collect_v_shoot_gadget_) == 1) {
+
+        if (getValue(climb_lock_gadget_) == 1) {
+
             if (turret.getAction() != follow_)
                 turret.setAction(follow_) ;
-        }
-        else {
-            // Collect mode
 
-            if (getValue(collect_gadget_) == 1) {
-                // We want to collect
-                if (gpm.getAction() != collect_) {
-                    gpm.setAction(collect_) ;
+            if (getValue(collect_v_shoot_gadget_) == 0) {
+
+                // Collect mode
+                if (getValue(start_collect_gadget_) == 1) {
+                    gpm.setAction(start_collect_action_) ;
+                }
+                else if (getValue(stop_collect_gadget_) == 1) {
+                    gpm.setAction(stop_collect_action_) ;
                 }
             }
             else {
+                gpm.setAction(fire_action_) ;
             }
         }
+        else {
+            if (turret.getAction() == follow_)
+                turret.setAction(null) ;
 
-        if (has_climber_) {
-            if (getValue(climb_lock_gadget_) == 0) {
-                // The climber is unlocked
-
-                if (getValue(climb_gadget_) == 1) {
-                    if (climber.getAction() != climb_)
-                        climber.setAction(climb_) ;
+            if (climber != null) {
+                    if (getValue(climb_gadget_) == 1) {
+                        if (climber.getAction() != climb_)
+                            climber.setAction(climb_) ;
+                    }
                 }
             }
         }
-    }
 
     private void initializeGadgets() throws BadParameterTypeException, MissingParameterException {
         int num = getSubsystem().getSettingsValue("oi:gadgets:automode").getInteger() ;
@@ -91,7 +98,8 @@ public class ZekeOIDevice extends OIPanel {
         collect_v_shoot_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level) ;
 
         num = getSubsystem().getSettingsValue("oi:gadgets:collect_onoff").getInteger() ;
-        collect_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level) ;
+        start_collect_gadget_ = mapButton(num, OIPanelButton.ButtonType.LowToHigh) ;
+        stop_collect_gadget_ = mapButton(num, OIPanelButton.ButtonType.HighToLow) ;        
 
         num = getSubsystem().getSettingsValue("oi:gadgets:climb_lock").getInteger() ;
         climb_lock_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level) ;

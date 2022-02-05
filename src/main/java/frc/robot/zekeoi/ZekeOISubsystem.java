@@ -41,7 +41,7 @@ public class ZekeOISubsystem extends OISubsystem {
 
         if (index != -1) {
             try {
-                oi_ = new ZekeOIDevice(this, "OI", index, true) ;
+                oi_ = new ZekeOIDevice(this, "OI", index) ;
                 addHIDDevice(oi_) ;
             }
             catch(Exception ex) {
