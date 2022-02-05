@@ -10,7 +10,7 @@ import org.xero1425.base.oi.OIPanelButton;
 
 import frc.robot.climber.ClimbAction;
 import frc.robot.climber.ClimberSubsystem;
-import frc.robot.gpm.GPMCollectAction;
+import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMSubsystem;
 import frc.robot.turret.FollowTargetAction;
 import frc.robot.turret.TurretSubsystem;
@@ -19,7 +19,7 @@ import frc.robot.zekesubsystem.ZekeSubsystem;
 public class ZekeOIDevice extends OIPanel {
     boolean has_climber_ ;
 
-    GPMCollectAction collect_ ;
+    GPMStartCollectAction collect_ ;
     ClimbAction climb_ ;
     FollowTargetAction follow_ ;
 
@@ -41,7 +41,7 @@ public class ZekeOIDevice extends OIPanel {
         ZekeSubsystem zeke = (ZekeSubsystem)getSubsystem().getRobot().getRobotSubsystem() ;
         GPMSubsystem gpm = zeke.getGPMSubsystem() ;
 
-        collect_ = new GPMCollectAction(gpm) ;
+        collect_ = new GPMStartCollectAction(gpm) ;
         climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive()) ;
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker()) ;
     }

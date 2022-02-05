@@ -39,6 +39,7 @@ public class GPMFireAction extends Action {
         if (conveyor_shoot_action_.isDone()) {
             // set the shooter hood thing to "off" position
             sub_.getShooter().setAction(new SetShooterAction(sub_.getShooter(), 0.0, 0.0, 0.0)) ;
+            setDone();
         }
 
     }

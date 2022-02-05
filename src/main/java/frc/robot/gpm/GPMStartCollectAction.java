@@ -5,12 +5,12 @@ import org.xero1425.base.actions.Action;
 import frc.robot.conveyor.ConveyorCollectAction;
 import frc.robot.intake.ZekeIntakeOnAction;
 
-public class GPMCollectAction extends Action {
+public class GPMStartCollectAction extends Action {
     private GPMSubsystem sub_;
     private ConveyorCollectAction conveyor_collect_action_ ;
     private ZekeIntakeOnAction intake_on_action_ ;
 
-    public GPMCollectAction(GPMSubsystem sub) throws Exception {
+    public GPMStartCollectAction(GPMSubsystem sub) throws Exception {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
 
@@ -24,10 +24,7 @@ public class GPMCollectAction extends Action {
     public void start() throws Exception {
         super.start();
         // collect on action -> intake
-        sub_.getIntake().setAction(new ZekeIntakeOnAction(sub_.getIntake())) ;
-
-        // ?? prepare to recieve -> conveyor
-        sub_.getConveyor().setAction(new ConveyorCollectAction(sub_.getConveyor(),1.0,0.0)) ;
+        sub_.getIntake().setAction(intake_on_action_) ;
 
         // collect on action -> conveyor
         sub_.getConveyor().setAction(conveyor_collect_action_) ;
@@ -41,6 +38,7 @@ public class GPMCollectAction extends Action {
         if (conveyor_collect_action_.isDone()) {
             // intake -> collect off action
             intake_on_action_.cancel();
+            setDone();
         }
 
     }
