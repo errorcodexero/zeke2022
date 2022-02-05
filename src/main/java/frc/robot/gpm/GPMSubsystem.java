@@ -23,8 +23,8 @@ public class GPMSubsystem extends Subsystem {
         intake_ = new ZekeIntakeSubsystem(this, color) ;
         addChild(intake_) ;
 
-        // conveyor_ = new ConveyorSubsystem(this) ;
-        // addChild(conveyor_) ;
+        conveyor_ = new ConveyorSubsystem(this, color) ;
+        addChild(conveyor_) ;
         
         shooter_ = new ShooterSubsystem(this);
         addChild(shooter_);

@@ -25,9 +25,9 @@ public class ZekeAutoController extends AutoController {
         
         try {
             test_mode_ = new ZekeTestModeAuto(this);
-            modes_[0] = new NoOpAuto(this, "Nop-0") ;
-            modes_[1] = new NoOpAuto(this, "Nop-1") ;
-            modes_[2] = new NoOpAuto(this, "Nop-2") ;
+            modes_[0] = new NearTarmac2BallAuto(this, "NearTarmac2BallAuto");
+            modes_[1] = new FarTaramc2BallAuto(this, "FarTarmac2BallAuto");
+            modes_[2] = new FarTarmac4BallAuto(this, "FarTarmac4BallAuto");
             modes_[3] = new NoOpAuto(this, "Nop-3") ;
             modes_[4] = new NoOpAuto(this, "Nop-4") ;
             modes_[5] = new NoOpAuto(this, "Nop-5") ;

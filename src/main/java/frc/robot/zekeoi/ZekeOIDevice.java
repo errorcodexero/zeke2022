@@ -10,17 +10,20 @@ import org.xero1425.base.oi.OIPanelButton;
 
 import frc.robot.climber.ClimbAction;
 import frc.robot.climber.ClimberSubsystem;
-import frc.robot.gpm.GPMCollectAction;
+import frc.robot.gpm.GPMFireAction;
+import frc.robot.gpm.GPMStartCollectAction;
+import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
 import frc.robot.turret.FollowTargetAction;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeOIDevice extends OIPanel {
-    GPMCollectAction start_collect_action_ ;
-    GPMCollectAction stop_collect_action_ ;
-    GPMCollectAction fire_action_ ;
+    GPMStartCollectAction start_collect_action_ ;
+    GPMStopCollectAction stop_collect_action_ ;
+    GPMFireAction fire_action_ ;
 
+    GPMStartCollectAction collect_ ;
     ClimbAction climb_ ;
     FollowTargetAction follow_ ;
 
@@ -42,10 +45,11 @@ public class ZekeOIDevice extends OIPanel {
         ZekeSubsystem zeke = (ZekeSubsystem)getSubsystem().getRobot().getRobotSubsystem() ;
         GPMSubsystem gpm = zeke.getGPMSubsystem() ;
 
-        start_collect_action_ = new GPMCollectAction(gpm) ;
-        stop_collect_action_ = new GPMCollectAction(gpm) ;
-        fire_action_ = new GPMCollectAction(gpm) ;
+        start_collect_action_ = new GPMStartCollectAction(gpm) ;
+        stop_collect_action_ = new GPMStopCollectAction(gpm) ;
+        fire_action_ = new GPMFireAction(gpm) ;
 
+        collect_ = new GPMStartCollectAction(gpm) ;
         climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive()) ;
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker()) ;
     }

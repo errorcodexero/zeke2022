@@ -2,8 +2,8 @@ package frc.robot.conveyor;
 
 import org.xero1425.base.actions.Action;
 
-public class ConveyorOnAction extends Action {
-    public ConveyorOnAction(ConveyorSubsystem sub, double intake, double shooter) {
+public class ConveyorCollectAction extends Action {
+    public ConveyorCollectAction(ConveyorSubsystem sub, double intake, double shooter) {
         super(sub.getRobot().getMessageLogger()) ;
         
         sub_ = sub ;
@@ -29,7 +29,7 @@ public class ConveyorOnAction extends Action {
 
     @Override
     public String toString(int indent) {
-        String ret = prefix(indent) + "ConveyorPowerAction" ;
+        String ret = prefix(indent) + "ConveyorCollectAction" ;
         ret += " intake = " + Double.toString(intake_) ;
         ret += " shooter = " + Double.toString(shooter_) ;
 
