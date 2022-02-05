@@ -4,7 +4,7 @@ import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 
-import frc.robot.conveyor.ConveyorOnAction;
+import frc.robot.conveyor.ConveyorShootAction;
 import frc.robot.conveyor.ConveyorSubsystem;
 import frc.robot.intake.ZekeIntakeOnAction;
 import frc.robot.intake.ZekeIntakeSubsystem;
@@ -20,9 +20,9 @@ public class GPMCollectAction extends Action {
         sub_ = sub ;
         
         // // properly declare color sensor to declare this properly!
-        intake_ = new ZekeIntakeSubsystem(sub, null) ;
+        intake_ = sub.getIntake() ;
         
-        conveyor_ = new ConveyorSubsystem(sub) ;
+        conveyor_ = sub.getConveyor();
 
     }
 
@@ -36,7 +36,7 @@ public class GPMCollectAction extends Action {
 
         // collect on action -> conveyor
         // what power should I set to intake and shooter here? -> get from params file!
-        conveyor_.setAction(new ConveyorOnAction(conveyor_, 1.0, 0.0)) ;
+        conveyor_.setAction(new ConveyorShootAction(conveyor_, 1.0, 0.0)) ;
     }
 
     @Override
