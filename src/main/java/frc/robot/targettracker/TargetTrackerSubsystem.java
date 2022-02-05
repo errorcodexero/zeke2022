@@ -29,7 +29,7 @@ public class TargetTrackerSubsystem extends Subsystem {
     private double distance_ ;
     private int lost_count_ ;
     private int max_lost_count_ ;
-    private boolean has_target_ ;
+    private boolean has_vision_target_ ;
     private TrackMethod track_method_ ;
     private TargetTracker field_target_tracker_ ;
 
@@ -55,7 +55,7 @@ public class TargetTrackerSubsystem extends Subsystem {
 
         desired_turret_angle_ = 0.0 ;
         lost_count_ = 0 ;
-        has_target_ = false;
+        has_vision_target_ = false;
 
         Translation2d target_coordinates = new Translation2d(27*12, 13.5*12) ;
         field_target_tracker_ = new TargetTracker(target_coordinates) ;
@@ -110,8 +110,8 @@ public class TargetTrackerSubsystem extends Subsystem {
         }
     }
 
-    public boolean hasTarget() {
-        return has_target_ ;
+    public boolean hasVisionTarget() {
+        return has_vision_target_ ;
     }
 
     public double getDesiredTurretAngle() {
@@ -140,7 +140,7 @@ public class TargetTrackerSubsystem extends Subsystem {
                 logger.add(" tpos", turret_.getPosition()).add(" desired", desired_turret_angle_);
                 logger.endMessage();
 
-                has_target_ = true ;
+                has_vision_target_ = true ;
                 lost_count_ = 0 ;
             }
             else if (track_method_ != TrackMethod.VisionOnly) 
@@ -149,10 +149,9 @@ public class TargetTrackerSubsystem extends Subsystem {
                 Pose2d robot_pose = getRobot().getRobotSubsystem().getDB().getPose() ;
                 double target_angle = field_target_tracker_.getRelativeTargetAngle(robot_pose) ;
                 double safe_target_angle = turret_.limitAngleToSafeRange(target_angle) ;
+                
                 desired_turret_angle_ = safe_target_angle ;
                 distance_ = field_target_tracker_.getRelativeTargetDistance(robot_pose) ;
-
-                // TODO: Add debug information to logger
             }
 
             // Using track method that allows vision, but target is not detected
@@ -161,11 +160,11 @@ public class TargetTrackerSubsystem extends Subsystem {
                 lost_count_++ ;
                 
                 if (lost_count_ > max_lost_count_)
-                    has_target_ = false ;
+                    has_vision_target_ = false ;
 
                 logger.startMessage(MessageType.Debug, getLoggerID());
                 logger.add("targettracker: lost target ").add(" lost count", lost_count_) ;
-                logger.add(" has_target", has_target_).endMessage();
+                logger.add(" has_target", has_vision_target_).endMessage();
             }
         }
         else
