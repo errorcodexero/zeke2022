@@ -1,8 +1,18 @@
 package frc.robot.automodes;
 
+import org.xero1425.base.actions.DelayAction;
+import org.xero1425.base.actions.ParallelAction;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.controllers.AutoMode;
+import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
+import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
+import frc.robot.conveyor.ConveyorCollectAction;
+import frc.robot.conveyor.ConveyorSubsystem;
+import frc.robot.gpm.GPMCollectAction;
+import frc.robot.gpm.GPMFireAction;
+import frc.robot.gpm.GPMSubsystem;
+import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeAutoMode extends AutoMode {
@@ -35,8 +45,24 @@ public class ZekeAutoMode extends AutoMode {
     // If the path is null, then no driving is performed before firing the balls.
     //
     protected void driveAndFire(String path, boolean reverse, double angle) throws Exception {
-        // TankDriveSubsystem db = getZekeRobotSubsystem().getTankDrive() ;
-      
+        
+        GPMSubsystem gpm = getZekeRobotSubsystem().getGPMSubsystem();
+        TankDriveSubsystem db = getZekeRobotSubsystem().getTankDrive();
+        ShooterSubsystem shooter = getZekeRobotSubsystem().getGPMSubsystem().getShooter();
+        ParallelAction parallel;
+
+        parallel = new ParallelAction(getAutoController().getRobot().getMessageLogger(), ParallelAction.DonePolicy.All);
+        parallel.addAction(setTurretToTrack(angle));
+
+        if (path != null) {
+            parallel.addSubActionPair(db, new TankDrivePathFollowerAction(db,path,reverse), true);
+        }
+
+        //TODO: add shooter action
+        //parallel.addSubActionPair(shooter, new , block);
+
+        addAction(parallel);
+        addSubActionPair(gpm, new GPMFireAction(gpm), true);
     }
 
     //
@@ -45,7 +71,27 @@ public class ZekeAutoMode extends AutoMode {
     // before following the path to let the collection sequence start.
     //
     protected void driveAndCollect(String path, double delay1, double delay2) throws Exception {
-        // TankDriveSubsystem db = getZekeRobotSubsystem().getTankDrive() ;
+        GPMSubsystem gpm = getZekeRobotSubsystem().getGPMSubsystem();
+        TankDriveSubsystem db = getZekeRobotSubsystem().getTankDrive();
+        ParallelAction parallel;
+        SequenceAction series, series2;
+
+        parallel = new ParallelAction(getAutoController().getRobot().getMessageLogger(), ParallelAction.DonePolicy.All);
+
+        series2 = new SequenceAction(getAutoController().getRobot().getMessageLogger());
+        series2.addAction(new DelayAction(getAutoController().getRobot(), delay1));
+        series2.addSubActionPair(db, new TankDrivePathFollowerAction(db, path, false), true);
+        series2.addAction(new DelayAction(getAutoController().getRobot(), delay2));
+        parallel.addAction(series2);
+
+        series = new SequenceAction(getAutoController().getRobot().getMessageLogger()); 
+        series.addSubActionPair(gpm, new GPMCollectAction(gpm), false);
+        parallel.addAction(series);
+
+        addAction(parallel);
+
+        //TODO: add action to stop collector 
+        //addSubActionPair(gpm, new , true);
     }
 
     //
