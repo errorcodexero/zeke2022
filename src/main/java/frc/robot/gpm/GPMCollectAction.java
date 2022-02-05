@@ -3,8 +3,6 @@ package frc.robot.gpm;
 import org.xero1425.base.actions.Action;
 
 import frc.robot.conveyor.ConveyorCollectAction;
-import frc.robot.conveyor.ConveyorStopAction;
-import frc.robot.intake.ZekeIntakeOffAction;
 import frc.robot.intake.ZekeIntakeOnAction;
 
 public class GPMCollectAction extends Action {
@@ -42,13 +40,7 @@ public class GPMCollectAction extends Action {
         // IF conveyor is DONE:
         if (conveyor_collect_action_.isDone()) {
             // intake -> collect off action
-            sub_.getIntake().setAction(new ZekeIntakeOffAction(sub_.getIntake())) ;
-            
-            // set the intake on action => cancel
             intake_on_action_.cancel();
-
-            // conveyor -> stop conveyor?
-            sub_.getConveyor().setAction(new ConveyorStopAction(sub_.getConveyor())) ;
         }
 
     }
