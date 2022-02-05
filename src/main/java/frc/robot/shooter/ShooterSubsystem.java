@@ -30,19 +30,4 @@ public class ShooterSubsystem extends Subsystem {
     public MotorEncoderSubsystem getHoodMotor(){
         return hoodMotor_;
     }
-  
-    public void setWheelVelocity(double v1, double v2) throws BadMotorRequestException, MotorRequestFailedException, MissingParameterException, BadParameterTypeException{
-        wheelMotor1_ = getWheelMotor1();
-        wheelMotor2_ = getWheelMotor2();
-        MotorEncoderVelocityAction a1 = new MotorEncoderVelocityAction(wheelMotor1_, "wheel1Velocity", v1);
-        MotorEncoderVelocityAction a2 = new MotorEncoderVelocityAction(wheelMotor2_, "wheel2Velocity", v2);
-        wheelMotor1_.setAction(a1);
-        wheelMotor2_.setAction(a2);
-    }
-
-    public void setHoodAngle(double angle) throws BadMotorRequestException, MotorRequestFailedException, MissingParameterException, BadParameterTypeException{
-        hoodMotor_ = getHoodMotor();
-        MotorEncoderVelocityAction a1 = new MotorEncoderVelocityAction(hoodMotor_, "hoodPosition", angle);
-        hoodMotor_.setAction(a1);
-    }
 }
