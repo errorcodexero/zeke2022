@@ -7,10 +7,9 @@ import org.xero1425.base.controllers.AutoMode;
 import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
-import frc.robot.conveyor.ConveyorCollectAction;
-import frc.robot.conveyor.ConveyorSubsystem;
-import frc.robot.gpm.GPMCollectAction;
 import frc.robot.gpm.GPMFireAction;
+import frc.robot.gpm.GPMStartCollectAction;
+import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
@@ -85,13 +84,12 @@ public class ZekeAutoMode extends AutoMode {
         parallel.addAction(series2);
 
         series = new SequenceAction(getAutoController().getRobot().getMessageLogger()); 
-        series.addSubActionPair(gpm, new GPMCollectAction(gpm), false);
+        series.addSubActionPair(gpm, new GPMStartCollectAction(gpm), false);
         parallel.addAction(series);
 
         addAction(parallel);
 
-        //TODO: add action to stop collector 
-        //addSubActionPair(gpm, new , true);
+        addSubActionPair(gpm, new GPMStopCollectAction(gpm), true);
     }
 
     //
