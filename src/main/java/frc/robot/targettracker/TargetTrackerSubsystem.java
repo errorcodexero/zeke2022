@@ -150,6 +150,7 @@ public class TargetTrackerSubsystem extends Subsystem {
                 double target_angle = field_target_tracker_.getRelativeTargetAngle(robot_pose) ;
                 double safe_target_angle = turret_.limitAngleToSafeRange(target_angle) ;
                 desired_turret_angle_ = safe_target_angle ;
+                distance_ = field_target_tracker_.getRelativeTargetDistance(robot_pose) ;
 
                 // TODO: Add debug information to logger
             }
