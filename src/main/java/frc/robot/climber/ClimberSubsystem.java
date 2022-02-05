@@ -72,9 +72,9 @@ public class ClimberSubsystem extends Subsystem {
         doublyindex = getSettingsValue("hw:windmill:windmill_power_forwards").getDouble() ;
         windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
         doublyindex = getSettingsValue("hw:windmill:windmill_power_backwards").getDouble() ;
-        windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
+        windmill_power_backwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
         doublyindex = getSettingsValue("hw:windmill:windmill_power_off").getDouble() ;
-        windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
+        windmill_power_off_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
 
         int index ;
         index = getSettingsValue("hw:touchsensors:mid_left").getInteger() ;
