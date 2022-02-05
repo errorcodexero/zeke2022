@@ -9,22 +9,38 @@ import org.xero1425.misc.SettingsValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.zeke_color_sensor.ZekeColorSensor;
+import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;
 
 public class ConveyorSubsystem extends Subsystem {
+    private enum State {
+        WAIT_INTAKE, 
+        WAIT_COLOR,
+        OPEN_EXIT,
+        WAIT_EXIT1,
+        WAIT_EXIT0,
+        START_UPTAKE,
+        WAIT_CHIMNEY1,
+        WAIT_CHIMNEY0,
+        STOP_UPTAKE,
+    }
     private static final DoubleSolenoid.Value ExitCloseState = DoubleSolenoid.Value.kForward ;
     private static final DoubleSolenoid.Value ExitOpenState = DoubleSolenoid.Value.kReverse ;
+    public static final int MAX_BALLS = 2;
     private int ball_count_ ;                       // The number of balls stored in the conveyor
-
+    private CargoType[] ball_types_;
     private MotorController intake_motor_ ;         // The motor for the flash intake piece
     private MotorController shooter_motor_ ;        // The motor for the shooter sidef of the conveyor
-    private XeroDoubleSolenoid Exit ;    
+    private XeroDoubleSolenoid exit_ ;    
     private ZekeColorSensor color_sensor_;
     private static final int SENSOR_COUNT = 4;
-    public static final int SENSOR_IDX_INTAKE = 0;
-    public static final int SENSOR_IDX_EXIT = 1;
-    public static final int SENSOR_IDX_CHIMNEY = 2;
-    public static final int SENSOR_IDX_SHOOTER = 3;
+    private static final int SENSOR_IDX_INTAKE = 0;
+    private static final int SENSOR_IDX_EXIT = 1;
+    private static final int SENSOR_IDX_CHIMNEY = 2;
+    private static final int SENSOR_IDX_SHOOTER = 3;
+    private State state_;
+
 
     private DigitalInput[] sensors_; // The array of ball detect sensors
     private boolean[] sensor_states_; // The states of ball detect sensors
@@ -32,21 +48,24 @@ public class ConveyorSubsystem extends Subsystem {
     
     public static final String SubsystemName = "conveyor";
     public static final String SensorLoggerName = "conveyor:sensors:messages";
-    public static final int MAX_BALLS = 2;
 
 
     public ConveyorSubsystem(Subsystem parent, ZekeColorSensor color) throws Exception {
         super(parent, SubsystemName);
       
-      color_sensor_ = color;
-        Exit = new XeroDoubleSolenoid(this, "Exit") ;
+        state_ = State.WAIT_INTAKE;
+        color_sensor_ = color;
+        exit_ = new XeroDoubleSolenoid(this, "exit") ;
 
         sensors_ = new DigitalInput[SENSOR_COUNT];
         sensor_states_ = new boolean[SENSOR_COUNT];
         prev_sensor_states_ = new boolean[SENSOR_COUNT];
 
         ball_count_ = 0 ;
-
+        ball_types_ = new CargoType [MAX_BALLS];
+        for (int i = 0; i < MAX_BALLS; i++) {
+            ball_types_ [i]= CargoType.None;
+        }
         intake_motor_ = getRobot().getMotorFactory().createMotor("intake", "subsystems:conveyor:hw:motors:intake");
         shooter_motor_ = getRobot().getMotorFactory().createMotor("shooter", "subsystems:conveyor:hw:motors:shooter");
 
@@ -63,14 +82,6 @@ public class ConveyorSubsystem extends Subsystem {
         }
     }
 
-    public SettingsValue getProperty(String name) {
-        SettingsValue v = null ;
-        
-        if (name.equals("ballcount")) {
-            v = new SettingsValue(ball_count_) ;
-        }
-        return v ;
-    }
 
     public boolean isFull() {
         return ball_count_ == MAX_BALLS ;
@@ -80,25 +91,8 @@ public class ConveyorSubsystem extends Subsystem {
         return ball_count_ == 0 ;
     }
 
-
-    @Override
-    public void run() throws Exception {
-        super.run() ;
-        for (int i = 0; i < SENSOR_COUNT; i++) {
-                //
-                // Get the sensor state
-                //
-                prev_sensor_states_[i] = sensor_states_[i];
-                sensor_states_[i] = !sensors_[i].get();
-            }
-        }
-
-
-    public void setStagedForCollect(boolean staged) {
-
-        MessageLogger logger = getRobot().getMessageLogger();
-        logger.startMessage(MessageType.Debug, getLoggerID());
-        logger.endMessage();
+    public int getBallCount() {
+        return ball_count_ ;
     }
 
     @Override
@@ -108,34 +102,54 @@ public class ConveyorSubsystem extends Subsystem {
 
     @Override
     public void computeMyState() throws Exception {
+        for (int i = 0; i < SENSOR_COUNT; i++) {
+            //
+            // Get the sensor state
+            //
+            prev_sensor_states_[i] = sensor_states_[i];
+            sensor_states_[i] = !sensors_[i].get();
+        }
+       CargoType cargoType =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
+
+        switch (state_) {
+           case WAIT_INTAKE:
+               if (prev_sensor_states_[SENSOR_IDX_INTAKE]==false && sensor_states_[SENSOR_IDX_INTAKE]==true)
+                   state_ = State.WAIT_COLOR;
+               break;
+           case  WAIT_COLOR:
+                if (cargoType == CargoType.Opposite)
+                    state_ = State.OPEN_EXIT;
+                else if (cargoType == CargoType.Same)
+                    state_ = State.START_UPTAKE;
+               break;
+           case  OPEN_EXIT:
+               exit_.set(ExitOpenState);
+               state_ = State.WAIT_EXIT1;
+               break;
+           case  WAIT_EXIT1:
+               if (sensor_states_[SENSOR_IDX_EXIT]==true)
+                   state_ = State.WAIT_EXIT0;
+               break;
+           case  WAIT_EXIT0:
+               break;
+           case  START_UPTAKE:
+               break;
+           case  WAIT_CHIMNEY1:
+               break;
+           case  WAIT_CHIMNEY0:
+               break;
+           case  STOP_UPTAKE:
+               break;
+        }
+
         putDashboard("ballcount", DisplayType.Always, ball_count_);
+    } 
+
+    @Override
+    public void run() throws Exception {
+        super.run() ;
     }
 
-    public int getBallCount() {
-        return ball_count_ ;
-    }
-
-    protected void setBallCount(int n) {
-        ball_count_ = n ;
-    }
-
-    protected void incrementBallCount() {
-        ball_count_++ ;
-
-        MessageLogger logger = getRobot().getMessageLogger();
-        logger.startMessage(MessageType.Debug, getLoggerID());
-        logger.add("Conveyor:").add("ballcount", ball_count_);
-        logger.endMessage();
-    }
-
-    protected void decrementBallCount() {
-        ball_count_-- ;
-
-        MessageLogger logger = getRobot().getMessageLogger();
-        logger.startMessage(MessageType.Debug, getLoggerID());
-        logger.add("Conveyor:").add("ballcount", ball_count_);
-        logger.endMessage();
-    }    
 
     protected void setMotorsPower(double intake, double shooter) {
         try {
