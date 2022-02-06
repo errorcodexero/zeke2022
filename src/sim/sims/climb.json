@@ -29,19 +29,6 @@
             ]
         },
         {
-            "time" : 1.0,
-            "events" : [
-                {
-                    "model" : "climber",
-                    "instance" : "1",
-                    "values" : {
-                        "comment" : "start the climber model sequencing",
-                        "start" : true
-                    }
-                }
-            ]
-        },
-        {
             "time" : 2.0,
             "events" : [
                 {
@@ -54,6 +41,19 @@
                     }
                 }
             ]
-        }
+        },
+        {
+            "time" : 2.1,
+            "events" : [
+                {
+                    "model" : "climber",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "start the climber model sequencing",
+                        "start" : true
+                    }
+                }
+            ]
+        }        
     ]
 }
