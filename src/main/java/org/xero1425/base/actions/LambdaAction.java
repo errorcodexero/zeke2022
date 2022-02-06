@@ -9,7 +9,13 @@ public class LambdaAction extends Action {
         void evaluate() ;
     }
 
+    public interface DoneFunction
+    {
+        boolean evaluate() ;
+    }
+
     private ActionFunction func_ ;
+    private DoneFunction done_ ;
     private String name_ ;
 
     public LambdaAction(MessageLogger logger, String name, ActionFunction dowork) {
@@ -17,12 +23,28 @@ public class LambdaAction extends Action {
 
         name_ = name ;
         func_ = dowork ;
+        done_ = null ;
+    }
+
+    public LambdaAction(MessageLogger logger, String name, ActionFunction dowork, DoneFunction done) {
+        super(logger) ;
+
+        name_ = name ;
+        func_ = dowork ;
+        done_ = done ;
     }
 
     @Override
     public void start() {
         func_.evaluate() ;
-        setDone() ;
+        if (done_ == null || done_.evaluate() == true)
+            setDone() ;
+    }
+
+    @Override
+    public void run() {
+        if (done_.evaluate())
+            setDone() ;
     }
 
     @Override
