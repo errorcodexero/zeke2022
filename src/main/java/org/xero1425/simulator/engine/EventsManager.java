@@ -14,6 +14,7 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.xero1425.misc.JsonReader;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 import org.xero1425.misc.SettingsValue;
@@ -37,29 +38,17 @@ public class EventsManager {
 
         logger.startMessage(MessageType.Info);
         logger.add("reading simulator events file ").addQuoted(file) ;
-        logger.endMessage();        
+        logger.endMessage(); 
 
-        byte[] encoded;
-        try {
-            encoded = Files.readAllBytes(Paths.get(file));
-        } catch (IOException e) {
+        JSONObject jobj = JsonReader.readFile(file, logger) ;
+        if (jobj == null) {
             logger.startMessage(MessageType.Error);
             logger.add("cannot read events file ").addQuoted(file).add(" - ");
-            logger.add(e.getMessage()).endMessage();
+            logger.add("error occurred while reading file") ;
             return false;
         }
 
-        String fulltext = new String(encoded);
-
-        Object obj = JSONValue.parse(fulltext);
-        if (!(obj instanceof JSONObject)) {
-            logger.startMessage(MessageType.Error);
-            logger.add("cannot read events file ").addQuoted(file).add(" - ");
-            logger.add("file does not contain a JSON object").endMessage();
-            return false;
-        }
-
-        JSONObject jobj = (JSONObject) obj;
+        Object obj ;
 
         if (jobj.containsKey("purpose")) {
             obj = jobj.get("purpose") ;

@@ -20,14 +20,19 @@ public class GPMStartCollectAction extends Action {
         intake_on_action_ = new ZekeIntakeOnAction(sub_.getIntake()) ;
     }
 
+    public void finish() {
+        sub_.getIntake().setAction(null) ;
+        conveyor_collect_action_.finish() ;
+    }
+
     @Override
     public void start() throws Exception {
         super.start();
         // collect on action -> intake
-        sub_.getIntake().setAction(intake_on_action_) ;
+        sub_.getIntake().setAction(intake_on_action_, true) ;
 
         // collect on action -> conveyor
-        sub_.getConveyor().setAction(conveyor_collect_action_) ;
+        sub_.getConveyor().setAction(conveyor_collect_action_, true) ;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package frc.robot.automodes;
 
 import org.xero1425.base.actions.DelayAction;
+import org.xero1425.base.actions.LambdaAction;
 import org.xero1425.base.actions.ParallelAction;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.controllers.AutoMode;
@@ -83,13 +84,14 @@ public class ZekeAutoMode extends AutoMode {
         series2.addAction(new DelayAction(getAutoController().getRobot(), delay2));
         parallel.addAction(series2);
 
+        GPMStartCollectAction collect = new GPMStartCollectAction(gpm) ;
         series = new SequenceAction(getAutoController().getRobot().getMessageLogger()); 
-        series.addSubActionPair(gpm, new GPMStartCollectAction(gpm), false);
+        series.addSubActionPair(gpm, collect, false);
         parallel.addAction(series);
 
         addAction(parallel);
 
-        addSubActionPair(gpm, new GPMStopCollectAction(gpm), true);
+        addAction(new LambdaAction(getAutoController().getRobot().getMessageLogger(), "FinishCollect", ()-> collect.finish())) ;
     }
 
     //

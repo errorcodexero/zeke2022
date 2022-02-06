@@ -1,27 +1,68 @@
+//
+// This is the settings file for the Zeke robot.  
+//
+// If the comments are causing lots of red markers in this file, you
+// need to change your JSON handling in VSCode to JSONC.  Do this by
+// selecting File/Preferences/Settings.  Select Text Editor/Files
+// and in the files section, add an entry "*.json" and "jsonc"
+//
+
 {
     "system": {
+        //
+        // This section controls messages sent to the log file.  The log file
+        // is stored on a USB stick on the RoboRio, or in the logs subdirectory
+        // in the robot code if running a simulation.
+        //
         "messages": {
+            // Robot framework settings settings
             "actions": true,
-            "tankdrive": false,
+
             "pathmanager": false,
             "xerorobot": false,
+
+            // Tank drive related settings
             "pathfollowing": false,
+            "tankdrive": false,
+
+            // Turrent/Limelight/Aiming related
             "zeke_limelight": false,
-            "climber" : false,
-            "zeke-color-sensor" : true,
-            "intake" : true,
-            "climber-model" : false
+
+            // Ball path related
+            "zeke-color-sensor" : false,
+            "intake" : false,
+            "conveyor" : false,
+            "shooter" : false,
+
+            // Climber related
+            "climber" : true,
+            "climber-model" : true
         },
+
+        //
+        // This section controls, what data shows up on the smart dashboard when the item has a
+        // display type of DisplayType.Verbose.
+        //
         "verbose": {
             "tankdrive": false
         },
+
+        //
+        // Enable plotting for actions that support plotting
+        //
         "plotting": true,
+
+        //
+        // The global pneumatics settings for the robot
+        //
         "pneumatics": {
             "type": "REVPH",
             "min-pressure" : 105.0,
             "max-pressure" : 120.0
         }
     },
+
+    // This section describes the subsystems on the robot
     "subsystems": {
         "tankdrive": {
             "hw": {
@@ -150,24 +191,27 @@
         },
         "conveyor" : {
             "hw" : {
-                "collector" : {
-                    "horiz" : {
+                "motors" : {
+                    "intake" : {
                         "type": "sparkmax_brushless",
                         "canid": 6
                     },
-                    "vert" : {
+                    "shooter" : {
                         "type": "sparkmax_brushless",
                         "canid": 5                        
                     }
                 },
                 "solenoids" : {
-                    "exit" : 11
+                    "exit" : {
+                        "forward" : 11,
+                        "reverse" : 12
+                    }
                 },
                 "sensors" : {
-                    "intake" : 1,
-                    "chimney" : 2,
-                    "shooter" : 3,
-                    "exit" : 10
+                    "a" : 1,
+                    "b" : 2,
+                    "c" : 3,
+                    "d" : 10
                 }
             }
         },
@@ -328,6 +372,15 @@
                     "m" : 0.0416666667,
                     "b" : 0.0
                 }
+            },
+            "w1" : {
+                "kp": 0.03,
+                "ki": 0.0,
+                "kd": 0.0,
+                "kf": 0,
+                "max": 1.0,
+                "min": -1.0,
+                "imax": 0.0                
             }
         },
         "shooter-w2" : {
@@ -342,6 +395,15 @@
                     "m" : 0.0416666667,
                     "b" : 0.0
                 }                
+            },
+            "w2" : {
+                "kp": 0.03,
+                "ki": 0.0,
+                "kd": 0.0,
+                "kf": 0,
+                "max": 1.0,
+                "min": -1.0,
+                "imax": 0.0
             }
         },
         "shooter-h" : {

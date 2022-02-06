@@ -1,8 +1,6 @@
 package frc.models;
 
 import edu.wpi.first.hal.simulation.DriverStationDataJNI;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 
 import org.xero1425.simulator.engine.SimulationModel;

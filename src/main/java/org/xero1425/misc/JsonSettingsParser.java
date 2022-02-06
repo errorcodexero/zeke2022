@@ -1,8 +1,5 @@
 package org.xero1425.misc;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +36,16 @@ public class JsonSettingsParser implements ISettingsSupplier {
         defines_ = new ArrayList<String>() ;
     }
 
+    public boolean readFile(String filename) {
+        
+        logger_.startMessage(MessageType.Info);
+        logger_.add("reading JSON robots setting file ").addQuoted(filename) ;
+        logger_.endMessage();    
+
+        contents_ = JsonReader.readFile(filename, logger_) ;
+        return contents_ != null ;
+    }
+
     /// \brief add a define to the reading process
     ///
     /// A define is a value that is stored and used in the settings lookup process
@@ -64,40 +71,6 @@ public class JsonSettingsParser implements ISettingsSupplier {
             defines_.add(name) ;
     }
 
-    /// \brief read a json settings file
-    /// This method returns true if the file was read successfully.  It returns false if
-    /// the file failed to read and also prints an error to the logfile.
-    /// \param filename the name of the file to read
-    /// \returns true if the file was read sucessfully, otherwise false
-    public boolean readFile(String filename) {
-
-        logger_.startMessage(MessageType.Info);
-        logger_.add("reading JSON robots setting file ").addQuoted(filename) ;
-        logger_.endMessage();        
-
-        byte[] encoded;
-        try {
-            encoded = Files.readAllBytes(Paths.get(filename));
-        } catch (IOException e) {
-            logger_.startMessage(MessageType.Error);
-            logger_.add("cannot read settings file ").addQuoted(filename).add(" - ");
-            logger_.add(e.getMessage()).endMessage();
-            return false;
-        }
-
-        String fulltext = new String(encoded);
-
-        Object obj = JSONValue.parse(fulltext);
-        if (!(obj instanceof JSONObject)) {
-            logger_.startMessage(MessageType.Error);
-            logger_.add("cannot read settings file ").addQuoted(filename).add(" - ");
-            logger_.add("file does not contain a JSON object").endMessage();
-            return false;
-        }
-
-        contents_ = (JSONObject) obj;
-        return true;        
-    }
 
     /// \brief Return a SettingsValue given the settings name.
     /// \exception throws MissingParameterException if the name does not map to an entry in the JSON file
@@ -231,4 +204,5 @@ public class JsonSettingsParser implements ISettingsSupplier {
 
         return current ;
     }
+
 }
