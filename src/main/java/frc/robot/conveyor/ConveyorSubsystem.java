@@ -137,6 +137,8 @@ public class ConveyorSubsystem extends Subsystem {
        CargoType cargoType =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
 
        for (int i = 0; i < MAX_BALLS; i++) {
+            State prevst = state_[i] ;
+
             switch (state_[i]) {
             case WAIT_INTAKE:
                 if (sensor_states_[SENSOR_IDX_INTAKE]==true)
@@ -199,6 +201,15 @@ public class ConveyorSubsystem extends Subsystem {
                     removeBall();
                 }
                     break;
+            }
+
+            if (prevst != state_[i]) {
+                MessageLogger logger = getRobot().getMessageLogger() ;
+                logger.startMessage(MessageType.Debug, getLoggerID()) ;
+                logger.add("ConveyorSubsystem:") ;
+                logger.add("loop", i) ;
+                logger.add(" ").add(prevst.toString()).add(" --> ").add(state_[i].toString()) ;
+                logger.endMessage();
             }
         }
         putDashboard("ballcount", DisplayType.Always, ball_count_);

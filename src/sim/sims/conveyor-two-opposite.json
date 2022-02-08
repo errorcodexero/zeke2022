@@ -40,10 +40,10 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : false,
-                        "chimney" : false,
+                        "intake" : true,
+                        "chimney" : true,
                         "exit" : true,
-                        "shooter" : false
+                        "shooter" : true
                     }
                 }
             ]
@@ -97,7 +97,8 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : true
+                        "comment" : "cargo #1 set the intake sensor",
+                        "intake" : false
                     }
                 }
             ]
@@ -110,7 +111,8 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : false
+                        "comment" : "cargo #1 cleared the intake sensor",
+                        "intake" : true
                     }
                 }
             ]
@@ -124,6 +126,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "comment" : "cargo #1 set the color sensor to red",
                         "color-2" : "1.0, 0.0, 0.0",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -140,6 +143,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "command" : "cargo #1 set the color sensor to none",
                         "color-2" : "0.333, 0.333, 0.333",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -181,6 +185,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo #1 set the exit sensor",
                         "exit" : false
                     }
                 }
@@ -194,7 +199,8 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : true
+                        "comment" : "cargo #2 set the intake sensor",
+                        "intake" : false
                     }
                 }
             ]
@@ -207,6 +213,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo #2 cleared the intake sensor",
                         "intake" : false
                     }
                 }
@@ -221,6 +228,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "comment" : "cargo #2 set the color sensor to red",
                         "color-2" : "1.0, 0.0, 0.0",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -236,6 +244,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo #1 cleared the exit sensor",
                         "exit" : true
                     }
                 }
@@ -250,6 +259,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "comment" : "cargo #2 set the color sensor to none",
                         "color-2" : "0.33, 0.33, 0.33",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -259,6 +269,34 @@
         },
         {
             "time" : 4.5,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #2 set the exit sensor",
+                        "exit" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.5,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #2 cleared the exit sensor",
+                        "exit" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.0,
             "asserts" : 
             [
                 {

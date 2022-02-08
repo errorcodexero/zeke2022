@@ -40,10 +40,10 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : false,
-                        "chimney" : false,
+                        "intake" : true,
+                        "chimney" : true,
                         "exit" : true,
-                        "shooter" : false
+                        "shooter" : true
                     }
                 }
             ]
@@ -97,7 +97,8 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : true
+                        "comment" : "cargo sets the intake sensor",
+                        "intake" : false
                     }
                 }
             ]
@@ -110,7 +111,8 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : false
+                        "comment" : "cargo cleared the intake sensor",
+                        "intake" : true
                     }
                 }
             ]
@@ -181,6 +183,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo set the exit sensor",
                         "exit" : false
                     }
                 }
@@ -194,6 +197,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo cleared the exit sensor",
                         "exit" : true
                     }
                 }

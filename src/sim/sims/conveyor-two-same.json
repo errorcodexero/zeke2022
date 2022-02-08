@@ -40,10 +40,10 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : false,
-                        "chimney" : false,
+                        "intake" : true,
+                        "chimney" : true,
                         "exit" : true,
-                        "shooter" : false
+                        "shooter" : true
                     }
                 }
             ]
@@ -97,7 +97,8 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : true
+                        "comment" : "cargo #1 set the intake sensor",
+                        "intake" : false
                     }
                 }
             ]
@@ -110,7 +111,8 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : false
+                        "comment" : "cargo #1 cleared the intake sensor",
+                        "intake" : true
                     }
                 }               
             ]
@@ -124,6 +126,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "comment" : "cargo #1 set the color sensor to blue",
                         "color-2" : "0.0, 0.0, 1.0",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -140,6 +143,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "comment" : "cargo #1 set the color sensor to none",
                         "color-2" : "0.333, 0.333, 0.333",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -155,7 +159,8 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : true
+                        "comment" : "cargo #2 set the intake sensor",
+                        "intake" : false
                     }
                 }
             ]
@@ -210,6 +215,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "comment" : "cargo #2 set the color sensor to blue",
                         "color-2" : "0.0, 0.0, 1.0",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -222,10 +228,11 @@
             "events" : 
             [
                 {
+                    "comment" : "cargo #1 set the chimney sensor",
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "chimney" : true
+                        "chimney" : false
                     }
                 }
             ]
@@ -235,10 +242,11 @@
             "events" : 
             [
                 {
+                    "comment" : "cargo #1 clear the chimney sensor",
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "chimney" : false
+                        "chimney" : true
                     }
                 }
             ]
