@@ -1,0 +1,250 @@
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Running simulation in teleop mode, OI is used to start operations",
+                        "start" : 0.1,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 5.0,
+                        "fms" : false
+                    }
+                },
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
+                        "comment" : "Collect/shoot mode switch set to collect",                        
+                        "button11" : false,
+                        
+                        // The climb lock button is in the locked state
+                        "button10" : true                        
+                    }
+                }                
+            ]
+        },
+        {
+            "time" : 1.0,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "intake" : true,
+                        "chimney" : true,
+                        "exit" : true,
+                        "shooter" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.0,
+            "events" :
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Collect button pressed",
+                        "button14" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.1,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }                    
+            ]
+        },
+        {
+            "time" : 3.2,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo set the intake sensor",
+                        "intake" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.24,
+            "events" :
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Collect button released",
+                        "button14" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.3,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo cleared the intake sensor",
+                        "intake" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.4,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo set the color sensor to red",
+                        "color-2" : "0.0, 0.0, 1.0",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.6,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo cleared the color sensor",
+                        "color-2" : "0.333, 0.333, 0.333",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.7,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }                    
+            ]
+        },
+        {
+            "time" : 3.8,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo set the chimney sensor",
+                        "chimney" : false
+                    }
+                }
+            ]
+        }, 
+        {
+            "time" : 3.9,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo cleared the chimney sensor",
+                        "chimney" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.0,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 1
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }    
+            ]
+        }
+    ]
+}
