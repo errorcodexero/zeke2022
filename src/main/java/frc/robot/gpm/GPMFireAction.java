@@ -16,7 +16,7 @@ public class GPMFireAction extends Action {
         sub_ = sub ;
 
         // figure out intake and shooter doubles -> get from params
-        conveyor_shoot_action_ = new ConveyorShootAction(sub_.getConveyor(), 0.0, 0.0) ; 
+        conveyor_shoot_action_ = new ConveyorShootAction(sub_.getConveyor(), 0.0) ; 
         
         // figure out what w1, w2, and hood are from -> get from params file
         shooter_action_ = new SetShooterAction(sub_.getShooter(), 0.0, 0.0, 0.0) ;
