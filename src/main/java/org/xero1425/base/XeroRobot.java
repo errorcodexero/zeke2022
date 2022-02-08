@@ -876,7 +876,22 @@ public abstract class XeroRobot extends TimedRobot {
         file.addDefine(bot) ;
         logger_.startMessage(MessageType.Info).add("reading params for bot ").addQuoted(bot).endMessage() ;
 
-        if (!file.readFile(robot_paths_.deployDirectory() + getName() + ".json")) {
+        String filename = robot_paths_.deployDirectory() + getName() + ".json" ;
+
+        File f = new File(filename) ;
+        if (!f.exists()) {
+            filename = robot_paths_.deployDirectory() + getName() + ".jsonc" ;
+            f = new File(filename) ;
+            if (!f.exists()) {
+                //
+                // There is no params file
+                //
+                logger_.startMessage(MessageType.Error).add("no settings file exists for this robot").endMessage();
+                return ;
+            }
+        }
+
+        if (!file.readFile(filename)) {
             logger_.startMessage(MessageType.Error).add("error reading parameters file").endMessage();
         }
 

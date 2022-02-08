@@ -7,8 +7,6 @@ import org.xero1425.misc.MissingParameterException;
 import org.xero1425.misc.SimArgs;
 import org.xero1425.simulator.engine.ModelFactory;
 import org.xero1425.simulator.engine.SimulationEngine;
-
-import edu.wpi.first.wpilibj.Compressor;
 import frc.robot.automodes.ZekeAutoController;
 import frc.robot.zekesubsystem.ZekeSubsystem ;
 
@@ -43,7 +41,7 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "climb";
+    return "conveyor-one-same";
   }
 
   protected void addRobotSimulationModels() {

@@ -26,15 +26,17 @@ public class ConveyorSubsystem extends Subsystem {
         WAIT_SHOOTER,
         WAIT_SHOOTER1,
         WAIT_SHOOTER0,
-
     }
+
     private static final DoubleSolenoid.Value ExitCloseState = DoubleSolenoid.Value.kForward ;
     private static final DoubleSolenoid.Value ExitOpenState = DoubleSolenoid.Value.kReverse ;
     public static final int MAX_BALLS = 2;
     private int ball_count_ ;                       // The number of balls stored in the conveyor
     private CargoType[] ball_types_;
     private MotorController intake_motor_ ;         // The motor for the flash intake piece
+    private double intake_motor_power_ ;
     private MotorController shooter_motor_ ;        // The motor for the shooter sidef of the conveyor
+    private double shooter_motor_power_ ;
     private XeroDoubleSolenoid exit_ ;    
     private ZekeColorSensor color_sensor_;
     private static final int SENSOR_COUNT = 4;
@@ -71,7 +73,9 @@ public class ConveyorSubsystem extends Subsystem {
             state_[i] = State.WAIT_INTAKE;
         }
         intake_motor_ = getRobot().getMotorFactory().createMotor("intake", "subsystems:conveyor:hw:motors:intake");
+        intake_motor_power_ = 0.0 ;
         shooter_motor_ = getRobot().getMotorFactory().createMotor("shooter", "subsystems:conveyor:hw:motors:shooter");
+        shooter_motor_power_ = 0.0 ;
 
         int num;
         int basech = (int) 'a';
@@ -85,6 +89,25 @@ public class ConveyorSubsystem extends Subsystem {
         }
     }
 
+    @Override
+    public SettingsValue getProperty(String name) {
+        SettingsValue v = null ;
+
+        if (name.equals("ball-count")) {
+            v = new SettingsValue(ball_count_) ;
+        }
+        else if (name.equals("exit")) {
+            v = new SettingsValue(exit_.get() == ExitOpenState) ;
+        }
+        else if (name.equals("horizontal")) {
+            v = new SettingsValue(intake_motor_power_) ;
+        }
+        else if (name.equals("vertical")) {
+            v = new SettingsValue(shooter_motor_power_) ;
+        }
+
+        return v ;
+    }
 
     public boolean isFull() {
         return ball_count_ == MAX_BALLS ;
@@ -196,7 +219,9 @@ public class ConveyorSubsystem extends Subsystem {
             logger.endMessage();
 
             intake_motor_.set(intake) ;
+            intake_motor_power_ = intake ;
             shooter_power_ = shooter ;
+            shooter_motor_power_ = shooter ;
         }
         catch(Exception ex) {
         }
