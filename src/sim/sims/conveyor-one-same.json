@@ -42,7 +42,7 @@
                     "values" : {
                         "intake" : false,
                         "chimney" : false,
-                        "exit" : true,
+                        "exit" : false,
                         "shooter" : false
                     }
                 }
@@ -75,7 +75,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "vertical",
-                    "value" : 0.0
+                    "value" : 1.0
                 },
                 {
                     "subsystem" : "conveyor",
@@ -97,6 +97,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo set the intake sensor",
                         "intake" : true
                     }
                 }
@@ -110,6 +111,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo cleared the intake sensor",
                         "intake" : false
                     }
                 }
@@ -124,6 +126,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "comment" : "cargo set the color sensor to red",
                         "color-2" : "0.0, 0.0, 1.0",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -140,6 +143,7 @@
                     "instance" : "1",
                     "values" : 
                     {
+                        "comment" : "cargo cleared the color sensor",
                         "color-2" : "0.333, 0.333, 0.333",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -181,6 +185,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo set the chimney sensor",
                         "chimney" : true
                     }
                 }
@@ -194,6 +199,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo cleared the chimney sensor",
                         "chimney" : false
                     }
                 }
