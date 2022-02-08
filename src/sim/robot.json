@@ -162,6 +162,39 @@
                 "povs" : 1,
                 "create_early" : true                
             }
-        }
+        },
+        {
+            "model" : "motor-encoder",
+            "instance" : "w1",
+            "props" : {
+                "rps-per-volt-per-time" : 75.68,
+                "ticks-per-rev" : 24.0,
+                "w1:motor:type": "sparkmax-brushless",
+                "w1:motor:index": 9,
+                "w1:motor:use_motor_encoders": true
+            }
+        },
+        {
+            "model" : "motor-encoder",
+            "instance" : "w2",
+            "props" : {
+                "rps-per-volt-per-time" : 75.68,
+                "ticks-per-rev" : 24.0,
+                "w2:motor:type": "sparkmax-brushless",
+                "w2:motor:index": 10,
+                "w2:motor:use_motor_encoders": true                
+            }
+        },
+        {
+            "model" : "motor-encoder",
+            "instance" : "hood",
+            "props" : {
+                "rps-per-volt-per-time" : 75.68,
+                "ticks-per-rev" : 24.0,
+                "hood:motor:type": "sparkmax-brushless",
+                "hood:motor:index": 12,
+                "hood:motor:use_motor_encoders": true                
+            }
+        }        
     ]
 }

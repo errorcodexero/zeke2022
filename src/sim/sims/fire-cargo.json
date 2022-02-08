@@ -14,7 +14,7 @@
                         "start" : 0.1,
                         "autonomous" : 0.0,
                         "between" : 0.0,
-                        "teleop" : 5.0,
+                        "teleop" : 10.0,
                         "fms" : false
                     }
                 },
@@ -23,13 +23,32 @@
                     "instance" : "1",
                     "values" :
                     {
-                        "comment" : "Collect/shoot mode switch set to collect",                        
+                        "comment" : "Collect/shoot mode switch set to collect",
                         "button11" : false,
-                        
-                        // The climb lock button is in the locked state
-                        "button10" : true                        
+
+                        // The climb lock button is set to locked
+                        "button10" : true
                     }
-                }                
+                },
+                {
+                    "model" : "turret",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "start the turret facing the not at the target",
+                        "angle" : 60.0
+                    }
+                },   
+                {
+                    "model" : "tankdrive",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "xpos" : 162.0,
+                        "ypos" : 162.0,
+                        "angle" : 180.0
+                    }
+                }
             ]
         },
         {
@@ -40,10 +59,10 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "intake" : true,
-                        "chimney" : true,
+                        "intake" : false,
+                        "chimney" : false,
                         "exit" : true,
-                        "shooter" : true
+                        "shooter" : false
                     }
                 }
             ]
@@ -75,7 +94,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "vertical",
-                    "value" : 1.0
+                    "value" : 0.0
                 },
                 {
                     "subsystem" : "conveyor",
@@ -97,23 +116,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "comment" : "cargo set the intake sensor",
-                        "intake" : false
-                    }
-                }
-            ]
-        },
-        {
-            "time" : 3.24,
-            "events" :
-            [
-                {
-                    "model" : "zekeoi",
-                    "instance" : "1",
-                    "values" : 
-                    {
-                        "comment" : "Collect button released",
-                        "button14" : false
+                        "intake" : true
                     }
                 }
             ]
@@ -126,8 +129,22 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "comment" : "cargo cleared the intake sensor",
-                        "intake" : true
+                        "intake" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.35,
+            "events" :
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Collect button released - early release of button",
+                        "button14" : false
                     }
                 }
             ]
@@ -141,7 +158,6 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "comment" : "cargo set the color sensor to red",
                         "color-2" : "0.0, 0.0, 1.0",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -158,7 +174,6 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "comment" : "cargo cleared the color sensor",
                         "color-2" : "0.333, 0.333, 0.333",
                         "proximity-2" : 25,
                         "ir-2" : 26
@@ -200,8 +215,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "comment" : "cargo set the chimney sensor",
-                        "chimney" : false
+                        "chimney" : true
                     }
                 }
             ]
@@ -214,8 +228,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "comment" : "cargo cleared the chimney sensor",
-                        "chimney" : true
+                        "chimney" : false
                     }
                 }
             ]
@@ -238,6 +251,99 @@
                     "subsystem" : "conveyor",
                     "property" : "ball-count",
                     "value" : 1
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }    
+            ]
+        },
+        {
+            "time" : 5.0,
+            "events" : 
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
+                        "comment" : "Collect/shoot mode switch set to shoot",                        
+                        "button11" : true,
+                    }
+                }                
+            ]
+        },
+        {
+            "time" : 8.0,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 1
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }    
+            ]
+        },        
+        {
+            "time" : 8.3,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "shooter" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 8.5,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "shooter" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 8.7,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
                 },
                 {
                     "subsystem" : "conveyor",
