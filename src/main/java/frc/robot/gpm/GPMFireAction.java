@@ -28,7 +28,7 @@ public class GPMFireAction extends Action {
         super.start();
 
         // set shooter to start... shooting...
-        sub_.getShooter().setAction(shooter_action_) ;
+        sub_.getShooter().setAction(shooter_action_, true) ;
 
     }
 
