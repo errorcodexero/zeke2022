@@ -23,25 +23,35 @@ public class ClimberModel extends SimulationModel {
         // The climber model is started
         Started,
 
-        // The climb sequence is started, we are looking for the first
-        // one of the two touch sensors
-        WaitingMidFirstSensor,
+        // The climb sequence is started.  In the model we wait for a fixed amount of time
+        // given by the model parameter 'first_mid_sensor_delay' and then we set the value
+        // of the first sensor to indicate the first side of the climber has hit the mid bar
+        SetFirstMidSensor,
 
-        // The first sensor has hit the bar, now we are waiting a fixed amount
-        // of time for the second sensor to hit.
-        //
-        // Checks: Be sure the correct side of the drive base is running based on
-        //         which sensor hit the bar
-        WaitingMidSecondSensor,
+        // The first sensor has hit the mid bar.  We wait for a fixed amount of time given by the
+        // model parameter 'second_mid_sensor_delay', validating that the correct drive base motor
+        // is running, and then set the second sensor indicating that the climber is flush with the 
+        // mid bar.
+        SetSecondMidSensor,
 
-        // Both sensor have hit the bar.  We wait for the grabbers to close around
-        // the bar.
+        // Both sensor have hit the bar.  We wait for the robot to close the grabbers on the A end of
+        // the climber to grab around the mid bar.
         WaitForMidGrabbersClosed,
 
-        // Waiting on the windmill motor to start running
-        WaitForWindMillOne,
+        // The A grabber has grabbed around the mid bar. The action should have started the windmill
+        // motor so we watch to see tha the midmill motor is running.
+        WindmillSetHighSensors,
 
-        // Wait on the switches on the high bar
+        WaitForHighGrabberClosed,
+
+        WaitForMidGrabberOpen,
+
+        WindmillSetTraverseSensors,
+
+        WaitForTraverseGrabberClosed,
+
+        WaitForHighGrabberOpen,
+
         Complete,
     };
 
@@ -51,11 +61,16 @@ public class ClimberModel extends SimulationModel {
 
     static private final String DBModelPropName = "dbmodel" ;
     static private final String DBInstPropName = "dbinst" ;
-    static private final String FirstSensorDelayPropName = "first_sensor_delay" ;
-    static private final String SecondSensorDelayPropName = "second_sensor_delay" ;
+    static private final String FirstSensorDelayPropName = "first_mid_sensor_delay" ;
+    static private final String SecondSensorDelayPropName = "second_mid_sensor_delay" ;
     static private final String SecondSensorDBCheckPropName = "second_sensor_db_check" ;
     static private final String WindMillCheckTime = "windmill_check" ; 
     static private final String WindMillDoneTime = "windmill_done" ;
+    static private final String MidGrabberCloseTime = "mid_grabber_close_time" ;
+    static private final String HighGrabberCloseTime = "high_grabber_close_time" ;
+    static private final String MidGrabberOpenTime = "mid_grabber_close_time" ;
+    static private final String TraverseGrabberCloseTime = "high_grabber_close_time" ;
+    static private final String HighGrabberOpenTime = "mid_grabber_close_time" ;
 
     static private final String TouchLeftMidIO = "touch_left_mid_io" ;
     static private final String TouchLeftHighIO = "touch_left_high_io" ;
@@ -114,6 +129,11 @@ public class ClimberModel extends SimulationModel {
     private double second_sencor_db_check_time_ ;
     private double windmill_check_time_ ;
     private double windmill_done_time_ ;
+    private double wait_for_mid_grabber_close_time_ ;
+    private double wait_for_high_grabber_close_time_ ;
+    private double wait_for_mid_grabber_open_time_ ;
+    private double wait_for_traverse_grabber_close_time_ ;
+    private double wait_for_high_grabber_open_time_ ;
 
     private int logger_id_ ;
 
@@ -151,6 +171,11 @@ public class ClimberModel extends SimulationModel {
             second_sencor_db_check_time_ = getDoubleProperty(SecondSensorDBCheckPropName) ;
             windmill_check_time_ = getDoubleProperty(WindMillCheckTime) ;
             windmill_done_time_ = getDoubleProperty(WindMillDoneTime) ;
+            wait_for_mid_grabber_close_time_ = getDoubleProperty(MidGrabberCloseTime) ;
+            wait_for_high_grabber_close_time_ = getDoubleProperty(HighGrabberCloseTime) ;
+            wait_for_mid_grabber_open_time_ = getDoubleProperty(MidGrabberOpenTime) ;
+            wait_for_traverse_grabber_close_time_ = getDoubleProperty(TraverseGrabberCloseTime) ;
+            wait_for_high_grabber_open_time_ = getDoubleProperty(HighGrabberOpenTime) ;
 
             if (second_sensor_time_ <= second_sencor_db_check_time_) {
                 MessageLogger logger = getEngine().getMessageLogger() ;
@@ -207,20 +232,40 @@ public class ClimberModel extends SimulationModel {
                 doStarted() ;
                 break;
 
-            case WaitingMidFirstSensor:
-                doWaitingMidFirstSensor() ;
+            case SetFirstMidSensor:
+                setFirstMidSensor() ;
                 break;
 
-            case WaitingMidSecondSensor:      
-                doWaitingMidSecondSensor() ;        
+            case SetSecondMidSensor:      
+                setSecondMidSensor() ;
                 break ;
 
             case WaitForMidGrabbersClosed:
-                doWaitForMidGrabberClosed() ;
+                waitForMidGrabberClosed() ;
                 break ;
 
-            case WaitForWindMillOne:
-                doWaitForWindMillOne() ;
+            case WindmillSetHighSensors:
+                setHighBothSensors() ;
+                break ;
+
+            case WaitForHighGrabberClosed:
+                waitForHighGrabberClosed() ;
+                break ;
+
+            case WaitForMidGrabberOpen:
+                waitForMidGrabberOpen();
+                break ;
+        
+            case WindmillSetTraverseSensors:
+                setTraverseBothSensors() ;
+                break ;
+        
+            case WaitForTraverseGrabberClosed:
+                waitForTraverseGrabberClosed() ;
+                break ;
+        
+            case WaitForHighGrabberOpen:
+                waitForHighGrabberOpen() ;
                 break ;
 
             case Complete:
@@ -241,8 +286,8 @@ public class ClimberModel extends SimulationModel {
 
     private void doStarted() {
         //
-        // The climber model sequencing has been triggered.  We wait for an amount
-        // of time given by the FirstSensorDelayPropName property.
+        // The climber model sequencing has been triggered. Select the left side
+        // right side, or both sides at random and move to the next state.
         //
         double r = random_.nextDouble() ;
         if (r > 0.9) {
@@ -260,8 +305,6 @@ public class ClimberModel extends SimulationModel {
             sensor_side_ = 0 ;
         }
 
-        sensor_side_ = 0 ;
-
         MessageLogger logger = getEngine().getMessageLogger() ;
         logger.startMessage(MessageType.Info, logger_id_) ;
         logger.add("event: model ").addQuoted(getModelName());
@@ -270,13 +313,13 @@ public class ClimberModel extends SimulationModel {
         logger.endMessage();
 
         phase_start_time_ = getRobotTime();
-        state_ = State.WaitingMidFirstSensor;
+        state_ = State.SetFirstMidSensor;
     }
 
-    private void doWaitingMidFirstSensor() {
+    private void setFirstMidSensor() {
         //
-        // The wait for the first sensor has expired.  Set the first sensor to true and then
-        // wait for the time given by the SecondSensorDelayPropName property.
+        // Wait for a specific amount of time and then trigger the sensor or sensors that detect the 
+        // mid bar.
         //
         if (getRobotTime() - phase_start_time_ > first_sensor_time_) {
             String which  = null ;
@@ -292,6 +335,7 @@ public class ClimberModel extends SimulationModel {
                 touch_right_mid_value_ = true;
                 touch_left_mid_value_ = true;
             }
+
             setSensors();
 
             if (which != null) {
@@ -305,17 +349,16 @@ public class ClimberModel extends SimulationModel {
 
             sensor_side_ = 1 - sensor_side_;
             phase_start_time_ = getRobotTime();
-            state_ = State.WaitingMidSecondSensor;
+            state_ = State.SetSecondMidSensor;
             msg_count_ = 0 ;
         }
     }
 
-    private void doWaitingMidSecondSensor() {          
+    private void setSecondMidSensor() {          
         //
         // In this state, we are waiting to set the second sensor on the mid bar for
-        // the original hook up to the bar.  We also check that the side of the drive base assocaited
-        // with the sensor that has not connected the bar is moving, but only after a delay given by
-        // the property 'SecondSensorDBCheckPropName'.
+        // the original hook up to the bar.  We also check that the side of the drive base associated
+        // with the sensor that has not connected the bar is moving.
         //
         if (getRobotTime() - phase_start_time_ > second_sencor_db_check_time_) {
             MessageLogger logger = getEngine().getMessageLogger() ;
@@ -373,13 +416,18 @@ public class ClimberModel extends SimulationModel {
 
             setSensors();
             state_ = State.WaitForMidGrabbersClosed ;
+            phase_start_time_ = getRobotTime() ;
             msg_count_ = 0 ;
         }
     }
 
-    private void doWaitForMidGrabberClosed() {
+    private void waitForMidGrabberClosed() {
+        MessageLogger logger = getEngine().getMessageLogger() ;
+
+        //
+        // Wait for the robot code to connect the mid level grabber to the mid level bar.
+        //
         if (msg_count_ < 1) {
-            MessageLogger logger = getEngine().getMessageLogger() ;
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
@@ -390,20 +438,27 @@ public class ClimberModel extends SimulationModel {
 
         if (solenoid_model_.getDoubleSolenoidState(grabber_left_a_) == GrabberClosedValue && 
                 solenoid_model_.getDoubleSolenoidState(grabber_right_a_) == GrabberClosedValue) {
-            MessageLogger logger = getEngine().getMessageLogger() ;
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
             logger.add(": both left and right A grabbers closed on the bar") ;
             logger.endMessage();
 
-            state_ = State.WaitForWindMillOne ;
+            state_ = State.WindmillSetHighSensors ;
             phase_start_time_ = getRobotTime() ;
             msg_count_= 0 ;
         }
+        else if (getRobotTime() - phase_start_time_ > wait_for_mid_grabber_close_time_) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" the mid bar grabbers did not grab the mid bar in the given timeout") ;
+            logger.endMessage();
+            getEngine().addAssertError();            
+        }
     }
 
-    private void doWaitForWindMillOne() {
+    private void setHighBothSensors() {
         if (getRobotTime() - phase_start_time_ > windmill_check_time_) {
 
             if (motor_.getPower() < 0.01 && msg_count_ < 1) {
@@ -433,7 +488,173 @@ public class ClimberModel extends SimulationModel {
             touch_right_high_value_ = true ;
             setSensors();
             msg_count_ = 0 ;
+
+            phase_start_time_ = getRobotTime() ;
+            state_ = State.WaitForHighGrabberClosed ;
+        }
+    }
+
+    private void waitForHighGrabberClosed() {
+        MessageLogger logger = getEngine().getMessageLogger() ;
+
+        if (msg_count_ < 1) {
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": waiting for the grabber A to grab mid bar") ;
+            logger.endMessage();
+            msg_count_++ ;
+        }
+
+        if (solenoid_model_.getDoubleSolenoidState(grabber_left_b_) == GrabberClosedValue && 
+                solenoid_model_.getDoubleSolenoidState(grabber_right_b_) == GrabberClosedValue) {
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": both left and right A grabbers closed on the bar") ;
+            logger.endMessage();
+
+            state_ = State.WaitForMidGrabberOpen ;
+            phase_start_time_ = getRobotTime() ;
+            msg_count_= 0 ;
+        }
+        else if (getRobotTime() - phase_start_time_ > wait_for_high_grabber_close_time_) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" the hight bar grabbers did not grab the mid bar in the given timeout") ;
+            logger.endMessage();
+            getEngine().addAssertError();            
+        }
+    }
+
+    private void waitForMidGrabberOpen() {
+        MessageLogger logger = getEngine().getMessageLogger() ;
+
+        if (msg_count_ < 1) {
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": waiting for the grabber A to grab mid bar") ;
+            logger.endMessage();
+            msg_count_++ ;
+        }
+
+        if (solenoid_model_.getDoubleSolenoidState(grabber_left_a_) == GrabberOpenValue && 
+                solenoid_model_.getDoubleSolenoidState(grabber_right_a_) == GrabberOpenValue) {
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": both left and right A grabbers closed on the bar") ;
+            logger.endMessage();
+
+            state_ = State.WindmillSetTraverseSensors ;
+            phase_start_time_ = getRobotTime() ;
+            msg_count_= 0 ;
+        }
+        else if (getRobotTime() - phase_start_time_ > wait_for_mid_grabber_open_time_) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" the hight bar grabbers did not grab the mid bar in the given timeout") ;
+            logger.endMessage();
+            getEngine().addAssertError();            
+        }
+    }
+
+    private void setTraverseBothSensors() {
+        if (getRobotTime() - phase_start_time_ > windmill_check_time_) {
+
+            if (motor_.getPower() < 0.01 && msg_count_ < 1) {
+                //
+                // The windmill is turning
+                //
+                MessageLogger logger = getEngine().getMessageLogger() ;
+                logger.startMessage(MessageType.Error, logger_id_) ;
+                logger.add("event: model ").addQuoted(getModelName());
+                logger.add(" instance ").addQuoted(getInstanceName());
+                logger.add(": windmill motor not running when expected") ;
+                logger.endMessage();
+
+                msg_count_++ ;
+            }
+        }
+
+        if (getRobotTime() - phase_start_time_ > windmill_done_time_) {
+            MessageLogger logger = getEngine().getMessageLogger() ;
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": windmill phase one complete, setting high sensors") ;
+            logger.endMessage();
+
+            touch_left_traverse_value_ = true ;
+            touch_right_traverse_value_ = true ;
+            setSensors();
+            msg_count_ = 0 ;
+
+            phase_start_time_ = getRobotTime() ;
+            state_ = State.WaitForHighGrabberClosed ;
+        }
+    }
+
+    private void waitForTraverseGrabberClosed() {
+        MessageLogger logger = getEngine().getMessageLogger() ;
+
+        if (msg_count_ < 1) {
+
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": waiting for the grabber A to grab mid bar") ;
+            logger.endMessage();
+            msg_count_++ ;
+        }
+
+        if (solenoid_model_.getDoubleSolenoidState(grabber_left_a_) == GrabberClosedValue && 
+                solenoid_model_.getDoubleSolenoidState(grabber_right_a_) == GrabberClosedValue) {
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": both left and right A grabbers closed on the bar") ;
+            logger.endMessage();
+
+            state_ = State.WaitForHighGrabberOpen ;
+            phase_start_time_ = getRobotTime() ;
+            msg_count_= 0 ;
+        }
+        else if (getRobotTime() - phase_start_time_ > wait_for_mid_grabber_open_time_) {
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" the hight bar grabbers did not grab the mid bar in the given timeout") ;
+            logger.endMessage();
+            getEngine().addAssertError();            
+        }
+    }
+
+    private void waitForHighGrabberOpen() {
+        if (msg_count_ < 1) {
+            MessageLogger logger = getEngine().getMessageLogger() ;
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": waiting for the grabber A to grab mid bar") ;
+            logger.endMessage();
+            msg_count_++ ;
+        }
+
+        if (solenoid_model_.getDoubleSolenoidState(grabber_left_b_) == GrabberOpenValue && 
+                solenoid_model_.getDoubleSolenoidState(grabber_right_b_) == GrabberOpenValue) {
+            MessageLogger logger = getEngine().getMessageLogger() ;
+            logger.startMessage(MessageType.Info, logger_id_) ;
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(": both left and right A grabbers closed on the bar") ;
+            logger.endMessage();
+
             state_ = State.Complete ;
+            msg_count_= 0 ;
         }
     }
 
