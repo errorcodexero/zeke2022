@@ -62,7 +62,7 @@ public class ZekeAutoMode extends AutoMode {
         //parallel.addSubActionPair(shooter, new , block);
 
         addAction(parallel);
-        addSubActionPair(gpm, new GPMFireAction(gpm), true);
+        addSubActionPair(gpm, new GPMFireAction(gpm, null, null, null), true);
     }
 
     //

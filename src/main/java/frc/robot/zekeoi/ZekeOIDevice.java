@@ -47,7 +47,7 @@ public class ZekeOIDevice extends OIPanel {
 
         start_collect_action_ = new GPMStartCollectAction(gpm);
         stop_collect_action_ = new GPMStopCollectAction(gpm);
-        fire_action_ = new GPMFireAction(gpm);
+        fire_action_ = new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()) ;
 
         collect_ = new GPMStartCollectAction(gpm);
         climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive());

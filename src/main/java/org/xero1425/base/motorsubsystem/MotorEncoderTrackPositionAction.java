@@ -16,17 +16,23 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
     // The time the last loop was run
     private double last_time_ ;
 
+    // The name of the action
+    private String name_ ;
+
     /// \brief Create the action
     /// \param sub the MotorEncoderSubsystem subsystem for the action    
     /// \param target the target position
     /// \param addhold if true, add a hold action when the goto action is complete
-    public MotorEncoderTrackPositionAction(MotorEncoderSubsystem sub, double target) throws Exception {
+    public MotorEncoderTrackPositionAction(MotorEncoderSubsystem sub, String name, double target) throws Exception {
         super(sub) ;
 
         if (!(sub instanceof MotorEncoderSubsystem))
             throw new Exception("This subsystem is not a MotorEncoderSubsystem") ;
                     
         target_ = target ;
+        name_ = name ;
+        
+        ctrl_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:" + name, false) ;
     }
 
     public double getError() {

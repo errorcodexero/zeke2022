@@ -22,7 +22,7 @@ public class SetShooterAction extends Action {
         sub_ = sub;
         w1_action_ = new MotorEncoderVelocityAction(sub.getWheelMotor1(), "w1", w1);
         w2_action_ = new MotorEncoderVelocityAction(sub.getWheelMotor2(), "w2", w2);
-        hood_action_ = new MotorEncoderTrackPositionAction(sub.getHoodMotor(), hood);
+        hood_action_ = new MotorEncoderTrackPositionAction(sub.getHoodMotor(), "hood", hood);
     }
 
     public void update(double w1, double w2, double hood) throws BadMotorRequestException, MotorRequestFailedException{
