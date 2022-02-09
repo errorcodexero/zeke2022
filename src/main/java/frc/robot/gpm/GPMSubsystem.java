@@ -12,7 +12,6 @@ public class GPMSubsystem extends Subsystem {
   
     public static final String SubsystemName = "gamepiecemanipulator" ;
 
-    // add the conveyor and shooter as they get created...
     private ZekeIntakeSubsystem intake_ ;
     private ConveyorSubsystem conveyor_ ;
     private ShooterSubsystem shooter_ ;
