@@ -54,16 +54,23 @@ public class SparkMaxMotorController extends MotorController
         target_ = 0 ;
 
         if (RobotBase.isSimulation()) {
-            if (brushless)
+            boolean usesticks = false ;
+
+            if (brushless) {
                 sim_ = SimDevice.create(SimDeviceNameBrushless, index) ;
+                usesticks = true ;
+            }
             else
+            {
                 sim_ = SimDevice.create(SimDeviceNameBrushed, index) ;
+                usesticks = false ;
+            }
 
             sim_power_ = sim_.createDouble(MotorController.SimPowerParamName, SimDevice.Direction.kBidir, 0.0) ;
             sim_encoder_ = sim_.createDouble(MotorController.SimEncoderParamName, SimDevice.Direction.kBidir, 0.0) ;
             sim_motor_inverted_ = sim_.createBoolean(MotorController.SimInvertedParamName, SimDevice.Direction.kBidir, false) ;
             sim_neutral_mode_ = sim_.createBoolean(MotorController.SimNeutralParamName, SimDevice.Direction.kBidir, false) ;  
-            sim_.createBoolean(MotorController.SimEncoderStoresTicksParamName, SimDevice.Direction.kBidir, false) ;            
+            sim_.createBoolean(MotorController.SimEncoderStoresTicksParamName, SimDevice.Direction.kBidir, usesticks) ;        
         }
         else {
             REVLibError code ;
