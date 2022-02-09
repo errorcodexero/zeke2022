@@ -1,12 +1,7 @@
 package frc.robot.shooter;
 
 import org.xero1425.base.Subsystem;
-import org.xero1425.base.motors.BadMotorRequestException;
-import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
-import org.xero1425.base.motorsubsystem.MotorEncoderVelocityAction;
-import org.xero1425.misc.BadParameterTypeException;
-import org.xero1425.misc.MissingParameterException;
 
 public class ShooterSubsystem extends Subsystem {
     private MotorEncoderSubsystem wheelMotor1_;
@@ -17,8 +12,13 @@ public class ShooterSubsystem extends Subsystem {
     public ShooterSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
         wheelMotor1_ = new MotorEncoderSubsystem(this, SubsystemName + "-w1", false);
+        addChild(wheelMotor1_) ;
+
         wheelMotor2_ = new MotorEncoderSubsystem(this, SubsystemName + "-w2", false);
+        addChild(wheelMotor2_);
+        
         hoodMotor_ = new MotorEncoderSubsystem(this, SubsystemName + "-h", false);
+        addChild(hoodMotor_) ;
     }
 
     public MotorEncoderSubsystem getWheelMotor1(){
