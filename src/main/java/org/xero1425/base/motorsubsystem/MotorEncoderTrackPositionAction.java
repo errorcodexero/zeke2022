@@ -32,7 +32,7 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
         target_ = target ;
         name_ = name ;
         
-        ctrl_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:" + name, false) ;
+        ctrl_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:" + sub.getName() + ":" + name, false) ;
     }
 
     public double getError() {
