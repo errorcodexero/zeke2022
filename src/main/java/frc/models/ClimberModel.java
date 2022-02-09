@@ -63,7 +63,7 @@ public class ClimberModel extends SimulationModel {
     static private final String DBInstPropName = "dbinst" ;
     static private final String FirstSensorDelayPropName = "first_mid_sensor_delay" ;
     static private final String SecondSensorDelayPropName = "second_mid_sensor_delay" ;
-    static private final String SecondSensorDBCheckPropName = "second_sensor_db_check" ;
+    static private final String SecondSensorDBCheckPropName = "second_mid_sensor_db_check" ;
     static private final String WindMillCheckTime = "windmill_check" ; 
     static private final String WindMillDoneTime = "windmill_done" ;
     static private final String MidGrabberCloseTime = "mid_grabber_close_time" ;
