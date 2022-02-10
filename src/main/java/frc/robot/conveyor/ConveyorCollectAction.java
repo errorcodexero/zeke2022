@@ -27,6 +27,9 @@ public class ConveyorCollectAction extends Action {
 
     @Override
     public void cancel() {
+        if (!isDone()) {
+            sub_.setStopCollect();
+        }
         super.cancel() ;
     }
 

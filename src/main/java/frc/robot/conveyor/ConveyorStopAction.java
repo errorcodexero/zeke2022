@@ -14,7 +14,8 @@ public class ConveyorStopAction extends Action {
         super.start() ;
 
         count_++ ;
-        sub_.setMotorsPower(0.0, 0.0) ;
+        //sub_.setMotorsPower(0.0, 0.0) ;
+        sub_.setStopCollect();
         setDone() ;
     }
 

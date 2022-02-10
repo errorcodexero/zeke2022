@@ -317,7 +317,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "exit",
-                    "value" : true
+                    "value" : false
                 }                  
             ]
         }
