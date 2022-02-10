@@ -290,9 +290,10 @@
                     "value" : 0.0
                 },
                 {
+                    // The second ball is not recognized until the color sensor registers the ball
                     "subsystem" : "conveyor",
                     "property" : "ball-count",
-                    "value" : 2
+                    "value" : 1
                 },
                 {
                     "subsystem" : "conveyor",

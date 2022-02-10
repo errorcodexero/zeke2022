@@ -2,7 +2,6 @@ package frc.robot.conveyor;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.MotorController;
-import org.xero1425.base.motorsubsystem.PowerTestAction;
 import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
@@ -10,7 +9,6 @@ import org.xero1425.misc.SettingsValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.zeke_color_sensor.ZekeColorSensor;
 import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;
 
