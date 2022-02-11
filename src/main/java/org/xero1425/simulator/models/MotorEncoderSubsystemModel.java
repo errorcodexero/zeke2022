@@ -40,9 +40,6 @@ public class MotorEncoderSubsystemModel extends SimulationModel {
         double power = motor_.getPower() ;
         double rps = rps_per_volt_per_time_ * power * dt ;
 
-        if (power > 0.1)
-            System.out.println("Testing") ;
-
         revs_ += rps ;
 
         if (motor_.usesTicks()) {
