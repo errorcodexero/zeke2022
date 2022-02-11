@@ -22,9 +22,10 @@ public class GPMFireAction extends Action {
     private ConveyorShootAction conveyor_shoot_action_ ;
     private SetShooterAction shooter_action_ ;
 
-    private double DB_VELOCITY_THRESHOLD_ ;
-    private double SHOOTER_VELOCITY_THRESHOLD_ ;
-    private double HOOD_POSITION_THRESHOLD ;
+    // Butch: These are just variables, nothing special in the code, lets follow our standard convention
+    private double db_velocity_threshold_ ;
+    private double shooter_velocity_threshold_ ;
+    private double hood_position_threshold_ ;
     
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
             TankDriveSubsystem db, TurretSubsystem turret) 
@@ -36,12 +37,14 @@ public class GPMFireAction extends Action {
         db_ = db ;
 
         double index ;
-        index = sub_.getSettingsValue("hw:db_vel_threshold").getDouble() ;
-        DB_VELOCITY_THRESHOLD_ = index;
-        index = sub_.getSettingsValue("hw:shooter_vel_threshold").getDouble() ;
-        SHOOTER_VELOCITY_THRESHOLD_ = index;
-        index = sub_.getSettingsValue("hw:hood_pos_threshold").getDouble() ;
-        HOOD_POSITION_THRESHOLD = index;
+        index = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
+        db_velocity_threshold_ = index;
+
+        index = sub_.getSettingsValue("fire-action:shooter_vel_threshold").getDouble() ;
+        shooter_velocity_threshold_ = index;
+
+        index = sub_.getSettingsValue("fire-action:hood_pos_threshold").getDouble() ;
+        hood_position_threshold_ = index;
 
         // figure out intake and shooter doubles -> get from params
         conveyor_shoot_action_ = new ConveyorShootAction(sub_.getConveyor(), 0.0) ; 
@@ -74,7 +77,7 @@ public class GPMFireAction extends Action {
         //  * target tracker sees the target
         //  * turret is aimed & ready to fire
         // then, let the conveyor push cargo into the shooter
-        if (isShooterReady() && Math.abs(db_.getVelocity()) < DB_VELOCITY_THRESHOLD_ 
+        if (isShooterReady() && Math.abs(db_.getVelocity()) < db_velocity_threshold_ 
             && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) 
         {
             // TODO: once the "shooter" param is removed in the ShootAction class, get rid of the 1.0 arg passed in
@@ -109,7 +112,7 @@ public class GPMFireAction extends Action {
         double dhood = Math.abs(hood - shoot_params_.hood_) ;
 
         // return whether or not all the deltas are under the thresholds
-        boolean amIReallyReady = dw1 < SHOOTER_VELOCITY_THRESHOLD_ && dw2 < SHOOTER_VELOCITY_THRESHOLD_ && dhood < HOOD_POSITION_THRESHOLD ;
+        boolean amIReallyReady = dw1 < shooter_velocity_threshold_ && dw2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
         return  amIReallyReady ;
     }
 
@@ -120,9 +123,9 @@ public class GPMFireAction extends Action {
         // TODO: do some cool math! probably get the values/equation from testing.
         // the following "times distance" is essentially junk and just a placeholder for something more
         //      sophisticated
-        shoot_params.v1_ = 0.0 * dist_ ;
-        shoot_params.v2_ = 0.0 * dist_ ;
-        shoot_params.hood_ = 0.0 * dist_ ;
+        shoot_params.v1_ = 1000.0 * dist_ ;
+        shoot_params.v2_ = 1000.0 * dist_ ;
+        shoot_params.hood_ = 10 * dist_ ;
 
         return shoot_params ;
     }
