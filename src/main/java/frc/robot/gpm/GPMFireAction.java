@@ -82,7 +82,7 @@ public class GPMFireAction extends Action {
             && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) 
         {
             // TODO: once the "shooter" param is removed in the ShootAction class, get rid of the 1.0 arg passed in
-            sub_.getConveyor().setAction(new ConveyorShootAction(sub_.getConveyor(), 1.0)) ; 
+            sub_.getConveyor().setAction(new ConveyorShootAction(sub_.getConveyor(), 1.0), true) ; 
         }
 
     }
