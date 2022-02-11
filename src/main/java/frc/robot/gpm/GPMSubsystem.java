@@ -10,7 +10,8 @@ import frc.robot.zeke_color_sensor.ZekeColorSensor;
 
 public class GPMSubsystem extends Subsystem {
   
-    public static final String SubsystemName = "gamepiecemanipulator" ;
+    // Butch: just for consistency, I renamed this to GPM like the actual class name
+    public static final String SubsystemName = "gpm" ;
 
     private ZekeIntakeSubsystem intake_ ;
     private ConveyorSubsystem conveyor_ ;
@@ -26,7 +27,8 @@ public class GPMSubsystem extends Subsystem {
         addChild(conveyor_) ;
         
         shooter_ = new ShooterSubsystem(this);
-        addChild(shooter_);
+        addChild(shooter_) ;
+
     }
 
     public ZekeIntakeSubsystem getIntake() {
