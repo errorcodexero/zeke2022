@@ -54,7 +54,7 @@ public class GPMFireAction extends Action {
         hood_position_threshold_ = index;
 
         // figure out intake and shooter doubles -> get from params
-        conveyor_shoot_action_ = new ConveyorShootAction(sub_.getConveyor(), 0.0) ; 
+        conveyor_shoot_action_ = new ConveyorShootAction(sub_.getConveyor(), 1.0) ; 
         
         // figure out what w1, w2, and hood default vals are from -> get from params file        
         shoot_params_ = new ShootParams(0.0, 0.0, 0.0) ;

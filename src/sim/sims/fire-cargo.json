@@ -312,7 +312,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "shooter" : true
+                        "shooter" : false
                     }
                 }
             ]
@@ -325,7 +325,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "shooter" : false
+                        "shooter" : true
                     }
                 }
             ]

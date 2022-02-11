@@ -202,9 +202,9 @@ public class ConveyorSubsystem extends Subsystem {
                     state_[i] = State.WAIT_SHOOTER;
                 }
                 break;
-           /* case  WAIT_SHOOTER:
-                shooter_motor_.set(POWER_OFF_); 
-                break; */
+            case  WAIT_SHOOTER:
+                setMotorsPower(0.0, 0.0) ;
+                break;
             case WAIT_SHOOTER1:
                 if (sensor_states_[SENSOR_IDX_SHOOTER]==true)
                     state_[i] = State.WAIT_SHOOTER0;
@@ -212,13 +212,12 @@ public class ConveyorSubsystem extends Subsystem {
             case WAIT_SHOOTER0:
                 if (sensor_states_[SENSOR_IDX_SHOOTER]==false)
                 {
+                    setMotorsPower(0.0, 0.0) ;
                     ball_count_staged_--;
-                    shooter_motor_power_= POWER_OFF_;
-                    shooter_motor_.set(POWER_OFF_);
                     state_[i] = State.WAIT_INTAKE;
                     removeBall();
                 }
-                    break;
+                break;
             }
 
             if (prevst != state_[i]) {
@@ -252,7 +251,6 @@ public class ConveyorSubsystem extends Subsystem {
         super.run() ;
     }
 
-    
     protected void setMotorsPower(double intake, double shooter) {
         try {
             MessageLogger logger = getRobot().getMessageLogger();
@@ -264,7 +262,11 @@ public class ConveyorSubsystem extends Subsystem {
             stop_collect_requested_ = false;
             intake_motor_.set(intake) ;
             intake_motor_power_ = intake ;
-            shooter_power_ = shooter ;
+
+            shooter_motor_.set(shooter) ;
+            shooter_motor_power_ = shooter ;
+
+            shooter_power_ = 1.0 ;
         }
         catch(Exception ex) {
         }
@@ -296,7 +298,7 @@ public class ConveyorSubsystem extends Subsystem {
             logger.endMessage();
 
             shooter_motor_power_ = shooter;
-            shooter_motor_.set(shooter) ;
+            setMotorsPower(1.0, 1.0) ;
             state_[0] = State.WAIT_SHOOTER1;
         }
         catch(Exception ex) {
