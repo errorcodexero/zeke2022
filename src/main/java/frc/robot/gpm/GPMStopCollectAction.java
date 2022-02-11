@@ -49,7 +49,7 @@ public class GPMStopCollectAction extends Action {
 
     @Override
     public String toString(int indent) {
-        return prefix(indent) + "GPMCollectAction";
+        return prefix(indent) + "GPMStopCollectAction";
     }
 
 }
