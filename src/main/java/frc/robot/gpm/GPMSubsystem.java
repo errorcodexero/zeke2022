@@ -6,6 +6,7 @@ import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import frc.robot.conveyor.ConveyorSubsystem;
 import frc.robot.intake.ZekeIntakeSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.turret.TurretSubsystem;
 import frc.robot.zeke_color_sensor.ZekeColorSensor;
 
 public class GPMSubsystem extends Subsystem {
@@ -15,6 +16,7 @@ public class GPMSubsystem extends Subsystem {
     private ZekeIntakeSubsystem intake_ ;
     private ConveyorSubsystem conveyor_ ;
     private ShooterSubsystem shooter_ ;
+    private TurretSubsystem turret_ ;
 
     public GPMSubsystem(Subsystem parent, TankDriveSubsystem db, ZekeColorSensor color) throws Exception {
         super(parent, SubsystemName) ;
@@ -26,7 +28,11 @@ public class GPMSubsystem extends Subsystem {
         addChild(conveyor_) ;
         
         shooter_ = new ShooterSubsystem(this);
-        addChild(shooter_);
+        addChild(shooter_) ;
+
+        turret_ = new TurretSubsystem(this) ;
+        addChild(turret_) ;
+
     }
 
     public ZekeIntakeSubsystem getIntake() {
@@ -39,6 +45,10 @@ public class GPMSubsystem extends Subsystem {
 
     public ShooterSubsystem getShooter() {
         return shooter_ ;
+    }
+
+    public TurretSubsystem getTurret() {
+        return turret_ ;
     }
 
     @Override
