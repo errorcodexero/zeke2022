@@ -51,6 +51,8 @@ public class GPMFireAction extends Action {
         
         // figure out what w1, w2, and hood default vals are from -> get from params file        
         shoot_params_ = new ShootParams(0.0, 0.0, 0.0) ;
+
+        shooter_action_ = new SetShooterAction(sub_.getShooter(), shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
     }
 
     @Override
