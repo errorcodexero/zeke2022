@@ -6,7 +6,6 @@ import org.xero1425.base.Subsystem;
 import org.xero1425.base.XeroRobot;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
-import org.xero1425.simulator.engine.SimulationEngine;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
@@ -28,7 +27,7 @@ public class ColorSensorSubsystem extends Subsystem {
     private int muxaddr_ ;
     private byte [] data_ = new byte[1] ;
     private int count_ ;
-    private ColorSensorV3 sensor_ ;
+    private ColorSensorV3 [] sensors_ ;
     private int[] proximity_ ;
     private int[] ir_ ;
     private Color [] colors_ ;
@@ -70,9 +69,7 @@ public class ColorSensorSubsystem extends Subsystem {
         }
 
         muxdev_ = new I2C(port_, muxaddr_)  ;
-        select(0) ;
-
-        sensor_ = new ColorSensorV3(port_) ;
+        sensors_ = new ColorSensorV3[count_] ;
         colors_ = new Color[count_] ;
         proximity_ = new int[count_] ;
         ir_ = new int[count_] ;
@@ -114,12 +111,12 @@ public class ColorSensorSubsystem extends Subsystem {
 
     // Derived class override this for different initialization
     protected ColorSensorV3.ColorSensorResolution getResolution(int which) {
-        return ColorSensorV3.ColorSensorResolution.kColorSensorRes16bit ;
+        return ColorSensorV3.ColorSensorResolution.kColorSensorRes13bit;
     }
 
     // Derived class override this for different initialization    
     protected ColorSensorV3.ColorSensorMeasurementRate getMeasurementRate(int which) { 
-        return ColorSensorV3.ColorSensorMeasurementRate.kColorRate100ms ;
+        return ColorSensorV3.ColorSensorMeasurementRate.kColorRate25ms ;
     }
 
     // Derived class override this for different initialization    
@@ -139,7 +136,7 @@ public class ColorSensorSubsystem extends Subsystem {
             }
         }
         else {
-            c = sensor_.getColor() ;
+            c = sensors_[which_].getColor() ;
         }
 
         return c ;
@@ -154,7 +151,7 @@ public class ColorSensorSubsystem extends Subsystem {
             }
         }
         else {
-            p = sensor_.getProximity() ;
+            p = sensors_[which_].getProximity() ;
         }
 
         return p ;
@@ -169,7 +166,7 @@ public class ColorSensorSubsystem extends Subsystem {
             }
         }
         else {
-            p = sensor_.getIR() ;
+            p = sensors_[which_].getIR() ;
         }
 
         return p ;
@@ -177,11 +174,13 @@ public class ColorSensorSubsystem extends Subsystem {
 
     private void init(int which) {
         select(which) ;
+        
+        sensors_[which] = new ColorSensorV3(port_) ;
 
         ColorSensorV3.ColorSensorResolution res = getResolution(which) ;
         ColorSensorV3.ColorSensorMeasurementRate rate = getMeasurementRate(which) ;
         ColorSensorV3.GainFactor gain = getGain(which) ;
-        sensor_.configureColorSensor(res, rate, gain) ;        
+        sensors_[which].configureColorSensor(res, rate, gain) ;        
     }
 
     private void select(int which) {
