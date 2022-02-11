@@ -23,9 +23,9 @@ public class GPMFireAction extends Action {
     private SetShooterAction shooter_action_ ;
 
     // Butch: These are just variables, nothing special in the code, lets follow our standard convention
-    private final double db_velocity_threshold_ ;
-    private final double shooter_velocity_threshold_ ;
-    private final double hood_position_threshold_ ;
+    private double db_velocity_threshold_ ;
+    private double shooter_velocity_threshold_ ;
+    private double hood_position_threshold_ ;
     
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
             TankDriveSubsystem db, TurretSubsystem turret) 
@@ -68,8 +68,7 @@ public class GPMFireAction extends Action {
 
         // prep shooters; keep it ready and up to speed
         shoot_params_ = calculate(shoot_params_, target_tracker_) ;
-        sub_.getShooter().setAction(new SetShooterAction(sub_.getShooter(), 
-            shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_)) ;        
+        shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
         
         // if the
         //  * shooter is up to speed
