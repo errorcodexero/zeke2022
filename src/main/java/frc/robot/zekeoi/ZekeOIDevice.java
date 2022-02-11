@@ -75,7 +75,8 @@ public class ZekeOIDevice extends OIPanel {
                     gpm.setAction(stop_collect_action_);
                 }
             } else {
-                gpm.setAction(fire_action_);
+                if (gpm.getAction() != fire_action_)
+                    gpm.setAction(fire_action_);
             }
         } else {
             if (turret.getAction() == follow_)
