@@ -18,16 +18,24 @@
             "actions": true,
             "pathmanager": false,
             "xerorobot": false,
+
             // Tank drive related settings
             "pathfollowing": false,
             "tankdrive": false,
+
             // Turrent/Limelight/Aiming related
             "zeke_limelight": false,
+
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
             "conveyor": true,
             "shooter": false,
+            "fire-action" : false,
+            "shooter-w1" : false,
+            "shooter-w2" : false,
+            "shooter-h" : false,
+
             // Climber related
             "climber": false,
             "climber-model": false

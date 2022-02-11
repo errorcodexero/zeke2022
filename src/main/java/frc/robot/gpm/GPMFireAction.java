@@ -2,6 +2,8 @@ package frc.robot.gpm;
 
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 
 import frc.robot.conveyor.ConveyorShootAction;
 import frc.robot.shooter.SetShooterAction;
@@ -10,7 +12,7 @@ import frc.robot.turret.TurretSubsystem;
 
 public class GPMFireAction extends Action {
 
-    public static final String SubsystemName = "gpm" ;
+    private final String LoggerName = "fire-action" ;
 
     private GPMSubsystem sub_;
     private TargetTrackerSubsystem target_tracker_ ;
@@ -26,6 +28,8 @@ public class GPMFireAction extends Action {
     private double db_velocity_threshold_ ;
     private double shooter_velocity_threshold_ ;
     private double hood_position_threshold_ ;
+
+    private int logger_id_ ;
     
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
             TankDriveSubsystem db, TurretSubsystem turret) 
@@ -35,6 +39,9 @@ public class GPMFireAction extends Action {
         sub_ = sub ;
         target_tracker_ = target_tracker ;
         db_ = db ;
+        turret_ = turret ;
+
+        logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem(LoggerName) ;
 
         double index ;
         index = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
@@ -68,9 +75,25 @@ public class GPMFireAction extends Action {
     public void run() throws Exception {
         super.run();
 
+        boolean shooterReady, dbready ;
+
         // prep shooters; keep it ready and up to speed
         shoot_params_ = calculate(shoot_params_, target_tracker_) ;
         shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
+
+        shooterReady = isShooterReady() ;
+        dbready = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
+
+        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Debug, logger_id_) ;
+        logger.add("FireAction: adjusting shooter") ;
+        logger.add("w1", shoot_params_.v1_).add("w2", shoot_params_.v2_).add("hood", shoot_params_.hood_) ;
+        logger.endMessage();
+        
+        logger.startMessage(MessageType.Debug, logger_id_) ;
+        logger.add("FireAction: ready") ;
+        logger.add("shooter", shooterReady).add("turret", turret_.isReadyToFire()).add("db", dbready).add("tracker", target_tracker_.hasVisionTarget()) ;
+        logger.endMessage();        
         
         // if the
         //  * shooter is up to speed
@@ -78,8 +101,7 @@ public class GPMFireAction extends Action {
         //  * target tracker sees the target
         //  * turret is aimed & ready to fire
         // then, let the conveyor push cargo into the shooter
-        if (isShooterReady() && Math.abs(db_.getVelocity()) < db_velocity_threshold_ 
-            && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) 
+        if (shooterReady && dbready && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) 
         {
             // TODO: once the "shooter" param is removed in the ShootAction class, get rid of the 1.0 arg passed in
             sub_.getConveyor().setAction(new ConveyorShootAction(sub_.getConveyor(), 1.0)) ; 
@@ -124,9 +146,9 @@ public class GPMFireAction extends Action {
         // TODO: do some cool math! probably get the values/equation from testing.
         // the following "times distance" is essentially junk and just a placeholder for something more
         //      sophisticated
-        shoot_params.v1_ = 1000.0 * dist_ ;
-        shoot_params.v2_ = 1000.0 * dist_ ;
-        shoot_params.hood_ = 10 * dist_ ;
+        shoot_params.v1_ = 10.0 * dist_ ;
+        shoot_params.v2_ = 10.0 * dist_ ;
+        shoot_params.hood_ = 1 * dist_ ;
 
         return shoot_params ;
     }
