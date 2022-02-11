@@ -14,8 +14,6 @@ public class GPMStopCollectAction extends Action {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
 
-        conveyor_stop_action_ = new ConveyorStopAction(sub_.getConveyor()) ; 
-
         intake_stop_action_ = new ZekeIntakeOffAction(sub_.getIntake()) ;
     }
 
@@ -26,7 +24,7 @@ public class GPMStopCollectAction extends Action {
         sub_.getIntake().setAction(conveyor_stop_action_, true) ;
 
         //  stop action -> conveyor
-        sub_.getConveyor().setAction(conveyor_stop_action_, true) ;
+        sub_.getConveyor().setAction(null, true) ;
     }
 
     @Override

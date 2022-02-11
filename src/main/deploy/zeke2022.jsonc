@@ -25,8 +25,8 @@
             "zeke_limelight": false,
             // Ball path related
             "zeke-color-sensor": false,
-            "intake": true,
-            "conveyor": false,
+            "intake": false,
+            "conveyor": true,
             "shooter": false,
             // Climber related
             "climber": false,

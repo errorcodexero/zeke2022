@@ -113,9 +113,11 @@
             "events" : 
             [
                 {
+
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo set the intake sensor",
                         "intake" : false
                     }
                 }
@@ -126,9 +128,11 @@
             "events" : 
             [
                 {
+
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
+                        "comment" : "cargo cleared the intake sensor",
                         "intake" : true
                     }
                 }
@@ -215,7 +219,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "chimney" : true
+                        "chimney" : false
                     }
                 }
             ]
@@ -228,7 +232,7 @@
                     "model" : "conveyor",
                     "instance" : "1",
                     "values" : {
-                        "chimney" : false
+                        "chimney" : true
                     }
                 }
             ]
@@ -240,7 +244,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "horizontal",
-                    "value" : 1.0
+                    "value" : 0.0
                 },
                 {
                     "subsystem" : "conveyor",
