@@ -18,19 +18,23 @@
             "actions": true,
             "pathmanager": false,
             "xerorobot": false,
+
             // Tank drive related settings
             "pathfollowing": false,
             "tankdrive": false,
+
             // Turrent/Limelight/Aiming related
             "zeke_limelight": false,
+
             // Ball path related
             "zeke-color-sensor": false,
-            "intake": true,
+            "intake": false,
             "conveyor": false,
             "shooter": false,
+
             // Climber related
-            "climber": false,
-            "climber-model": false
+            "climber": true,
+            "climber-model": true
         },
         //
         // This section controls, what data shows up on the smart dashboard when the item has a
