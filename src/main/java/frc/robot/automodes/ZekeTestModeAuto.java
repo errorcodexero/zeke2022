@@ -9,6 +9,8 @@ import frc.robot.intake.ZekeIntakeArmAction;
 import frc.robot.intake.ZekeIntakeOnAction;
 import frc.robot.intake.ZekeIntakePowerAction;
 import frc.robot.intake.ZekeIntakeSubsystem;
+import frc.robot.shooter.SetShooterAction;
+import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.climber.ClimbAction ;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
@@ -20,9 +22,13 @@ public class ZekeTestModeAuto extends TestAutoMode {
 
         ZekeSubsystem zeke = (ZekeSubsystem) ctrl.getRobot().getRobotSubsystem();
         TankDriveSubsystem db = zeke.getTankDrive();
+        ZekeIntakeSubsystem intake = zeke.getGPMSubsystem().getIntake() ;   
+        ConveyorSubsystem conveyor = zeke.getGPMSubsystem().getConveyor() ;
+        ShooterSubsystem shooter = zeke.getGPMSubsystem().getShooter() ;
         ClimberSubsystem climber = zeke.getClimber() ;
-        ZekeIntakeSubsystem intake = zeke.getGPMSubsystem().getIntake() ;
 
+        // https://docs.google.com/document/d/1_RRGDMPI7WE6HX6dVFBds36qcHX3i3mzn8hmVEGbd0s/edit
+        // send an email if you can't access -> all the tests we'll need
         switch (getTestNumber()) {
             //
             // Numbers 0 - 9 are for the DRIVEBASE
@@ -59,15 +65,31 @@ public class ZekeTestModeAuto extends TestAutoMode {
             //
             // Numbers 20 - 29 are for the CONVEYOR
             //
-            case 20:        
+            case 20:   
                 //add action
                 break ;
             
             //
             // Numbers 30 - 39 are for the SHOOTER
             //
-            case 30:        
-                //add action
+            case 30: // power to both wheel motors; position to hood motor
+                addSubActionPair(shooter, new SetShooterAction(shooter, getPower(), getPower(), getPosition()), false);
+                break ;
+
+            case 31: // power to wheel motor #1
+                addSubActionPair(shooter, new SetShooterAction(shooter, getPower(), 0.0, 0.0), false);
+                break ;
+        
+            case 32: // power to wheel motor #2
+                addSubActionPair(shooter, new SetShooterAction(shooter, 0.0, getPower(), 0.0), false);
+                break ;
+                
+            case 33: // power to both wheel motors
+                addSubActionPair(shooter, new SetShooterAction(shooter, getPower(), getPower(), 0.0), false);
+                break ;
+
+            case 34: // position to hood motor
+                addSubActionPair(shooter, new SetShooterAction(shooter, 0.0, 0.0, getPosition()), false);
                 break ;
 
             //
