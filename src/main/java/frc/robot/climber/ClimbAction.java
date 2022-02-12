@@ -282,6 +282,7 @@ public class ClimbAction extends Action {
         // wait for clamp A to completely unclamp
         if (sub_.getRobot().getTime() - state_start_time_ > first_unclamp_wait_) {
             sub_.setWindmill(SetWindmillTo.FORWARDS);
+            state_ = ClimbingStates.WINDMILL_TWO ;
         }
     }
 

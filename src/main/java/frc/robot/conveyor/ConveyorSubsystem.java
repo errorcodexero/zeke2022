@@ -203,7 +203,11 @@ public class ConveyorSubsystem extends Subsystem {
                 }
                 break;
             case  WAIT_SHOOTER:
-                setMotorsPower(0.0, 0.0) ;
+                if (ball_count_ == 2 && i == 1) {
+                    if (Math.abs(intake_motor_power_) > 0.01 || Math.abs(shooter_motor_power_) > 0.01) {
+                        setMotorsPower(0.0, 0.0) ;
+                    }
+                }
                 break;
             case WAIT_SHOOTER1:
                 if (sensor_states_[SENSOR_IDX_SHOOTER]==true)

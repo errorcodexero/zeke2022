@@ -45,11 +45,11 @@
                 "first_mid_sensor_delay" : 0.5,
                 "second_mid_sensor_delay" : 0.5,
                 "second_mid_sensor_db_check" : 0.1,
-                "windmill_check" : 0.1,
+                "windmill_check" : 0.6,
                 "windmill_done" : 2.0,
                 "mid_grabber_close_time" : 0.5,
                 "high_grabber_close_time" : 0.5,
-                "mid_grabber_open_time" : 0.5,
+                "mid_grabber_open_time" : 0.6,
                 "traverse_grabber_close_time" : 0.5,
                 "high_grabber_open_time" : 0.5,
 
@@ -64,13 +64,13 @@
                 "left_a_forward": 2,
                 "left_a_reverse" : 3,
 
-                "left_b_module": 0,
-                "left_b_forward": 4,
-                "left_b_reverse" : 5,
-
                 "right_a_module": 0,
                 "right_a_forward": 6,
                 "right_a_reverse" : 7,
+
+                "left_b_module": 0,
+                "left_b_forward": 4,
+                "left_b_reverse" : 5,
                 
                 "right_b_module": 0,
                 "right_b_forward": 8,
