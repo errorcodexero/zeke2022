@@ -1,5 +1,7 @@
 package frc.robot.automodes;
 
+import java.lang.annotation.Target;
+
 import org.xero1425.base.controllers.TestAutoMode;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
@@ -11,6 +13,9 @@ import frc.robot.intake.ZekeIntakePowerAction;
 import frc.robot.intake.ZekeIntakeSubsystem;
 import frc.robot.shooter.SetShooterAction;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.targettracker.TargetTrackerSubsystem;
+import frc.robot.turret.FollowTargetAction;
+import frc.robot.turret.TurretSubsystem;
 import frc.robot.climber.ClimbAction ;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
@@ -20,11 +25,13 @@ public class ZekeTestModeAuto extends TestAutoMode {
     public ZekeTestModeAuto(ZekeAutoController ctrl) throws Exception {
         super(ctrl, "Zeke2022-Test-Mode");
 
-        ZekeSubsystem zeke = (ZekeSubsystem) ctrl.getRobot().getRobotSubsystem();
-        TankDriveSubsystem db = zeke.getTankDrive();
+        ZekeSubsystem zeke = (ZekeSubsystem) ctrl.getRobot().getRobotSubsystem() ;
+        TankDriveSubsystem db = zeke.getTankDrive() ;
         ZekeIntakeSubsystem intake = zeke.getGPMSubsystem().getIntake() ;   
         ConveyorSubsystem conveyor = zeke.getGPMSubsystem().getConveyor() ;
         ShooterSubsystem shooter = zeke.getGPMSubsystem().getShooter() ;
+        TurretSubsystem turret = zeke.getTurret() ;
+        TargetTrackerSubsystem tracker = zeke.getTargetTracker() ;
         ClimberSubsystem climber = zeke.getClimber() ;
 
         // https://docs.google.com/document/d/1_RRGDMPI7WE6HX6dVFBds36qcHX3i3mzn8hmVEGbd0s/edit
@@ -93,10 +100,10 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break ;
 
             //
-            // Numbers 40 - 49 are for the LIMELIGHT/TURRET
+            // Numbers 40 - 49 are for the LIMELIGHT/TURRET/TARGETTRACKER
             //
-            case 40:        
-                //add action
+            case 40: // follow the limelight!
+                addSubActionPair(turret, new FollowTargetAction(turret, tracker), false);
                 break ;
 
             //
