@@ -5,7 +5,9 @@ import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import frc.robot.climber.ClimberSubsystem;
 import frc.robot.conveyor.ConveyorSubsystem;
+import frc.robot.intake.ZekeIntakeArmAction;
 import frc.robot.intake.ZekeIntakeOnAction;
+import frc.robot.intake.ZekeIntakePowerAction;
 import frc.robot.intake.ZekeIntakeSubsystem;
 import frc.robot.climber.ClimbAction ;
 import frc.robot.zekesubsystem.ZekeSubsystem;
@@ -23,7 +25,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
 
         switch (getTestNumber()) {
             //
-            // Numbers 0 - 9 are for the driverbase
+            // Numbers 0 - 9 are for the DRIVEBASE
             //
             case 0: // Drive straight, used to test and get Kv number
                 addSubActionPair(db, new TankDrivePowerAction(db, getPower(), getPower(), getDuration()), true);
@@ -34,35 +36,49 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break ;  
                         
             //
-            // Numbers 10 - 19 are for the intake
+            // Numbers 10 - 19 are for the INTAKE
             //
             case 10:        
                 addSubActionPair(intake, new ZekeIntakeOnAction(intake), true) ;
                 break ;
+
+            case 11:  // turns on the left intake motor
+                addSubActionPair(intake, new ZekeIntakePowerAction(intake, ZekeIntakePowerAction.IntakeMotor.LEFT, getPower()), true);            
+                break ;
             
+            case 12:  // turns on the right intake motor
+                addSubActionPair(intake, new ZekeIntakePowerAction(intake, ZekeIntakePowerAction.IntakeMotor.RIGHT, getPower()), true);            
+                break ;
+
+            case 13:  // retracts and deploys the intake arm
+                // add the waits into place between deploying and retracting
+                addSubActionPair(intake, new ZekeIntakeArmAction(intake, ZekeIntakeArmAction.ArmPos.DEPLOY), false);  
+                addSubActionPair(intake, new ZekeIntakeArmAction(intake, ZekeIntakeArmAction.ArmPos.RETRACT), false);  
+                break ;
+
             //
-            // Numbers 20 - 29 are for the conveyor
+            // Numbers 20 - 29 are for the CONVEYOR
             //
             case 20:        
                 //add action
                 break ;
             
             //
-            // Numbers 30 - 39 are for the shooter
+            // Numbers 30 - 39 are for the SHOOTER
             //
             case 30:        
                 //add action
                 break ;
 
             //
-            // Numbers 40 - 49 are for the turret/limelight
+            // Numbers 40 - 49 are for the LIMELIGHT/TURRET
             //
             case 40:        
                 //add action
                 break ;
 
             //
-            // Numbers 50 - 59 are for the climber
+            // Numbers 50 - 59 are for the CLIMBER
             //
             case 50:        
                 if (caction_ == null) {
@@ -72,10 +88,11 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break ;
 
             //
-            // Numbers 100+ are for the whole-robot
+            // Numbers 100+ are for the whole-robot; gpm; etc
             //
             case 100:  
                 break ;
+
         }
     }
 }
