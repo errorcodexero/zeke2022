@@ -1,10 +1,10 @@
 package frc.robot.automodes;
 
 import org.xero1425.base.actions.DelayAction;
-import org.xero1425.base.actions.LambdaAction;
 import org.xero1425.base.actions.ParallelAction;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.controllers.AutoMode;
+import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
@@ -12,7 +12,6 @@ import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
-import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeAutoMode extends AutoMode {
@@ -28,14 +27,6 @@ public class ZekeAutoMode extends AutoMode {
     // Add the actions to set the initial ball count
     //
     protected void setInitialBallCount(int count) {
-        //
-    }
-
-    //
-    // Initialize the climber
-    //
-    protected void initializeClimber() throws Exception {
-        //
     }
 
     //
@@ -46,23 +37,18 @@ public class ZekeAutoMode extends AutoMode {
     //
     protected void driveAndFire(String path, boolean reverse, double angle) throws Exception {
         
-        GPMSubsystem gpm = getZekeRobotSubsystem().getGPMSubsystem();
-        TankDriveSubsystem db = getZekeRobotSubsystem().getTankDrive();
-        ShooterSubsystem shooter = getZekeRobotSubsystem().getGPMSubsystem().getShooter();
+        ZekeSubsystem zeke = getZekeRobotSubsystem() ;
+        GPMSubsystem gpm = zeke.getGPMSubsystem();
         ParallelAction parallel;
 
         parallel = new ParallelAction(getAutoController().getRobot().getMessageLogger(), ParallelAction.DonePolicy.All);
         parallel.addAction(setTurretToTrack(angle));
 
         if (path != null) {
-            parallel.addSubActionPair(db, new TankDrivePathFollowerAction(db,path,reverse), true);
+            parallel.addSubActionPair(zeke.getTankDrive(), new TankDrivePathFollowerAction(zeke.getTankDrive(), path, reverse), true);
         }
-
-        //TODO: add shooter action
-        //parallel.addSubActionPair(shooter, new , block);
-
         addAction(parallel);
-        addSubActionPair(gpm, new GPMFireAction(gpm, null, null, null), true);
+        addSubActionPair(gpm, new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()), true) ;
     }
 
     //
@@ -77,21 +63,24 @@ public class ZekeAutoMode extends AutoMode {
         SequenceAction series, series2;
 
         parallel = new ParallelAction(getAutoController().getRobot().getMessageLogger(), ParallelAction.DonePolicy.All);
-
         series2 = new SequenceAction(getAutoController().getRobot().getMessageLogger());
-        series2.addAction(new DelayAction(getAutoController().getRobot(), delay1));
+
+        if (Math.abs(delay1) > 0.05) {
+            series2.addAction(new DelayAction(getAutoController().getRobot(), delay1));
+        }
         series2.addSubActionPair(db, new TankDrivePathFollowerAction(db, path, false), true);
-        series2.addAction(new DelayAction(getAutoController().getRobot(), delay2));
+        if (Math.abs(delay2) > 0.05) {
+            series2.addAction(new DelayAction(getAutoController().getRobot(), delay2));
+        } 
         parallel.addAction(series2);
 
         GPMStartCollectAction collect = new GPMStartCollectAction(gpm) ;
         series = new SequenceAction(getAutoController().getRobot().getMessageLogger()); 
         series.addSubActionPair(gpm, collect, false);
         parallel.addAction(series);
-
         addAction(parallel);
 
-        addAction(new LambdaAction(getAutoController().getRobot().getMessageLogger(), "FinishCollect", ()-> collect.finish())) ;
+        addSubActionPair(gpm, new GPMStopCollectAction(gpm), true);
     }
 
     //
@@ -100,8 +89,8 @@ public class ZekeAutoMode extends AutoMode {
     //
     protected SequenceAction setTurretToTrack(double angle) throws Exception {
         SequenceAction seq = new SequenceAction(getAutoController().getRobot().getMessageLogger()) ;
-        // still need to write stuff here :)
+        MotorEncoderGotoAction action = new MotorEncoderGotoAction(getZekeRobotSubsystem().getTurret(), angle, true) ;
+        seq.addSubActionPair(getZekeRobotSubsystem().getTurret(), action, true);
         return seq ;
     }
-
 }

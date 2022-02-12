@@ -11,9 +11,6 @@ public class ConveyorCollectAction extends Action {
         shooter_ = shooter ;
     }
 
-    public void finish() {
-    }
-
     @Override
     public void start() throws Exception {
         super.start() ;
