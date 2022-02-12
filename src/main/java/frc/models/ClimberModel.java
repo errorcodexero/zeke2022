@@ -526,11 +526,7 @@ public class ClimberModel extends SimulationModel {
             state_ = State.WaitForMidGrabberOpen ;
             phase_start_time_ = getRobotTime() ;
         }
-        else if (getRobotTime() - phase_start_time_ > wait_for_high_grabber_close_time_) {
-            
-            var left = solenoid_model_.getDoubleSolenoidState(grabber_left_b_) ;
-            var right = solenoid_model_.getDoubleSolenoidState(grabber_right_b_) ;
-
+        else if (getRobotTime() - phase_start_time_ > wait_for_high_grabber_close_time_) {            
             if (!messages_.contains(7)) {
                 logger.startMessage(MessageType.Error);
                 logger.add("event: model ").addQuoted(getModelName());
@@ -585,7 +581,7 @@ public class ClimberModel extends SimulationModel {
 
             if (motor_.getPower() < 0.01) {
                 //
-                // The windmill is turning
+                // The windmill is not turning
                 //
                 if (!messages_.contains(10)) {
                     MessageLogger logger = getEngine().getMessageLogger() ;
@@ -605,7 +601,7 @@ public class ClimberModel extends SimulationModel {
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
-            logger.add(": windmill phase one complete, setting high sensors") ;
+            logger.add(": windmill phase two complete, setting traverse sensors") ;
             logger.endMessage();
 
             touch_left_traverse_value_ = true ;
@@ -613,7 +609,7 @@ public class ClimberModel extends SimulationModel {
             setSensors();
 
             phase_start_time_ = getRobotTime() ;
-            state_ = State.WaitForHighGrabberClosed ;
+            state_ = State.WaitForTraverseGrabberClosed ;
         }
     }
 
