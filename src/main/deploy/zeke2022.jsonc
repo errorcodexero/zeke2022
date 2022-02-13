@@ -218,6 +218,10 @@
                     "c": 2,
                     "d": 3
                 }
+            },
+            "power" : {
+                "intake" : 1.0,
+                "shooter" : 1.0
             }
         },
         "turret": {

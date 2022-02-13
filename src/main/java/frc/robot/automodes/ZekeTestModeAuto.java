@@ -1,12 +1,11 @@
 package frc.robot.automodes;
 
-import java.lang.annotation.Target;
-
 import org.xero1425.base.actions.DelayAction;
 import org.xero1425.base.controllers.TestAutoMode;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import frc.robot.climber.ClimberSubsystem;
+import frc.robot.conveyor.ConveyorPowerAction;
 import frc.robot.conveyor.ConveyorSubsystem;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMSubsystem;
@@ -82,8 +81,19 @@ public class ZekeTestModeAuto extends TestAutoMode {
             // Numbers 20 - 29 are for the CONVEYOR
             //
             case 20:   
-                //add action
+                // Run the intake conveyor motor
+                addSubActionPair(conveyor, new ConveyorPowerAction(conveyor, getPower(), 0.0, getDuration()), true) ;
                 break ;
+
+            case 21:   
+                // Run the shooter conveyor motor
+                addSubActionPair(conveyor, new ConveyorPowerAction(conveyor, 0.0, getPower(), getDuration()), true) ;
+                break ;     
+                
+            case 22:   
+                // Run both the shooter conveyor motor and the intake conveyor motor
+                addSubActionPair(conveyor, new ConveyorPowerAction(conveyor, getPower(), getPower(), getDuration()), true) ;
+                break ;                    
             
             //
             // Numbers 30 - 39 are for the SHOOTER

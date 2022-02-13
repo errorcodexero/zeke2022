@@ -1,7 +1,9 @@
 package frc.robot.conveyor;
 
 import org.xero1425.base.Subsystem;
+import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorController;
+import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
@@ -33,10 +35,15 @@ public class ConveyorSubsystem extends Subsystem {
     private int ball_count_staged_ ;
     private boolean stop_collect_requested_;
     private CargoType[] ball_types_;
+
     private MotorController intake_motor_ ;         // The motor for the flash intake piece
     private double intake_motor_power_ ;
+    private double intake_motor_on_ ;
+
     private MotorController shooter_motor_ ;        // The motor for the shooter sidef of the conveyor
     private double shooter_motor_power_ ;
+    private double shooter_motor_on_ ;
+
     private XeroDoubleSolenoid exit_ ;    
     private ZekeColorSensor color_sensor_;
     private static final int SENSOR_COUNT = 4;
@@ -45,8 +52,8 @@ public class ConveyorSubsystem extends Subsystem {
     private static final int SENSOR_IDX_CHIMNEY = 2;
     private static final int SENSOR_IDX_SHOOTER = 3;
     private State[] state_;
+
     private static final double POWER_OFF_ = 0;
-    private double shooter_power_ = POWER_OFF_;
 
 
     private DigitalInput[] sensors_; // The array of ball detect sensors
@@ -77,8 +84,12 @@ public class ConveyorSubsystem extends Subsystem {
         }
         intake_motor_ = getRobot().getMotorFactory().createMotor("intake", "subsystems:conveyor:hw:motors:intake");
         intake_motor_power_ = 0.0 ;
+        intake_motor_on_ = getSettingsValue("power:intake").getDouble() ;
+
         shooter_motor_ = getRobot().getMotorFactory().createMotor("shooter", "subsystems:conveyor:hw:motors:shooter");
         shooter_motor_power_ = 0.0 ;
+        shooter_motor_on_ = getSettingsValue("power:shooter").getDouble() ;
+
         stop_collect_requested_ = false;
 
         int num;
@@ -178,15 +189,13 @@ public class ConveyorSubsystem extends Subsystem {
             case  START_UPTAKE:
                 if (i == 0)
                 {
-                    shooter_motor_power_= shooter_power_;
-                    shooter_motor_.set(shooter_power_);
+                    setShooterMotor(shooter_motor_on_);
                     state_[i] = State.WAIT_CHIMNEY1;
                 }
                 else
                 {
                     ball_count_staged_ = 2;
-                    intake_motor_power_= POWER_OFF_;
-                    intake_motor_.set(POWER_OFF_);
+                    setIntakeMotor(POWER_OFF_);
                 }
                 break;
             case  WAIT_CHIMNEY1:
@@ -197,8 +206,7 @@ public class ConveyorSubsystem extends Subsystem {
                 if (sensor_states_[SENSOR_IDX_CHIMNEY]==false)
                 {
                     ball_count_staged_ = 1;
-                    shooter_motor_power_= POWER_OFF_;
-                    shooter_motor_.set(POWER_OFF_);
+                    setShooterMotor(POWER_OFF_);
                     state_[i] = State.WAIT_SHOOTER;
                 }
                 break;
@@ -255,25 +263,39 @@ public class ConveyorSubsystem extends Subsystem {
         super.run() ;
     }
 
-    protected void setMotorsPower(double intake, double shooter) {
-        try {
-            MessageLogger logger = getRobot().getMessageLogger();
-            logger.startMessage(MessageType.Debug, getLoggerID());
-            logger.add("Conveyor:").add("intake_power", intake) ;
-            logger.add(" shooter_power", shooter) ;
-            logger.endMessage();
+    private void setShooterMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
+        MessageLogger logger = getRobot().getMessageLogger();
+        logger.startMessage(MessageType.Debug, getLoggerID());
+        logger.add("Conveyor:").add("shooter", power) ;
+        logger.endMessage();
 
-            stop_collect_requested_ = false;
-            intake_motor_.set(intake) ;
-            intake_motor_power_ = intake ;
+        shooter_motor_power_ = power ;
+        shooter_motor_.set(power) ;
+    }
 
-            shooter_motor_.set(shooter) ;
-            shooter_motor_power_ = shooter ;
+    private void setIntakeMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
+        MessageLogger logger = getRobot().getMessageLogger();
+        logger.startMessage(MessageType.Debug, getLoggerID());
+        logger.add("Conveyor:").add("intake", power) ;
+        logger.endMessage();
 
-            shooter_power_ = 1.0 ;
-        }
-        catch(Exception ex) {
-        }
+        intake_motor_power_ = power ;
+        intake_motor_.set(power) ;
+    }
+
+    protected void setMotorsPower(double intake, double shooter) throws BadMotorRequestException, MotorRequestFailedException {
+        MessageLogger logger = getRobot().getMessageLogger();
+        logger.startMessage(MessageType.Debug, getLoggerID());
+        logger.add("Conveyor:").add("intake_power", intake) ;
+        logger.add(" shooter_power", shooter) ;
+        logger.endMessage();
+
+        stop_collect_requested_ = false;
+        intake_motor_.set(intake) ;
+        intake_motor_power_ = intake ;
+
+        shooter_motor_.set(shooter) ;
+        shooter_motor_power_ = shooter ;
     }
 
     protected void setStopCollect()
@@ -293,21 +315,15 @@ public class ConveyorSubsystem extends Subsystem {
         ball_count_ = 1;
     }
         
-    protected void setShootMode(double shooter) {
-        try {
-            MessageLogger logger = getRobot().getMessageLogger();
-            logger.startMessage(MessageType.Debug, getLoggerID());
-            logger.add("Conveyor:");
-            logger.add(" shooter_power", shooter) ;
-            logger.endMessage();
-
-            shooter_motor_power_ = shooter;
-            setMotorsPower(1.0, 1.0) ;
-            state_[0] = State.WAIT_SHOOTER1;
-        }
-        catch(Exception ex) {
-        }
+    protected void setShootMode() throws BadMotorRequestException, MotorRequestFailedException {
+        setMotorsPower(intake_motor_on_, shooter_motor_on_) ;
+        state_[0] = State.WAIT_SHOOTER1;
     }  
+
+    protected void setCollectMode() throws BadMotorRequestException, MotorRequestFailedException  {
+        setMotorsPower(intake_motor_on_, 0.0) ;
+    }
+
     private void removeBall() 
     {
         for(int i = 1; i < ball_count_; i ++) 
