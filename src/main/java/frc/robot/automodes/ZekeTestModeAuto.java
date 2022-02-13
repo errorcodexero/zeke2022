@@ -2,11 +2,14 @@ package frc.robot.automodes;
 
 import java.lang.annotation.Target;
 
+import org.xero1425.base.actions.DelayAction;
 import org.xero1425.base.controllers.TestAutoMode;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import frc.robot.climber.ClimberSubsystem;
 import frc.robot.conveyor.ConveyorSubsystem;
+import frc.robot.gpm.GPMStartCollectAction;
+import frc.robot.gpm.GPMSubsystem;
 import frc.robot.intake.ZekeIntakeArmAction;
 import frc.robot.intake.ZekeIntakeOnAction;
 import frc.robot.intake.ZekeIntakePowerAction;
@@ -27,6 +30,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
 
         ZekeSubsystem zeke = (ZekeSubsystem) ctrl.getRobot().getRobotSubsystem() ;
         TankDriveSubsystem db = zeke.getTankDrive() ;
+        GPMSubsystem gpm = zeke.getGPMSubsystem() ;
         ZekeIntakeSubsystem intake = zeke.getGPMSubsystem().getIntake() ;   
         ConveyorSubsystem conveyor = zeke.getGPMSubsystem().getConveyor() ;
         ShooterSubsystem shooter = zeke.getGPMSubsystem().getShooter() ;
@@ -56,16 +60,21 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break ;
 
             case 11:  // turns on the left intake motor
-                addSubActionPair(intake, new ZekeIntakePowerAction(intake, ZekeIntakePowerAction.IntakeMotor.LEFT, getPower()), true);            
+                addSubActionPair(intake, new ZekeIntakePowerAction(intake, getPower(), 0.0, getDuration()), true);            
                 break ;
             
             case 12:  // turns on the right intake motor
-                addSubActionPair(intake, new ZekeIntakePowerAction(intake, ZekeIntakePowerAction.IntakeMotor.RIGHT, getPower()), true);            
+                addSubActionPair(intake, new ZekeIntakePowerAction(intake, 0.0, getPower(), getDuration()), true);            
                 break ;
 
-            case 13:  // retracts and deploys the intake arm
+            case 13:  // turns on the both intake motors
+                addSubActionPair(intake, new ZekeIntakePowerAction(intake, getPower(), getPower(), getDuration()), true);            
+                break ;                
+
+            case 14:  // retracts and deploys the intake arm
                 // add the waits into place between deploying and retracting
                 addSubActionPair(intake, new ZekeIntakeArmAction(intake, ZekeIntakeArmAction.ArmPos.DEPLOY), false);  
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;
                 addSubActionPair(intake, new ZekeIntakeArmAction(intake, ZekeIntakeArmAction.ArmPos.RETRACT), false);  
                 break ;
 
@@ -114,6 +123,15 @@ public class ZekeTestModeAuto extends TestAutoMode {
                     caction_ = new ClimbAction(climber, db) ;
                 }
                 addSubActionPair(climber, caction_, true);      
+                break ;
+
+            //
+            // Numbers 60 - 69 are for the GPMSubsystem
+            //
+            case 60:
+                addSubActionPair(gpm, new GPMStartCollectAction(gpm), false) ;
+                addAction(new DelayAction(ctrl.getRobot(), getDuration())) ;
+                addSubActionPair(gpm, null, false);
                 break ;
 
             //
