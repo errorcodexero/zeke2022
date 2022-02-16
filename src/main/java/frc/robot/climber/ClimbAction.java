@@ -12,11 +12,14 @@ import org.xero1425.misc.MissingParameterException;
 
 import frc.robot.climber.ClimberSubsystem.ChangeClampTo;
 import frc.robot.climber.ClimberSubsystem.SetWindmillTo;
+import frc.robot.climber.ClimberSubsystem.WhichClamp;
+import frc.robot.zekeoi.ZekeOISubsystem;
 
 public class ClimbAction extends Action {
 
     private ClimberSubsystem sub_ ;
     private TankDriveSubsystem db_ ;
+    private ZekeOISubsystem oi_ ;
     private TankDrivePowerAction left_wheel_ ;
     private TankDrivePowerAction right_wheel_ ;
     private TankDrivePowerAction stop_db_ ;
@@ -51,10 +54,11 @@ public class ClimbAction extends Action {
     private ClimbingStates state_ = ClimbingStates.IDLE ;
 
     // todo: also take the gamepad/OI as a param so climber can disable it after it starts climbing
-    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db) throws BadParameterTypeException, MissingParameterException {
+    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, ZekeOISubsystem oi) throws BadParameterTypeException, MissingParameterException {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
         db_ = db ;
+        oi_ = oi ;
 
         drive_action_power_ = sub.getSettingsValue("climbaction:drive_action_power").getDouble() ;
         left_wheel_ = new TankDrivePowerAction(db_, drive_action_power_, 0.0) ;
@@ -152,9 +156,10 @@ public class ClimbAction extends Action {
             // touched in the same robot loop.  Unlikely, but it could happen.
             // Do:
             // - disable game pad
+            oi_.getGamePad().disable();
 
             // set clamp A => closed
-            sub_.setClampA(ChangeClampTo.CLOSED) ;
+            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.CLOSED);
 
             // - get a time stamp to use in next method; this is to give time for clamp A to be closed
             state_start_time_ = sub_.getRobot().getTime() ;
@@ -197,7 +202,7 @@ public class ClimbAction extends Action {
             db_.setAction(stop_db_) ;
 
             // - clamp A state
-            sub_.setClampA(ChangeClampTo.CLOSED);
+            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.CLOSED);
             
             // - get a time stamp to use in next method; this is to give time for clamp A to be closed
             state_start_time_ = sub_.getRobot().getTime() ;
@@ -240,7 +245,7 @@ public class ClimbAction extends Action {
         // - waits for high sensor to hit
         if (sub_.isHighLeftTouched() && sub_.isHighRightTouched()) {
             sub_.setWindmill(SetWindmillTo.OFF) ;
-            sub_.setClampB(ChangeClampTo.CLOSED);
+            sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.CLOSED);
             
             state_start_time_ = sub_.getRobot().getTime() ;
             state_ = ClimbingStates.CLAMP_TWO ;
@@ -260,7 +265,7 @@ public class ClimbAction extends Action {
     private void doClampTwo() {
         // wait for 2nd "clamp time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_clamp_wait_) {
-            sub_.setClampA(ChangeClampTo.OPEN);
+            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.OPEN);
             
             state_start_time_ = sub_.getRobot().getTime() ;
             state_ = ClimbingStates.UNCLAMP_ONE ;
@@ -302,7 +307,7 @@ public class ClimbAction extends Action {
             // turns off windmill
             sub_.setWindmill(SetWindmillTo.OFF) ;
             // sets clamp A to be closed
-            sub_.setClampA(ChangeClampTo.CLOSED);
+            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.CLOSED);
 
             state_start_time_ = sub_.getRobot().getTime() ;
             state_ = ClimbingStates.CLAMP_THREE ;
@@ -322,7 +327,7 @@ public class ClimbAction extends Action {
     private void doClampThree() {     
         //wait for 2nd "unclamping time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_unclamp_wait_) {
-            sub_.setClampB(ChangeClampTo.OPEN);
+            sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.OPEN);
 
             state_ = ClimbingStates.UNCLAMP_TWO ;
         }

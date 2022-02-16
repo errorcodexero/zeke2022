@@ -60,6 +60,11 @@ public class ClimberSubsystem extends Subsystem {
         UNKNOWN
     }
 
+    public static enum WhichClamp {
+        CLAMP_A,
+        CLAMP_B
+    }
+
     public ClimberSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
 
@@ -114,32 +119,31 @@ public class ClimberSubsystem extends Subsystem {
     //clamps. 
     // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the windmill
     // also, set the clamp to neither open nor closed if passed in parameter is "UNKNWOWN" 
-    public void setClampA(ChangeClampTo ChangeClampA) {
+    public void changeClamp(WhichClamp clamp_name, ChangeClampTo clamp_setting) {
         MessageLogger logger = getRobot().getMessageLogger() ;
         logger.startMessage(MessageType.Debug, getLoggerID()) ;
-        logger.add("Climber: set clamp: A -> ").add(ChangeClampA.toString()) ;
+        logger.add("Climber: set clamp: ") ;
+        // logger.add(changeClamp.toString()) ;
         logger.endMessage();
         
-        if (ChangeClampA == ChangeClampTo.CLOSED) {
-            clamp_a_left_.set(GripperCloseState);
-            clamp_a_right_.set(GripperCloseState);
-        } else if (ChangeClampA == ChangeClampTo.OPEN) {
-            clamp_a_left_.set(GripperOpenState);
-            clamp_a_right_.set(GripperOpenState);
-        } 
-    }
-    public void setClampB(ChangeClampTo ChangeClampB) {
-        MessageLogger logger = getRobot().getMessageLogger() ;
-        logger.startMessage(MessageType.Debug, getLoggerID()) ;
-        logger.add("Climber: set clamp: B -> ").add(ChangeClampB.toString()) ;
-        logger.endMessage();
-
-        if (ChangeClampB == ChangeClampTo.CLOSED) {
-            clamp_b_left_.set(GripperCloseState);
-            clamp_b_right_.set(GripperCloseState);
-        } else if (ChangeClampB == ChangeClampTo.OPEN) {
-            clamp_b_left_.set(GripperOpenState);
-            clamp_b_right_.set(GripperOpenState);
+        if (clamp_name == WhichClamp.CLAMP_A) {
+            if (clamp_setting == ChangeClampTo.CLOSED) {
+                clamp_a_left_.set(GripperCloseState);
+                clamp_a_right_.set(GripperCloseState);
+            }
+            else if (clamp_setting == ChangeClampTo.OPEN) {
+                clamp_a_left_.set(GripperOpenState);
+                clamp_a_right_.set(GripperOpenState);
+            }
+        } else if (clamp_name == WhichClamp.CLAMP_B) {
+            if (clamp_setting == ChangeClampTo.CLOSED) {
+                clamp_b_left_.set(GripperCloseState);
+                clamp_b_right_.set(GripperCloseState);
+            }
+            else if (clamp_setting == ChangeClampTo.OPEN) {
+                clamp_b_left_.set(GripperOpenState);
+                clamp_b_right_.set(GripperOpenState);
+            }
         }
     }
  

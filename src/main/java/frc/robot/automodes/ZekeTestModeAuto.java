@@ -17,6 +17,7 @@ import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.FollowTargetAction;
 import frc.robot.turret.TurretSubsystem;
+import frc.robot.zekeoi.ZekeOISubsystem;
 import frc.robot.climber.ClimbAction ;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
@@ -116,7 +117,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
             //
             case 50:        
                 if (caction_ == null) {
-                    caction_ = new ClimbAction(climber, db) ;
+                    caction_ = new ClimbAction(climber, db, zeke.getOI()) ;
                 }
                 addSubActionPair(climber, caction_, true);      
                 break ;
