@@ -11,6 +11,7 @@ import frc.robot.intake.ZekeIntakeArmAction;
 import frc.robot.intake.ZekeIntakeOnAction;
 import frc.robot.intake.ZekeIntakePowerAction;
 import frc.robot.intake.ZekeIntakeSubsystem;
+import frc.robot.intake.ZekeIntakeThroughputAction;
 import frc.robot.shooter.SetShooterAction;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.targettracker.TargetTrackerSubsystem;
@@ -68,6 +69,10 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 addSubActionPair(intake, new ZekeIntakeArmAction(intake, ZekeIntakeArmAction.ArmPos.DEPLOY), false);  
                 addSubActionPair(intake, new ZekeIntakeArmAction(intake, ZekeIntakeArmAction.ArmPos.RETRACT), false);  
                 break ;
+            case 14:
+                addSubActionPair(intake, new ZekeIntakeThroughputAction(intake), true);
+                break ;
+
 
             //
             // Numbers 20 - 29 are for the CONVEYOR

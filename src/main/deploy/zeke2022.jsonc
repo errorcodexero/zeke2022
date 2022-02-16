@@ -461,7 +461,7 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 10,
+        "which": 14,
         "power": 0.5,
         "duration": 5.0,
         "distance": 0.0,
