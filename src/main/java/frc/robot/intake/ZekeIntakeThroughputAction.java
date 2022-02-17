@@ -12,11 +12,9 @@ public class ZekeIntakeThroughputAction extends Action {
     private ZekeIntakeSubsystem subsystem_;
     private double in_speed_;
     private double out_slow_;
-    private double out_fast_;
     private double motor_left_begin_time_;
     private double motor_right_begin_time_;
     private int blocked_count_;
-    private double eject_duration_;
     private double blocked_duration_;
     private double left_move_duration_;
     private MovementState motor_left_state_;
@@ -34,13 +32,11 @@ public class ZekeIntakeThroughputAction extends Action {
         subsystem_ = subsystem;
         in_speed_ = subsystem_.getSettingsValue("intake-on:in_speed").getDouble();
         out_slow_ = subsystem_.getSettingsValue("intake-on:out_slow").getDouble();
-        out_fast_ = subsystem_.getSettingsValue("intake-on:out_fast").getDouble();
         blocked_count_ = subsystem_.getSettingsValue("intake-on:blocked_count").getInteger();
         blocked_duration_ = subsystem_.getSettingsValue("intake-on:blocked_duration").getDouble();
         left_move_duration_ = subsystem_.getSettingsValue("intake-on:move_left_duration").getDouble();
 
         // butch: changed this line from getInteger() to getDouble()
-        eject_duration_ = subsystem_.getSettingsValue("intake-on:eject_duration").getDouble();
 
     }
 
@@ -119,7 +115,7 @@ public class ZekeIntakeThroughputAction extends Action {
 
     @Override
     public String toString(int indent) {
-        return prefix(indent) + "IntakeOnAction";
+        return prefix(indent) + "IntakeThroughputAction";
     }
 
 }
