@@ -183,7 +183,7 @@ public class ConveyorSubsystem extends Subsystem {
                 {
                     exit_.set(ExitCloseState);
                     state_[i] = State.WAIT_INTAKE; 
-                    removeBall();
+                    removeBall(i);
                 }
                 break;
             case  START_UPTAKE:
@@ -227,7 +227,7 @@ public class ConveyorSubsystem extends Subsystem {
                     setMotorsPower(0.0, 0.0) ;
                     ball_count_staged_--;
                     state_[i] = State.WAIT_INTAKE;
-                    removeBall();
+                    removeBall(i);
                 }
                 break;
             }
@@ -324,16 +324,15 @@ public class ConveyorSubsystem extends Subsystem {
         setMotorsPower(intake_motor_on_, 0.0) ;
     }
 
-    private void removeBall() 
+    private void removeBall(int ball_idx) 
     {
-        for(int i = 1; i < ball_count_; i ++) 
-        {
-           ball_types_ [i-1] = ball_types_ [i];
-           state_ [i-1] = state_[i];
-        }
         ball_count_ --;
-        ball_types_ [ball_count_] =  CargoType.None;
-        state_ [ball_count_] = State.WAIT_INTAKE;
-        
+        if (0 == ball_idx)
+        {
+            ball_types_[0] = ball_types_[1];
+            state_[0] = state_[1];
+        }
+        ball_types_[1] =  CargoType.None;
+        state_[1] = State.WAIT_INTAKE;
     }
  } ;

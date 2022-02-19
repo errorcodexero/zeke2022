@@ -1,0 +1,763 @@
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Running simulation in teleop mode, OI is used to start operations",
+                        "start" : 0.1,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 7.0,
+                        "fms" : false
+                    }
+                },
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
+                        "comment" : "Collect/shoot mode switch set to collect",                        
+                        "button11" : false,
+                        
+                        // The climb lock button is in the locked state
+                        "button10" : true                        
+                    }
+                }                
+            ]
+        },
+        {
+            "time" : 1.0,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "intake" : true,
+                        "chimney" : true,
+                        "exit" : true,
+                        "shooter" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.0,
+            "events" :
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Collect button pressed",
+                        "button14" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.1,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }   
+            ]
+        },
+
+
+        // Ball 1 is theirs (other)
+        {
+            "time" : 3.2,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #1 set the intake sensor",
+                        "intake" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.3,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #1 cleared the intake sensor",
+                        "intake" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.4,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo #1 set the color sensor to red",
+                        "color-2" : "1.0, 0.0, 0.0",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.6,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "command" : "cargo #1 set the color sensor to none",
+                        "color-2" : "0.333, 0.333, 0.333",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.7,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : true
+                }  
+            ]
+        },
+        {
+            "time" : 3.8,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #1 set the exit sensor",
+                        "exit" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.9,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #1 cleared the exit sensor",
+                        "exit" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.0,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }                  
+            ]
+        },
+
+
+
+        // Ball 2 is ours (same)
+        {
+            "time" : 4.1,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #2 set the intake sensor",
+                        "intake" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.2,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #2 cleared the intake sensor",
+                        "intake" : true
+                    }
+                }               
+            ]
+        },
+        {
+            "time" : 4.3,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo #2 set the color sensor to blue",
+                        "color-2" : "0.0, 0.0, 1.0",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.4,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo #2 set the color sensor to none",
+                        "color-2" : "0.333, 0.333, 0.333",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.5,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }                  
+            ]
+        },
+        {
+            "time" : 4.6,
+            "events" : 
+            [
+                {
+                    "comment" : "cargo #2 set the chimney sensor",
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "chimney" : false
+                    }
+                }
+            ]
+        }, 
+        {
+            "time" : 4.7,
+            "events" : 
+            [
+                {
+                    "comment" : "cargo #2 clear the chimney sensor",
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "chimney" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.8,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 1
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }    
+            ]
+        },
+
+
+
+        // Ball 3 & 4 are theirs (other)
+        {
+            "time" : 4.9,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #3 set the intake sensor",
+                        "intake" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.0,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #3 cleared the intake sensor",
+                        "intake" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.1,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo #3 set the color sensor to red",
+                        "color-2" : "1.0, 0.0, 0.0",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.2,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "command" : "cargo #3 set the color sensor to none",
+                        "color-2" : "0.333, 0.333, 0.333",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.3,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 1
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : true
+                }  
+            ]
+        },
+        {
+            "time" : 5.4,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #3 set the exit sensor",
+                        "exit" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.5,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #3 set the exit sensor",
+                        "exit" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.6,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 1
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }  
+            ]
+        },
+        {
+            "time" : 5.7,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #4 set the intake sensor",
+                        "intake" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.8,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #4 cleared the intake sensor",
+                        "intake" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 5.9,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo #4 set the color sensor to red",
+                        "color-2" : "1.0, 0.0, 0.0",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.0,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo #4 set the color sensor to none",
+                        "color-2" : "0.33, 0.33, 0.33",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.1,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 1
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : true
+                }                  
+            ]
+        },
+        {
+            "time" : 6.2,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #4 set the exit sensor",
+                        "exit" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.3,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #4 cleared the exit sensor",
+                        "exit" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.4,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 1.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 1
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }                  
+            ]
+        },
+
+
+        // Ball 5 is ours (same)
+        {
+            "time" : 6.5,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #5 set the intake sensor",
+                        "intake" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.6,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #5 cleared the intake sensor",
+                        "intake" : true
+                    }
+                }               
+            ]
+        },
+        {
+            "time" : 6.7,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo #5 set the color sensor to blue",
+                        "color-2" : "0.0, 0.0, 1.0",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 6.8,
+            "events" : 
+            [
+                {
+                    "model" : "color-sensor-model",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "cargo #5 set the color sensor to none",
+                        "color-2" : "0.333, 0.333, 0.333",
+                        "proximity-2" : 25,
+                        "ir-2" : 26
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 7.0,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "ball-count",
+                    "value" : 2
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "exit",
+                    "value" : false
+                }    
+            ]
+        }
+    ]
+}
