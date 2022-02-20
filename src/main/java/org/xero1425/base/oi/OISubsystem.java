@@ -68,6 +68,15 @@ public class OISubsystem extends Subsystem {
         addTankDriveGamePad();
     }
 
+    public HIDDevice getDevice(int index) {
+        for(HIDDevice dev : devices_) {
+            if (dev.getIndex() == index)
+                return dev ;
+        }
+
+        return null ;
+    }
+
     public GamePadType getGamePadType() {
         return gamepad_type_ ;
     }

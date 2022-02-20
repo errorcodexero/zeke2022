@@ -4,6 +4,8 @@ import org.xero1425.base.LoopType;
 import org.xero1425.base.actions.InvalidActionRequest;
 import org.xero1425.base.actions.SequenceAction;
 
+import edu.wpi.first.wpilibj.GenericHID;
+
 /// \file
 
 /// \brief This class represents a basic HID device attached to the driver station.  This
@@ -22,6 +24,9 @@ public abstract class HIDDevice
     // The index for this HIDDevice in the WPILib API called.
     private int index_ ;
 
+    // The WPILib HID device for this device
+    private GenericHID hid_device_ ;
+
     /// \brief Create a new HID device
     /// \param sub the subsystem that owns this HID device
     /// \param name the name of this HID device
@@ -31,6 +36,8 @@ public abstract class HIDDevice
         index_ = index ;
         enabled_ = true ;
         name_ = name ;
+
+        hid_device_ = new GenericHID(index) ;
     }
 
     /// \brief Return the the name of the device
@@ -89,5 +96,9 @@ public abstract class HIDDevice
     /// \returns true if this device is enabled
     public boolean isEnabled() {
         return enabled_ ;
+    }
+
+    public void setOutput(int output, boolean value) {
+        hid_device_.setOutput(output, value) ;
     }
 }
