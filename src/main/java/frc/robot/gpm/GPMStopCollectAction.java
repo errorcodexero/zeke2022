@@ -21,10 +21,10 @@ public class GPMStopCollectAction extends Action {
     public void start() throws Exception {
         super.start();
         //  stop action -> intake
-        sub_.getIntake().setAction(conveyor_stop_action_, true) ;
+        sub_.getIntake().setAction(intake_stop_action_, true) ;
 
         //  stop action -> conveyor
-        sub_.getConveyor().setAction(null, true) ;
+        sub_.getConveyor().setAction(conveyor_stop_action_, true) ;
     }
 
     @Override

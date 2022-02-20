@@ -16,9 +16,6 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
     // The time the last loop was run
     private double last_time_ ;
 
-    // The name of the action
-    private String name_ ;
-
     /// \brief Create the action
     /// \param sub the MotorEncoderSubsystem subsystem for the action    
     /// \param target the target position
@@ -30,7 +27,6 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
             throw new Exception("This subsystem is not a MotorEncoderSubsystem") ;
                     
         target_ = target ;
-        name_ = name ;
         
         ctrl_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:" + sub.getName() + ":" + name, false) ;
     }

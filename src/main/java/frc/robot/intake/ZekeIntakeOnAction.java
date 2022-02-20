@@ -39,10 +39,7 @@ public class ZekeIntakeOnAction extends Action {
         blocked_count_ = subsystem_.getSettingsValue("intake-on:blocked_count").getInteger();
         blocked_duration_ = subsystem_.getSettingsValue("intake-on:blocked_duration").getDouble();
         left_move_duration_ = subsystem_.getSettingsValue("intake-on:move_left_duration").getDouble();
-
-        // butch: changed this line from getInteger() to getDouble()
         eject_duration_ = subsystem_.getSettingsValue("intake-on:eject_duration").getDouble();
-
     }
 
     @Override
@@ -82,7 +79,6 @@ public class ZekeIntakeOnAction extends Action {
         } else if (motor_left_state_ == MovementState.UNBLOCK && motor_right_state_ == MovementState.UNBLOCK) {
             if (subsystem_.getRobot().getTime() - motor_right_begin_time_ > blocked_duration_
                     && subsystem_.getRightBallColor() != CargoType.Same) {
-                double t = subsystem_.getRobot().getTime();
                 motor_right_state_ = MovementState.CONVEYOR;
                 motor_left_state_ = MovementState.CONVEYOR;
                 subsystem_.setLeftCollectorPower(in_speed_);
@@ -106,8 +102,8 @@ public class ZekeIntakeOnAction extends Action {
                 motor_right_begin_time_ = subsystem_.getRobot().getTime();
             } else if (motor_right_state_ == MovementState.EJECT
                     && subsystem_.getRobot().getTime() - motor_right_begin_time_ > eject_duration_
-                    && subsystem_.getLeftBallColor() != CargoType.Opposite) {
-                motor_left_state_ = MovementState.CONVEYOR;
+                    && subsystem_.getRightBallColor() != CargoType.Opposite) {
+                motor_right_state_ = MovementState.CONVEYOR;
                 subsystem_.setRightCollectorPower(in_speed_);
             }
 

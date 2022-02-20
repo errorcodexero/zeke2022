@@ -79,7 +79,7 @@ public class StandardGamepad extends Gamepad {
         if (db_ == null || isEnabled() == false)
           return ;
 
-        double xSpeed = DriverStation.getStickAxis(getIndex(), AxisNumber.LEFTY.value) ;
+        double xSpeed = -DriverStation.getStickAxis(getIndex(), AxisNumber.LEFTY.value) ;
         double zRotation = DriverStation.getStickAxis(getIndex(), AxisNumber.RIGHTX.value) ;
 
         xSpeed = MathUtil.applyDeadband(xSpeed, deadband_) ;

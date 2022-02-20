@@ -48,13 +48,6 @@ public class TargetTracker {
 
     // \returns double distance
     public double getRelativeTargetDistance(Pose2d robot) {
-
         return robot.getTranslation().getDistance(target_);
     }
-
-    // \returns turret offset
-    private Translation2d getTurretOffset() {
-        return turret_offset_ ;
-    }
-
 }

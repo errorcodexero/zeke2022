@@ -57,7 +57,7 @@ public class ZekeIntakeSubsystem extends Subsystem {
     if (right == right_intake_color_) {
       right_count_++;
     } else {
-      right_intake_color_ = left;
+      right_intake_color_ = right;
       right_count_ = 1;
     }
     if (left == left_intake_color_) {

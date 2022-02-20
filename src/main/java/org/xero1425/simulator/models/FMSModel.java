@@ -1,7 +1,6 @@
 package org.xero1425.simulator.models;
 
 import edu.wpi.first.hal.AllianceStationID;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 
 import org.xero1425.simulator.engine.SimulationModel;
@@ -91,7 +90,6 @@ public class FMSModel extends SimulationModel {
                 }
             }
             DriverStationSim.setAllianceStationId(id) ;
-            DriverStation.Alliance a = DriverStation.getAlliance() ;
         }
 
         setCreated();

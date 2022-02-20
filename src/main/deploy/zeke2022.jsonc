@@ -27,9 +27,9 @@
             "zeke_limelight": false,
 
             // Ball path related
-            "zeke-color-sensor": false,
-            "intake": false,
-            "conveyor": false,
+            "zeke-color-sensor": true,
+            "intake": true,
+            "conveyor": true,
             "shooter": false,
             "fire-action" : false,
             "shooter-w1" : false,
@@ -91,6 +91,7 @@
                     }
                 }
             },
+            "current_limit" : 10.0,
             "width": 30,
             "scrub": 1.0,
             "inches_per_tick": 0.006,
@@ -149,10 +150,10 @@
                 "index": 2,
                 "gadgets": {
                     "automode": 0,
-                    "shoot_collect_mode": 11,
-                    "collect_onoff": 14,
+                    "shoot_collect_mode": 6,
+                    "collect_onoff": 3,
                     "climb_lock": 10,
-                    "climb": 5
+                    "climb": 14
                 }
             }
         },
@@ -166,17 +167,17 @@
         },
         "intake": {
             "intake-on": {
-                "in_speed": 1,
+                "in_speed": 0.8,
                 "out_slow": -0.2,
-                "out_fast": -1,
+                "out_fast": -0.7,
                 "blocked_count": 10,
-                "blocked_duration": 0.5,
-                "move_left_duration": 0.2,
-                "eject_duration": 0.3
+                "blocked_duration": 1.0,
+                "move_left_duration": 0.4,
+                "eject_duration": 1.5
             },
             "hw": {
                 "solenoids": {
-                    "deploy": 1
+                    "deploy": 8
                 },
                 "collector": {
                     "motor-left": {
@@ -185,7 +186,8 @@
                     },
                     "motor-right": {
                         "type": "sparkmax_brushless",
-                        "canid": 8
+                        "canid": 8,
+                        "inverted" : true
                     },
                     "in_speed": 1,
                     "out_slow": 0.3,
@@ -213,10 +215,10 @@
                     }
                 },
                 "sensors": {
-                    "a": 1,
+                    "a": 11,
                     "b": 10,
-                    "c": 2,
-                    "d": 3
+                    "c": 12,
+                    "d": 13
                 }
             },
             "power" : {
@@ -469,9 +471,9 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 14,
-        "power": 0.5,
-        "duration": 5.0,
+        "which": 0,
+        "power": 0.3,
+        "duration": 1.0,
         "distance": 0.0,
         "name": "Test_Straight"
     }

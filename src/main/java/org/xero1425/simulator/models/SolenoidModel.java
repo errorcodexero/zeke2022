@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 import org.xero1425.base.pneumatics.XeroSolenoid;
-import org.xero1425.base.pneumatics.XeroSolenoidBase;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 

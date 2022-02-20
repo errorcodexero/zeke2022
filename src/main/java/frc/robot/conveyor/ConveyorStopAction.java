@@ -13,8 +13,6 @@ public class ConveyorStopAction extends Action {
     public void start() throws Exception {
         super.start() ;
 
-        count_++ ;
-        //sub_.setMotorsPower(0.0, 0.0) ;
         sub_.setStopCollect();
         setDone() ;
     }
@@ -34,5 +32,4 @@ public class ConveyorStopAction extends Action {
     }
 
     ConveyorSubsystem sub_ ;
-    static int count_ = 0 ;
 } ;

@@ -3,6 +3,7 @@ package frc.robot.zekeoi;
 import org.xero1425.base.actions.InvalidActionRequest;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.oi.OISubsystem;
+import org.xero1425.base.oi.Gamepad;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
@@ -28,7 +29,6 @@ public class ZekeOIDevice extends OIPanel {
     FollowTargetAction follow_;
 
     int start_collect_gadget_;
-    int stop_collect_gadget_;
     int automode_gadget_;
     int collect_v_shoot_gadget_;
     int climb_gadget_;
@@ -69,10 +69,12 @@ public class ZekeOIDevice extends OIPanel {
             if (getValue(collect_v_shoot_gadget_) == 0) {
 
                 // Collect mode
-                if (getValue(start_collect_gadget_) == 1) {
-                    gpm.setAction(start_collect_action_);
-                } else if (getValue(stop_collect_gadget_) == 1) {
-                    gpm.setAction(stop_collect_action_);
+                if (isCollectButtonPressed()) {
+                    if (gpm.getAction() != start_collect_action_)
+                        gpm.setAction(start_collect_action_);
+                } else {
+                    if (gpm.getAction() == start_collect_action_)
+                        gpm.setAction(stop_collect_action_) ;
                 }
             } else {
                 if (gpm.getAction() != fire_action_)
@@ -91,6 +93,17 @@ public class ZekeOIDevice extends OIPanel {
         }
     }
 
+    private boolean isCollectButtonPressed() {
+        if (getValue(start_collect_gadget_) == 1)
+            return true ;
+
+        Gamepad g = getSubsystem().getGamePad() ;
+        if (g != null && g.isRTriggerPressed())
+            return true ;
+
+        return false ;
+    }
+
     private void initializeGadgets() throws BadParameterTypeException, MissingParameterException {
         int num = getSubsystem().getSettingsValue("oi:gadgets:automode").getInteger();
         Double[] map = { -0.9, -0.75, -0.5, -0.25, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 };
@@ -100,8 +113,7 @@ public class ZekeOIDevice extends OIPanel {
         collect_v_shoot_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
 
         num = getSubsystem().getSettingsValue("oi:gadgets:collect_onoff").getInteger();
-        start_collect_gadget_ = mapButton(num, OIPanelButton.ButtonType.LowToHigh);
-        stop_collect_gadget_ = mapButton(num, OIPanelButton.ButtonType.HighToLow);
+        start_collect_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
 
         num = getSubsystem().getSettingsValue("oi:gadgets:climb_lock").getInteger();
         climb_lock_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);

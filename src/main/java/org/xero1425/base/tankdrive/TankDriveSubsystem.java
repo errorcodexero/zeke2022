@@ -27,6 +27,8 @@ import org.xero1425.misc.Speedometer;
 /// 
 public class TankDriveSubsystem extends Subsystem {
 
+    static private final String CurrentLimitName = "current_limit" ;
+
     private PositionTracker tracker_ ;
     private double left_power_ ;
     private double right_power_ ;
@@ -427,6 +429,12 @@ public class TankDriveSubsystem extends Subsystem {
 
         left_motors_ = getRobot().getMotorFactory().createMotor("TankDriveLeft", "subsystems:" + getName() + ":hw:left:motors") ;
         right_motors_ = getRobot().getMotorFactory().createMotor("TankDriveRight", "subsystems:" + getName() + ":hw:right:motors") ;
+
+        if (isSettingDefined(CurrentLimitName)) {
+            double limit = getSettingsValue(CurrentLimitName).getDouble() ;
+            left_motors_.setCurrentLimit(limit) ;
+            right_motors_.setCurrentLimit(limit);
+        }
 
         if (left_motors_ == null || right_motors_ == null) {
 

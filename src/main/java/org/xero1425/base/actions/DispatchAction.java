@@ -79,7 +79,10 @@ public class DispatchAction extends ActionGroup {
 
         ret += "  [" ;
         ret += "\n" ;
-        ret += act_.toString(indent + 4) ;
+        if (act_ == null)
+            ret += "(null)" ;
+        else
+            ret += act_.toString(indent + 4) ;
         ret += "\n" ;
         ret += spaces(indent) + "]" ;
         return ret;

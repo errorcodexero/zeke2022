@@ -26,7 +26,6 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
     private int conveyor_ ;
 
     private CargoType [] cargo_ ;
-    private double [] times_ ;
     private CargoType [] prevcargo_ ;
 
     final private Alliance alliance_ ;
@@ -61,8 +60,6 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         matcher_.addColorMatch(none_);
 
         alliance_ = DriverStation.getAlliance() ;
-
-        times_ = new double[count()] ;
 
         cargo_ = new CargoType[3] ;
         prevcargo_ = new CargoType[3] ;
@@ -101,7 +98,6 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         super.computeMyState();
 
         boolean changed = false ;
-        double now = getRobot().getTime() ;
 
         for (int i = 0 ; i < count() ; i++) {
             prevcargo_[i] = cargo_[i] ;
@@ -109,13 +105,7 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
             if (prevcargo_[i] != cargo_[i])
                 changed = true ;
             
-            if (cargo_[i] != CargoType.None) {
-                times_[i] = getRobot().getTime() ;
-                putDashboard("Sensor" + i, DisplayType.Always, cargo_[i].toString()) ;
-            }
-            else if (cargo_[i] == CargoType.None && now - times_[i] > 2.0) {
-                putDashboard("Sensor" + i, DisplayType.Always, cargo_[i].toString());
-            }
+            putDashboard("Sensor" + i, DisplayType.Always, cargo_[i].toString()) ;
         }
 
         if (changed) {

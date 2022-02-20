@@ -6,14 +6,10 @@
 
 package org.xero1425.simulator.engine;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.xero1425.misc.JsonReader;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;

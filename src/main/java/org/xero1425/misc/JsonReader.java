@@ -55,7 +55,6 @@ public class JsonReader {
             }
             else {
                 sb.append((char)encoded[i]) ;
-                String sss = sb.toString() ;
             }
         }
 

@@ -3,12 +3,8 @@ package frc.robot.shooter;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
-import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
-import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
 import org.xero1425.base.motorsubsystem.MotorEncoderTrackPositionAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderVelocityAction;
-import org.xero1425.misc.BadParameterTypeException;
-import org.xero1425.misc.MissingParameterException;
 
 public class SetShooterAction extends Action {
     private ShooterSubsystem sub_;

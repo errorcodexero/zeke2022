@@ -144,13 +144,19 @@ public class ConveyorSubsystem extends Subsystem {
 
     @Override
     public void computeMyState() throws Exception {
+
+        MessageLogger logger = getRobot().getMessageLogger() ;
         for (int i = 0; i < SENSOR_COUNT; i++) {
             //
             // Get the sensor state
             //
             sensor_states_prev_[i] = sensor_states_[i];
             sensor_states_[i] = !sensors_[i].get();
+
+            String sname = Character.toString((char) ('A' + i));
+            putDashboard(sname, Subsystem.DisplayType.Always, sensor_states_[i]);
         }
+
        CargoType cargoType =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
 
        int loops = Math.min(ball_count_ + 1, MAX_BALLS);
@@ -233,7 +239,6 @@ public class ConveyorSubsystem extends Subsystem {
             }
 
             if (prevst != state_[i]) {
-                MessageLogger logger = getRobot().getMessageLogger() ;
                 logger.startMessage(MessageType.Debug, getLoggerID()) ;
                 logger.add("ConveyorSubsystem:") ;
                 logger.add("loop", i) ;
@@ -249,7 +254,6 @@ public class ConveyorSubsystem extends Subsystem {
         {
             setMotorsPower(POWER_OFF_, POWER_OFF_);
 
-            MessageLogger logger = getRobot().getMessageLogger() ;
             logger.startMessage(MessageType.Debug, getLoggerID()) ;
             logger.add("ConveyorSubsystem: shutting down as requested.") ;
             logger.endMessage();

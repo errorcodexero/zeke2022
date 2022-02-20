@@ -1,6 +1,5 @@
 package org.xero1425.base.oi;
 
-import org.xero1425.base.Subsystem;
 import org.xero1425.base.actions.Action;
 
 public class OIOutputAction extends Action {

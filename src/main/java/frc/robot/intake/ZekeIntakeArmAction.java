@@ -44,7 +44,7 @@ public class ZekeIntakeArmAction extends Action {
 
     @Override
     public String toString(int indent) {
-        return prefix(indent) + "IntakeOffAction" ;
+        return prefix(indent) + "IntakeArmAction" + arm_pos_.toString() ;
     }
     
 }
