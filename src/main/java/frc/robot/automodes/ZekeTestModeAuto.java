@@ -78,7 +78,8 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;
                 addSubActionPair(intake, new ZekeIntakeArmAction(intake, ZekeIntakeArmAction.ArmPos.RETRACT), false);  
                 break ;
-            case 14:
+                
+            case 15:
                 addSubActionPair(intake, new ZekeIntakeThroughputAction(intake), true);
                 break ;
 
