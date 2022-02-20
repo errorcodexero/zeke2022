@@ -149,9 +149,9 @@
             "model" : "conveyor",
             "instance" : "1",
             "props" : {
-                "intake-sensor" : 1,
-                "chimney-sensor" : 2,
-                "shooter-sensor" : 3,
+                "intake-sensor" : 11,
+                "chimney-sensor" : 12,
+                "shooter-sensor" : 13,
                 "exit-sensor" : 10
             }
         },

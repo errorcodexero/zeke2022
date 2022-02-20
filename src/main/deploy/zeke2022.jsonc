@@ -28,7 +28,7 @@
 
             // Ball path related
             "zeke-color-sensor": true,
-            "intake": true,
+            "intake": false,
             "conveyor": true,
             "shooter": false,
             "fire-action" : false,
@@ -209,16 +209,13 @@
                     }
                 },
                 "solenoids": {
-                    "exit": {
-                        "forward": 11,
-                        "reverse": 12
-                    }
+                    "exit": 0
                 },
                 "sensors": {
-                    "a": 11,
-                    "b": 10,
-                    "c": 12,
-                    "d": 13
+                    "intake": 11,
+                    "exit": 10,
+                    "chimney": 12,
+                    "shooter": 13
                 }
             },
             "power" : {

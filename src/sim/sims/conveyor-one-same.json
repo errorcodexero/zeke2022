@@ -126,7 +126,7 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "comment" : "cargo set the color sensor to red",
+                        "comment" : "cargo set the color sensor to blue",
                         "color-2" : "0.0, 0.0, 1.0",
                         "proximity-2" : 25,
                         "ir-2" : 26

@@ -4,13 +4,12 @@ import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorController;
 import org.xero1425.base.motors.MotorRequestFailedException;
-import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
+import org.xero1425.base.pneumatics.XeroSolenoid;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 import org.xero1425.misc.SettingsValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.zeke_color_sensor.ZekeColorSensor;
 import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;
 
@@ -28,8 +27,8 @@ public class ConveyorSubsystem extends Subsystem {
         WAIT_SHOOTER0,
     }
 
-    private static final DoubleSolenoid.Value ExitCloseState = DoubleSolenoid.Value.kForward ;
-    private static final DoubleSolenoid.Value ExitOpenState = DoubleSolenoid.Value.kReverse ;
+    private static final boolean ExitCloseState = false ;
+    private static final boolean ExitOpenState = true ;
     public static final int MAX_BALLS = 2;
     private int ball_count_ ;                       // The number of balls stored in the conveyor
     private int ball_count_staged_ ;
@@ -44,7 +43,7 @@ public class ConveyorSubsystem extends Subsystem {
     private double shooter_motor_power_ ;
     private double shooter_motor_on_ ;
 
-    private XeroDoubleSolenoid exit_ ;    
+    private XeroSolenoid exit_ ;    
     private ZekeColorSensor color_sensor_;
     private static final int SENSOR_COUNT = 4;
     private static final int SENSOR_IDX_INTAKE = 0;
@@ -68,7 +67,7 @@ public class ConveyorSubsystem extends Subsystem {
         super(parent, SubsystemName);
       
         color_sensor_ = color;
-        exit_ = new XeroDoubleSolenoid(this, "exit") ;
+        exit_ = new XeroSolenoid(this, "exit") ;
 
         sensors_ = new DigitalInput[SENSOR_COUNT];
         sensor_states_ = new boolean[SENSOR_COUNT];
@@ -93,9 +92,26 @@ public class ConveyorSubsystem extends Subsystem {
         stop_collect_requested_ = false;
 
         int num;
-        int basech = (int) 'a';
+        String name = null ;
         for (int i = 0; i < SENSOR_COUNT; i++) {
-            String name = "hw:sensors:" + (char) (basech + i);
+            switch(i) {
+                case 0:
+                    name = "hw:sensors:intake" ;
+                    break ;
+
+                case 1:
+                    name = "hw:sensors:exit" ;
+                    break ;
+
+                case 2:
+                    name = "hw:sensors:chimney" ;
+                    break ;
+
+                case 3:
+                    name = "hw:sensors:shooter" ;
+                    break ;
+            }
+
             num = getSettingsValue(name).getInteger() ;
             sensors_[i] = new DigitalInput(num);
             sensor_states_[i] = false;
@@ -268,21 +284,11 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     private void setShooterMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
-        MessageLogger logger = getRobot().getMessageLogger();
-        logger.startMessage(MessageType.Debug, getLoggerID());
-        logger.add("Conveyor:").add("shooter", power) ;
-        logger.endMessage();
-
         shooter_motor_power_ = power ;
         shooter_motor_.set(power) ;
     }
 
     private void setIntakeMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
-        MessageLogger logger = getRobot().getMessageLogger();
-        logger.startMessage(MessageType.Debug, getLoggerID());
-        logger.add("Conveyor:").add("intake", power) ;
-        logger.endMessage();
-
         intake_motor_power_ = power ;
         intake_motor_.set(power) ;
     }
