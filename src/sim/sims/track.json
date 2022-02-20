@@ -27,7 +27,7 @@
                         "button11" : true,
 
                         // The climb lock button is set to locked
-                        "button14" : true
+                        "button3" : true
                     }
                 },
                 {

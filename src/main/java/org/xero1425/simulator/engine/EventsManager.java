@@ -8,6 +8,7 @@ package org.xero1425.simulator.engine;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.xero1425.misc.JsonReader;
@@ -83,7 +84,17 @@ public class EventsManager {
         for (int i = 0; i < stimarray.size(); i++) {
             obj = stimarray.get(i);
             if (obj instanceof JSONObject) {
-                parseTimePoint((JSONObject) obj);
+                try {
+                    parseTimePoint((JSONObject) obj);
+                }
+                catch(Exception ex) {
+                    logger.startMessage(MessageType.Error);
+                    logger.add("cannot read events file ").addQuoted(file).add(" - ");
+                    logger.add("error parsing time point - ");
+                    logger.add(ex.getMessage()) ;
+                    logger.endMessage();
+                    return false;                    
+                }
             }
         }
 
@@ -102,7 +113,7 @@ public class EventsManager {
         events_.remove(0) ;
     }
 
-    private void parseTimePoint(JSONObject tpt) {
+    private void parseTimePoint(JSONObject tpt) throws Exception {
         Object obj ;
 
         if (!tpt.containsKey("time"))
@@ -226,7 +237,7 @@ public class EventsManager {
         }
     }
 
-    private void parseSimAsserts(double t, JSONArray evs) {
+    private void parseSimAsserts(double t, JSONArray evs) throws Exception {
         MessageLogger logger = engine_.getMessageLogger() ;
 
         for(int i = 0 ; i < evs.size() ; i++) {
@@ -264,7 +275,6 @@ public class EventsManager {
 
             Object mobj = jobj.get("subsystem") ;
             Object iobj = jobj.get("property") ;
-
 
             if (!(mobj instanceof String)) {
                 logger.startMessage(MessageType.Warning) ;

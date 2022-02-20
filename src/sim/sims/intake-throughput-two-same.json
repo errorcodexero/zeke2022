@@ -27,12 +27,12 @@
                 {
                     "subsystem" : "intake",
                     "property" : "left-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 },
                 {
                     "subsystem" : "intake",
                     "property" : "right-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 }                
             ]
         },
@@ -62,12 +62,12 @@
                 {
                     "subsystem" : "intake",
                     "property" : "left-power",
-                    "value" : -0.2
+                    "setting" : "subsystems:intake:intake-on:out_slow"
                 },
                 {
                     "subsystem" : "intake",
                     "property" : "right-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 }                
             ]
         },
@@ -97,12 +97,12 @@
                 {
                     "subsystem" : "intake",
                     "property" : "left-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 },
                 {
                     "subsystem" : "intake",
                     "property" : "right-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 }                
             ]
         }        

@@ -24,7 +24,7 @@
                     "values" :
                     {
                         "comment" : "Collect/shoot mode switch set to collect",
-                        "button11" : false,
+                        "button6" : false,
 
                         // The climb lock button is set to locked
                         "button10" : true
@@ -77,7 +77,7 @@
                     "values" : 
                     {
                         "comment" : "Collect button pressed",
-                        "button14" : true
+                        "button3" : true
                     }
                 }
             ]

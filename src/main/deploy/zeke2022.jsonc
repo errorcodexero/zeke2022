@@ -173,7 +173,7 @@
                 "blocked_count": 10,
                 "blocked_duration": 1.0,
                 "move_left_duration": 0.4,
-                "eject_duration": 1.5
+                "eject_duration": 1.0
             },
             "hw": {
                 "solenoids": {

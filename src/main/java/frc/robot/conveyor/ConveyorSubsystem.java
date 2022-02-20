@@ -288,12 +288,6 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     protected void setMotorsPower(double intake, double shooter) throws BadMotorRequestException, MotorRequestFailedException {
-        MessageLogger logger = getRobot().getMessageLogger();
-        logger.startMessage(MessageType.Debug, getLoggerID());
-        logger.add("Conveyor:").add("intake_power", intake) ;
-        logger.add(" shooter_power", shooter) ;
-        logger.endMessage();
-
         stop_collect_requested_ = false;
         intake_motor_.set(intake) ;
         intake_motor_power_ = intake ;

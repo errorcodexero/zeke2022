@@ -14,7 +14,7 @@
                         "start" : 0.1,
                         "autonomous" : 0.0,
                         "between" : 0.0,
-                        "teleop" : 5.0,
+                        "teleop" : 6.0,
                         "fms" : false
                     }
                 },
@@ -24,7 +24,7 @@
                     "values" :
                     {
                         "comment" : "Collect/shoot mode switch set to collect",                        
-                        "button11" : false,
+                        "button6" : false,
 
                         
                         // The climb lock button is in the locked state
@@ -43,7 +43,7 @@
                     "values" : 
                     {
                         "comment" : "Collect button pressed",
-                        "button14" : true
+                        "button3" : true
                     }
                 }
             ]
@@ -55,12 +55,12 @@
                 {
                     "subsystem" : "intake",
                     "property" : "left-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 },
                 {
                     "subsystem" : "intake",
                     "property" : "right-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 }                
             ]
         },
@@ -90,12 +90,12 @@
                 {
                     "subsystem" : "intake",
                     "property" : "left-power",
-                    "value" : -0.2
+                    "setting" : "subsystems:intake:intake-on:out_slow"
                 },
                 {
                     "subsystem" : "intake",
                     "property" : "right-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 }                
             ]
         },
@@ -119,18 +119,18 @@
             ]
         },
         {
-            "time" : 4.0,
+            "time" : 5.6,
             "asserts" : 
             [
                 {
                     "subsystem" : "intake",
                     "property" : "left-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 },
                 {
                     "subsystem" : "intake",
                     "property" : "right-power",
-                    "value" : 1.0
+                    "setting" : "subsystems:intake:intake-on:in_speed"
                 }                
             ]
         }        
