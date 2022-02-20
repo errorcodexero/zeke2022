@@ -1,32 +1,32 @@
-package frc.robot.intake;
+package frc.robot.conveyor;
 
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
 
-public class ZekeIntakePowerAction extends Action {
-    private ZekeIntakeSubsystem subsystem_;
+public class ConveyorPowerAction extends Action {
+    private ConveyorSubsystem subsystem_;
 
-    private double left_ ; 
-    private double right_ ;
+    private double intake_ ; 
+    private double shooter_ ;
     private double duration_ ;
     private double start_ ;
     private boolean timed_ ;
 
-    public ZekeIntakePowerAction(ZekeIntakeSubsystem subsystem, double left, double right)  {
+    public ConveyorPowerAction(ConveyorSubsystem subsystem, double intake, double shooter)  {
         super(subsystem.getRobot().getMessageLogger());
         subsystem_ = subsystem;
-        left_ = left ;
-        right_ = right ;
+        intake_ = intake ;
+        shooter_ = shooter ;
         duration_ = 0.0 ;
         timed_ = false ;
     }
 
-    public ZekeIntakePowerAction(ZekeIntakeSubsystem subsystem, double left, double right, double duration)  {
+    public ConveyorPowerAction(ConveyorSubsystem subsystem, double intake, double shooter, double duration)  {
         super(subsystem.getRobot().getMessageLogger());
         subsystem_ = subsystem;
-        left_ = left ;
-        right_ = right ;
+        intake_ = intake ;
+        shooter_ = shooter ;
         duration_ = duration ;
         timed_ = true ;
     }
@@ -35,8 +35,7 @@ public class ZekeIntakePowerAction extends Action {
     public void start() throws Exception {
         super.start() ;
 
-        subsystem_.setLeftCollectorPower(left_);
-        subsystem_.setRightCollectorPower(right_);
+        subsystem_.setMotorsPower(intake_, shooter_);
 
         if (timed_) {
             start_ = subsystem_.getRobot().getTime() ;
@@ -51,8 +50,7 @@ public class ZekeIntakePowerAction extends Action {
         super.run() ;
 
         if (subsystem_.getRobot().getTime() - start_ > duration_) {
-            subsystem_.setLeftCollectorPower(0.0);
-            subsystem_.setRightCollectorPower(0.0);
+            subsystem_.setMotorsPower(0.0, 0.0);
             setDone() ;
         }
     }
@@ -62,8 +60,7 @@ public class ZekeIntakePowerAction extends Action {
         super.cancel() ;
 
         try {
-            subsystem_.setLeftCollectorPower(0.0);
-            subsystem_.setRightCollectorPower(0.0);
+            subsystem_.setMotorsPower(0.0, 0.0);
         } catch (BadMotorRequestException | MotorRequestFailedException e) {
         }
 
@@ -71,11 +68,10 @@ public class ZekeIntakePowerAction extends Action {
 
     @Override
     public String toString(int indent) {
-        String ret = prefix(indent) + "IntakeOffAction left=" + left_ + ", right=" + right_ ;
+        String str = prefix(indent) + "ConveyorPowerAction intake=" + intake_ + ", shooter=" + shooter_  ;
         if (timed_)
-            ret += ", duration=" + duration_ ;
+            str += ", duration= " + duration_ ;
 
-        return ret ;
+        return str ;
     }
-    
 }

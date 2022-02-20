@@ -10,20 +10,16 @@ import org.xero1425.simulator.engine.SimulationModel;
 import edu.wpi.first.hal.HALValue;
 import edu.wpi.first.hal.SimDeviceJNI;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
-import edu.wpi.first.wpilibj.util.Color;
 
 public class ColorSensorModel extends SimulationModel {
     private static final String ColorPrefix = "color-" ;
     private static final String IRPrefix = "ir-" ;
     private static final String ProximityPrefix = "proximity-" ;
 
-    private byte mux_data_ ;
     private int sensor_handle_ ;
 
     public ColorSensorModel(SimulationEngine engine, String model, String inst) {
         super(engine, model, inst);
-
-        mux_data_ = 0 ;
     }
 
     public boolean create() {

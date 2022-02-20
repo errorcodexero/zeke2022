@@ -23,8 +23,6 @@ public class ZekeIntakeSubsystem extends Subsystem {
   private int left_count_;
   private int right_count_;
 
-  
-
   public ZekeIntakeSubsystem(Subsystem parent, ZekeColorSensor sensor) throws Exception {
     super(parent, SubsystemName);
 
@@ -34,18 +32,19 @@ public class ZekeIntakeSubsystem extends Subsystem {
         "intake-collecor-right", "subsystems:intake:hw:collector:motor-right");
 
     solenoid_ = new XeroSolenoid(this, "deploy");
-    color_sensor_ = sensor ;
+    color_sensor_ = sensor;
     left_intake_color_ = CargoType.None;
     right_intake_color_ = CargoType.None;
     left_count_ = 0;
     right_count_ = 0;
-    
+
   }
 
   public void setLeftCollectorPower(double power) throws BadMotorRequestException, MotorRequestFailedException {
     collector_left_.set(power);
-    left_motor_power_= power;
+    left_motor_power_ = power;
   }
+
   public void setRightCollectorPower(double power) throws BadMotorRequestException, MotorRequestFailedException {
     collector_right_.set(power);
     right_motor_power_ = power;
@@ -53,8 +52,8 @@ public class ZekeIntakeSubsystem extends Subsystem {
 
   @Override
   public void computeMyState() {
-    CargoType left = color_sensor_.getCargoType(color_sensor_.getIntakeLeftIndex()); 
-    CargoType right = color_sensor_.getCargoType(color_sensor_.getIntakeRightIndex()); 
+    CargoType left = color_sensor_.getCargoType(color_sensor_.getIntakeLeftIndex());
+    CargoType right = color_sensor_.getCargoType(color_sensor_.getIntakeRightIndex());
     if (right == right_intake_color_) {
       right_count_++;
     } else {
@@ -69,24 +68,26 @@ public class ZekeIntakeSubsystem extends Subsystem {
     }
   }
 
-  
   public void deployIntake() {
     solenoid_.set(true);
   }
+
   public void retractIntake() {
     solenoid_.set(false);
   }
 
-  public CargoType getLeftBallColor() { 
+  public CargoType getLeftBallColor() {
     return left_intake_color_;
   }
+
   public CargoType getRightBallColor() {
-     return right_intake_color_;
+    return right_intake_color_;
   }
 
   public int getLeftCount() {
     return left_count_;
   }
+
   public int getRightCount() {
     return right_count_;
   }
@@ -104,8 +105,6 @@ public class ZekeIntakeSubsystem extends Subsystem {
     return v;
 
   }
-
-  
 
   @Override
   public void postHWInit() {

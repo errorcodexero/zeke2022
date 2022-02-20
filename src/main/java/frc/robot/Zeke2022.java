@@ -41,7 +41,7 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "fire-cargo";
+    return "climb";
   }
 
   protected void addRobotSimulationModels() {

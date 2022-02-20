@@ -3,22 +3,17 @@ package frc.robot.conveyor;
 import org.xero1425.base.actions.Action;
 
 public class ConveyorCollectAction extends Action {
-    public ConveyorCollectAction(ConveyorSubsystem sub, double intake, double shooter) {
+    public ConveyorCollectAction(ConveyorSubsystem sub) {
         super(sub.getRobot().getMessageLogger()) ;
         
         sub_ = sub ;
-        intake_ = intake ;
-        shooter_ = shooter ;
-    }
-
-    public void finish() {
     }
 
     @Override
     public void start() throws Exception {
         super.start() ;
 
-        sub_.setMotorsPower(intake_, shooter_) ;
+        sub_.setCollectMode() ;
     }
 
     @Override
@@ -27,19 +22,17 @@ public class ConveyorCollectAction extends Action {
 
     @Override
     public void cancel() {
+        if (!isDone()) {
+            sub_.setStopCollect();
+        }
         super.cancel() ;
     }
 
     @Override
     public String toString(int indent) {
         String ret = prefix(indent) + "ConveyorCollectAction" ;
-        ret += " intake = " + Double.toString(intake_) ;
-        ret += " shooter = " + Double.toString(shooter_) ;
-
         return ret ;
     }
 
     private ConveyorSubsystem sub_ ;
-    private double intake_ ;
-    private double shooter_ ;
 } ;

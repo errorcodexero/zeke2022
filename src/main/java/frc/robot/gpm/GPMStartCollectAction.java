@@ -14,13 +14,8 @@ public class GPMStartCollectAction extends Action {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
 
-        conveyor_collect_action_ = new ConveyorCollectAction(sub_.getConveyor(), 1.0, 1.0) ;
+        conveyor_collect_action_ = new ConveyorCollectAction(sub_.getConveyor()) ;
         intake_on_action_ = new ZekeIntakeOnAction(sub_.getIntake()) ;
-    }
-
-    public void finish() {
-        sub_.getIntake().setAction(null) ;
-        conveyor_collect_action_.finish() ;
     }
 
     @Override
