@@ -94,7 +94,6 @@ public class ZekeOIDevice extends OIPanel {
 
     @Override
     public void generateActions(SequenceAction seq) throws InvalidActionRequest {
-        double t = getSubsystem().getRobot().getTime() ;
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();
         ClimberSubsystem climber = zeke.getClimber();

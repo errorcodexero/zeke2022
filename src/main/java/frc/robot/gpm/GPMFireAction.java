@@ -12,6 +12,20 @@ import frc.robot.turret.TurretSubsystem;
 
 public class GPMFireAction extends Action {
 
+    // shoot params class
+    // used so I can return 3 values thru one var in the "calculate" class  :)
+    private class ShootParams {
+        public double v1_ ;
+        public double v2_ ;
+        public double hood_ ;
+
+        public ShootParams(double v1, double v2, double hood) {
+            v1_ = v1 ;
+            v2_ = v2 ;
+            hood_ = hood ;
+        }
+    }
+
     private final String LoggerName = "fire-action" ;
 
     private GPMSubsystem sub_;
@@ -23,11 +37,11 @@ public class GPMFireAction extends Action {
 
     private ConveyorShootAction conveyor_shoot_action_ ;
     private SetShooterAction shooter_action_ ;
+    private boolean shoot_params_valid_ ;
 
-    // Butch: These are just variables, nothing special in the code, lets follow our standard convention
-    private double db_velocity_threshold_ ;
-    private double shooter_velocity_threshold_ ;
-    private double hood_position_threshold_ ;
+    private final double db_velocity_threshold_ ;
+    private final double shooter_velocity_threshold_ ;
+    private final double hood_position_threshold_ ;
 
     private int logger_id_ ;
     
@@ -43,21 +57,22 @@ public class GPMFireAction extends Action {
 
         logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem(LoggerName) ;
 
-        double index ;
-        index = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
-        db_velocity_threshold_ = index;
+        double value ;
+        value = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
+        db_velocity_threshold_ = value;
 
-        index = sub_.getSettingsValue("fire-action:shooter_vel_threshold").getDouble() ;
-        shooter_velocity_threshold_ = index;
+        value = sub_.getSettingsValue("fire-action:shooter_vel_threshold").getDouble() ;
+        shooter_velocity_threshold_ = value;
 
-        index = sub_.getSettingsValue("fire-action:hood_pos_threshold").getDouble() ;
-        hood_position_threshold_ = index;
+        value = sub_.getSettingsValue("fire-action:hood_pos_threshold").getDouble() ;
+        hood_position_threshold_ = value;
 
         // figure out intake and shooter doubles -> get from params
         conveyor_shoot_action_ = new ConveyorShootAction(sub_.getConveyor()) ; 
         
-        // figure out what w1, w2, and hood default vals are from -> get from params file        
-        shoot_params_ = new ShootParams(0.0, 0.0, 0.0) ;
+        // These are initial values for shooing params.  These just get the shooter spinning up
+        shoot_params_ = new ShootParams(1000, 1000, 7.0) ;
+        shoot_params_valid_ = false ;
 
         shooter_action_ = new SetShooterAction(sub_.getShooter(), shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
     }
@@ -67,6 +82,7 @@ public class GPMFireAction extends Action {
         super.start();
 
         // set shooter to start, well, shooting...
+        // This gets the shooter motors running
         sub_.getShooter().setAction(shooter_action_, true) ;
 
     }
@@ -77,9 +93,22 @@ public class GPMFireAction extends Action {
 
         boolean shooterReady, dbready ;
 
-        // prep shooters; keep it ready and up to speed
-        shoot_params_ = calculate(shoot_params_, target_tracker_) ;
-        shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
+        if (target_tracker_.hasVisionTarget()) {
+            //
+            // We have a target, so compute a new set of parameters for the shooter and assign
+            // to the shooter.
+            //
+            computeShooterParams(target_tracker_.getDistance()) ;
+            shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
+            shoot_params_valid_ = true ;
+        }
+        else {
+            //
+            // We reset these here to be sure that since we lost the target, we want to force a new
+            // set of shooting parametesr to be computed before we are ready to shoot.
+            //
+            shoot_params_valid_ = false ;
+        }
 
         shooterReady = isShooterReady() ;
         dbready = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
@@ -121,8 +150,15 @@ public class GPMFireAction extends Action {
         return prefix(indent) + "GPMFireAction";
     }
 
-    
     boolean isShooterReady() {
+        if (!shoot_params_valid_)
+        {
+            //
+            // We have nothing to compare to, so we cannot be ready
+            //
+            return false ;
+        }
+
         // find actual velocities/positions
         double w1 = sub_.getShooter().getWheelMotor1().getVelocity() ;
         double w2 = sub_.getShooter().getWheelMotor2().getVelocity() ;
@@ -138,33 +174,13 @@ public class GPMFireAction extends Action {
         return  amIReallyReady ;
     }
 
-    public ShootParams calculate(ShootParams shoot_params, TargetTrackerSubsystem target_tracker) {
-        
-        double dist_ = target_tracker.getDistance() ;
+    public void computeShooterParams(double dist) {
+    
+        // TODO: compute some emperical stuff to control the shooter
+        double v1 = 10.0 * dist ;
+        double v2 = 10.0 * dist ;
+        double hood = 1.0 * dist ;
 
-        // TODO: do some cool math! probably get the values/equation from testing.
-        // the following "times distance" is essentially junk and just a placeholder for something more
-        //      sophisticated
-        shoot_params.v1_ = 10.0 * dist_ ;
-        shoot_params.v2_ = 10.0 * dist_ ;
-        shoot_params.hood_ = 1 * dist_ ;
-
-        return shoot_params ;
+        shoot_params_ = new ShootParams(v1, v2, hood) ;
     }
-
-
-    // shoot params class
-    // used so I can return 3 values thru one var in the "calculate" class  :)
-    private class ShootParams {
-        public double v1_ ;
-        public double v2_ ;
-        public double hood_ ;
-
-        public ShootParams(double v1, double v2, double hood) {
-            v1_ = v1 ;
-            v2_ = v2 ;
-            hood_ = hood ;
-        }
-    }
-
 }
