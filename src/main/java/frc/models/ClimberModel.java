@@ -74,28 +74,18 @@ public class ClimberModel extends SimulationModel {
     static private final String TraverseGrabberCloseTime = "high_grabber_close_time" ;
     static private final String HighGrabberOpenTime = "mid_grabber_close_time" ;
 
-    static private final String TouchLeftMidIO = "touch_left_mid_io" ;
-    static private final String TouchLeftHighIO = "touch_left_high_io" ;
-    static private final String TouchLeftTraverseIO = "touch_left_traverse_io" ;
-    static private final String TouchRightMidIO = "touch_right_mid_io" ;
-    static private final String TouchRightHighIO = "touch_right_high_io" ;
-    static private final String TouchRightTraverseIO = "touch_right_traverse_io" ;
+    static private final String TouchLeftA = "touch_left_a" ;
+    static private final String TouchLeftB = "touch_left_b" ;
+    static private final String TouchRightA = "touch_right_a" ;
+    static private final String TouchRightB = "touch_right_b" ;
 
-    static private final String LeftAModulePropName = "left_a_module" ;
-    static private final String LeftAForwardPropName = "left_a_forward" ;
-    static private final String LeftAReversePropName = "left_a_reverse" ;
+    static private final String AModulePropName = "a_module" ;
+    static private final String AForwardPropName = "a_forward" ;
+    static private final String AReversePropName = "a_reverse" ;
 
-    static private final String RightAModulePropName = "right_a_module" ;
-    static private final String RightAForwardPropName = "right_a_forward" ;
-    static private final String RightAReversePropName = "right_a_reverse" ;
-
-    static private final String LeftBModulePropName = "left_b_module" ;
-    static private final String LeftBForwardPropName = "left_b_forward" ;        
-    static private final String LeftBReversePropName = "left_b_reverse" ;       
-
-    static private final String RightBModulePropName = "right_b_module" ;
-    static private final String RightBForwardPropName = "right_b_forward" ;        
-    static private final String RightBReversePropName = "right_b_reverse" ;    
+    static private final String BModulePropName = "b_module" ;
+    static private final String BForwardPropName = "b_forward" ;
+    static private final String BReversePropName = "b_reverse" ;
 
     private Random random_;
     private State state_;
@@ -105,26 +95,21 @@ public class ClimberModel extends SimulationModel {
 
     private List<Integer> messages_ ;
 
-    private int grabber_left_a_;
-    private int grabber_left_b_;
-    private int grabber_right_a_;
-    private int grabber_right_b_;
+    private int grabber_a_;
+    private int grabber_b_;
 
     private double phase_start_time_;
     private int sensor_side_;
 
-    private int touch_left_mid_io_;
-    private boolean touch_left_mid_value_ = false;
-    private int touch_left_traverse_io_;
-    private boolean touch_left_traverse_value_ = false;
-    private int touch_right_mid_io_;
-    private boolean touch_right_mid_value_ = false;
-    private int touch_right_traverse_io_;
-    private boolean touch_right_traverse_value_ = false;
-    private int touch_left_high_io_;
-    private boolean touch_left_high_value_ = false;
-    private int touch_right_high_io_;
-    private boolean touch_right_high_value_ = false;
+    private int touch_left_a_;
+    private boolean touch_left_a_value_ = false;
+    private int touch_right_a_;
+    private boolean touch_right_a_value_ = false;
+    private int touch_left_b_;
+    private boolean touch_left_b_value_ = false;
+    private int touch_right_b_;
+    private boolean touch_right_b_value_ = false;
+
 
     private TankDriveModel dbmodel_ ;
 
@@ -190,18 +175,14 @@ public class ClimberModel extends SimulationModel {
                 return false ;
             }
 
-            grabber_left_a_ = createGrabber(LeftAModulePropName, LeftAForwardPropName, LeftAReversePropName) ;
-            grabber_left_b_ = createGrabber(LeftBModulePropName, LeftBForwardPropName, LeftBReversePropName) ;
-            grabber_right_a_ = createGrabber(RightAModulePropName, RightAForwardPropName, RightAReversePropName) ;
-            grabber_right_b_ = createGrabber(RightBModulePropName, RightBForwardPropName, RightBReversePropName) ;
+            grabber_a_ = createGrabber(AModulePropName, AForwardPropName, AReversePropName) ;
+            grabber_b_ = createGrabber(BModulePropName, BForwardPropName, BReversePropName) ;
 
-            touch_left_mid_io_ = getIntProperty(TouchLeftMidIO) ;
-            touch_left_high_io_ = getIntProperty(TouchLeftHighIO) ;
-            touch_left_traverse_io_ = getIntProperty(TouchLeftTraverseIO) ;
+            touch_left_a_ = getIntProperty(TouchLeftA) ;
+            touch_left_b_ = getIntProperty(TouchLeftB) ;
 
-            touch_right_mid_io_ = getIntProperty(TouchRightMidIO) ;
-            touch_right_high_io_ = getIntProperty(TouchRightHighIO) ;
-            touch_right_traverse_io_ = getIntProperty(TouchRightTraverseIO) ;
+            touch_right_a_ = getIntProperty(TouchRightA) ;
+            touch_right_b_ = getIntProperty(TouchRightB) ;
 
         }
         catch(Exception ex) {
@@ -327,15 +308,15 @@ public class ClimberModel extends SimulationModel {
             String which  = null ;
 
             if (sensor_side_ == 0) {
-                touch_left_mid_value_ = true;
+                touch_left_a_value_ = true;
                 which = ": the left side" ;
             } else if (sensor_side_ == 1) {
                 which = ": the right side" ;
-                touch_right_mid_value_ = true;
+                touch_right_a_value_ = true;
             } else if (sensor_side_ == 2) {
                 which = ": both sides" ;
-                touch_right_mid_value_ = true;
-                touch_left_mid_value_ = true;
+                touch_left_a_value_ = true;
+                touch_right_a_value_ = true;
             }
 
             setSensors();
@@ -401,11 +382,11 @@ public class ClimberModel extends SimulationModel {
             String which = null ;
 
             if (sensor_side_ == 0) {
-                touch_left_mid_value_ = true;
+                touch_left_a_value_ = true;
                 which = "left" ;
             }
             else {
-                touch_right_mid_value_ = true;
+                touch_right_a_value_ = true;
                 which = "right" ;
             }
 
@@ -440,8 +421,7 @@ public class ClimberModel extends SimulationModel {
             messages_.add(3) ;
         }
 
-        if (solenoid_model_.getDoubleSolenoidState(grabber_left_a_) == GrabberClosedValue && 
-                solenoid_model_.getDoubleSolenoidState(grabber_right_a_) == GrabberClosedValue) {
+        if (solenoid_model_.getDoubleSolenoidState(grabber_a_) == GrabberClosedValue) {
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
@@ -493,8 +473,8 @@ public class ClimberModel extends SimulationModel {
             logger.add(": windmill phase one complete, setting high sensors") ;
             logger.endMessage();
 
-            touch_left_high_value_ = true ;
-            touch_right_high_value_ = true ;
+            touch_left_b_value_ = true ;
+            touch_right_b_value_ = true ;
             setSensors();
 
             phase_start_time_ = getRobotTime() ;
@@ -515,8 +495,7 @@ public class ClimberModel extends SimulationModel {
         }
 
 
-        if (solenoid_model_.getDoubleSolenoidState(grabber_left_b_) == GrabberClosedValue && 
-                solenoid_model_.getDoubleSolenoidState(grabber_right_b_) == GrabberClosedValue) {
+        if (solenoid_model_.getDoubleSolenoidState(grabber_b_) == GrabberClosedValue) {
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
@@ -551,8 +530,7 @@ public class ClimberModel extends SimulationModel {
             messages_.add(8) ;
         }
 
-        if (solenoid_model_.getDoubleSolenoidState(grabber_left_a_) == GrabberOpenValue && 
-                solenoid_model_.getDoubleSolenoidState(grabber_right_a_) == GrabberOpenValue) {
+        if (solenoid_model_.getDoubleSolenoidState(grabber_a_) == GrabberOpenValue) {
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
@@ -604,8 +582,8 @@ public class ClimberModel extends SimulationModel {
             logger.add(": windmill phase two complete, setting traverse sensors") ;
             logger.endMessage();
 
-            touch_left_traverse_value_ = true ;
-            touch_right_traverse_value_ = true ;
+            touch_left_a_value_ = true ;
+            touch_right_a_value_ = true ;
             setSensors();
 
             phase_start_time_ = getRobotTime() ;
@@ -625,8 +603,7 @@ public class ClimberModel extends SimulationModel {
             messages_.add(11) ;
         }
 
-        if (solenoid_model_.getDoubleSolenoidState(grabber_left_a_) == GrabberClosedValue && 
-                solenoid_model_.getDoubleSolenoidState(grabber_right_a_) == GrabberClosedValue) {
+        if (solenoid_model_.getDoubleSolenoidState(grabber_a_) == GrabberClosedValue) {
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
@@ -657,8 +634,7 @@ public class ClimberModel extends SimulationModel {
             messages_.add(12) ;
         }
 
-        if (solenoid_model_.getDoubleSolenoidState(grabber_left_b_) == GrabberOpenValue && 
-                solenoid_model_.getDoubleSolenoidState(grabber_right_b_) == GrabberOpenValue) {
+        if (solenoid_model_.getDoubleSolenoidState(grabber_b_) == GrabberOpenValue) {
             logger.startMessage(MessageType.Info, logger_id_) ;
             logger.add("event: model ").addQuoted(getModelName());
             logger.add(" instance ").addQuoted(getInstanceName());
@@ -678,14 +654,10 @@ public class ClimberModel extends SimulationModel {
     }
 
     private void setSensors() {
-        DIODataJNI.setValue(touch_left_mid_io_, touch_left_mid_value_);
-        DIODataJNI.setValue(touch_right_mid_io_, touch_right_mid_value_);
-
-        DIODataJNI.setValue(touch_left_high_io_, touch_left_high_value_);
-        DIODataJNI.setValue(touch_right_high_io_, touch_right_high_value_);
-
-        DIODataJNI.setValue(touch_left_traverse_io_, touch_left_traverse_value_);
-        DIODataJNI.setValue(touch_right_traverse_io_, touch_right_traverse_value_);
+        DIODataJNI.setValue(touch_left_a_, touch_left_a_value_);
+        DIODataJNI.setValue(touch_right_a_, touch_right_a_value_);
+        DIODataJNI.setValue(touch_left_b_, touch_left_b_value_);
+        DIODataJNI.setValue(touch_right_b_, touch_right_b_value_);
     }
 
     private int createGrabber(String modname, String forname, String revname) throws Exception {

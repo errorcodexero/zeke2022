@@ -23,7 +23,7 @@
                     "values" :
                     {
                         "comment" : "Climb lock button set to unlocked",                        
-                        "button14" : false
+                        "button10" : false
                     }
                 }
             ]
@@ -37,7 +37,7 @@
                     "values" :
                     {
                         "comment" : "Pushed the climb button",                        
-                        "button5" : true
+                        "button14" : true
                     }
                 }
             ]
