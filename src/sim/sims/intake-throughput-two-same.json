@@ -15,7 +15,8 @@
                         "autonomous" : 5.0,
                         "between" : 0.0,
                         "teleop" : 0.0,
-                        "fms" : false
+                        "fms" : false,
+                        "alliance" : "blue1"                        
                     }
                 }
             ]

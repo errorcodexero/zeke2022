@@ -34,11 +34,26 @@ public class ZekeOIDevice extends OIPanel {
     int climb_gadget_;
     int climb_lock_gadget_;
 
+    int ball1_output_ ;
+    int ball2_output_ ;
+
+    int climber_left_a_output_ ;
+    int climber_right_a_output_ ;
+    int climber_left_b_output_ ;
+    int climber_right_b_output_ ;
+
     public ZekeOIDevice(OISubsystem sub, String name, int index)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
 
         initializeGadgets();
+
+        ball1_output_ = sub.getSettingsValue("oi:outputs:ball1").getInteger() ;
+        ball2_output_ = sub.getSettingsValue("oi:outputs:ball2").getInteger() ;
+        climber_left_a_output_ = sub.getSettingsValue("oi:outputs:climber-left-a").getInteger() ;
+        climber_right_a_output_ = sub.getSettingsValue("oi:outputs:climber-right-a").getInteger() ;        
+        climber_left_b_output_ = sub.getSettingsValue("oi:outputs:climber-left-b").getInteger() ;
+        climber_right_b_output_ = sub.getSettingsValue("oi:outputs:climber-right-b").getInteger() ;                                        
     }
 
     public void createStaticActions() throws Exception {
@@ -54,12 +69,38 @@ public class ZekeOIDevice extends OIPanel {
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker());
     }
 
+    private void setLEDs()
+    {
+        ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
+        GPMSubsystem gpm = zeke.getGPMSubsystem();   
+        // ClimberSubsystem climber = zeke.getClimber();
+
+        switch(gpm.getConveyor().getBallCount())
+        {
+            case 0:
+                setOutput(ball1_output_, false);
+                setOutput(ball2_output_, false) ;
+                break ;
+            case 1:
+                setOutput(ball1_output_, true);
+                setOutput(ball2_output_, false) ;
+                break ;    
+            case 2:
+                setOutput(ball1_output_, true);
+                setOutput(ball2_output_, true) ;
+                break ;                               
+        }        
+    }
+
     @Override
     public void generateActions(SequenceAction seq) throws InvalidActionRequest {
+        double t = getSubsystem().getRobot().getTime() ;
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();
         ClimberSubsystem climber = zeke.getClimber();
         TurretSubsystem turret = zeke.getTurret();
+
+        setLEDs() ;
 
         if (getValue(climb_lock_gadget_) == 1) {
 

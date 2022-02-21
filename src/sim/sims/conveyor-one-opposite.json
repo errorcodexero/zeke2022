@@ -15,7 +15,8 @@
                         "autonomous" : 0.0,
                         "between" : 0.0,
                         "teleop" : 5.0,
-                        "fms" : false
+                        "fms" : false,
+                        "alliance" : "blue1"
                     }
                 },
                 {
@@ -70,7 +71,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "horizontal",
-                    "value" : 1.0
+                    "setting" : "subsystems:conveyor:power:intake"
                 },
                 {
                     "subsystem" : "conveyor",
@@ -156,7 +157,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "horizontal",
-                    "value" : 1.0
+                    "setting" : "subsystems:conveyor:power:intake"
                 },
                 {
                     "subsystem" : "conveyor",
@@ -210,7 +211,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "horizontal",
-                    "value" : 1.0
+                    "setting" : "subsystems:conveyor:power:intake"
                 },
                 {
                     "subsystem" : "conveyor",

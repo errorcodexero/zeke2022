@@ -154,6 +154,14 @@
                     "collect_onoff": 3,
                     "climb_lock": 10,
                     "climb": 14
+                },
+                "outputs" : {
+                    "ball1" : 0,
+                    "ball2" : 1,
+                    "climber-left-a" : 2,
+                    "climber-right-a" : 3,
+                    "climber-left-b" : 4,
+                    "climber-right-b" : 5
                 }
             }
         },

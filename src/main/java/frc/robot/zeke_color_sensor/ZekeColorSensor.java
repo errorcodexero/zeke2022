@@ -28,7 +28,7 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
     private CargoType [] cargo_ ;
     private CargoType [] prevcargo_ ;
 
-    final private Alliance alliance_ ;
+    private Alliance alliance_ ;
 
     public ZekeColorSensor(Subsystem parent, I2C.Port port) throws BadParameterTypeException, MissingParameterException {
         super(parent, "zeke-color-sensor", port) ;
@@ -73,6 +73,7 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         None,
         Same,
         Opposite,
+        Invalid,
     }
 
     private enum CargoColor {
@@ -97,15 +98,22 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
     public void computeMyState() {
         super.computeMyState();
 
+        alliance_ = DriverStation.getAlliance() ;
+
         boolean changed = false ;
 
         for (int i = 0 ; i < count() ; i++) {
             prevcargo_[i] = cargo_[i] ;
-            cargo_[i] = getCargoTypeInt(i) ;
+            if (alliance_ == Alliance.Invalid) {
+                cargo_[i] = CargoType.Invalid ;
+            }
+            else {
+                cargo_[i] = getCargoTypeInt(i) ;
+            }
             if (prevcargo_[i] != cargo_[i])
                 changed = true ;
             
-            putDashboard("Sensor" + i, DisplayType.Always, cargo_[i].toString()) ;
+            putDashboard("Sensor" + i, DisplayType.Verbose, cargo_[i].toString()) ;
         }
 
         if (changed) {
@@ -120,7 +128,6 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
             }
             logger.endMessage();
         }
-
     }
 
     public CargoType getCargoType(int which) {
@@ -131,11 +138,6 @@ public class ZekeColorSensor extends ColorSensorSubsystem {
         CargoType type = CargoType.None ;
 
         Color c = getColor(which) ;
-        putDashboard("red " + which, DisplayType.Always, c.red) ;
-        putDashboard("green " + which, DisplayType.Always, c.green) ;
-        putDashboard("blue " + which, DisplayType.Always, c.blue) ;
-        putDashboard("ir " + which, DisplayType.Always, getIR(which));
-        putDashboard("proximity "+ which, DisplayType.Always, getProximity(which));
         CargoColor cc = colorToCargoColor(c) ;
 
         if (cc == CargoColor.Red) {

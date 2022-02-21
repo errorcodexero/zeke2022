@@ -19,7 +19,7 @@
                 "autonomous": 15.0,
                 "between": 2.0,
                 "teleop": 135.0,
-                "alliance" : "blue1",
+                "alliance" : "red1",
                 "create_early": true
             }
         },

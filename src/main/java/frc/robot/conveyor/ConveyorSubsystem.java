@@ -141,17 +141,6 @@ public class ConveyorSubsystem extends Subsystem {
         return v ;
     }
 
-    public boolean isFull() {
-        return ball_count_ == MAX_BALLS ;
-    }
-
-    public boolean isEmpty() {
-        return ball_count_ == 0 ;
-    }
-
-    public int getBallCount() {
-        return ball_count_ ;
-    }
 
     @Override
     public void postHWInit() {
@@ -268,11 +257,14 @@ public class ConveyorSubsystem extends Subsystem {
             ((ball_count_ == 1) && (state_[0] == State.WAIT_SHOOTER)) ||
             ((ball_count_ == 2) && (state_[0] == State.WAIT_SHOOTER) && (state_[1] == State.START_UPTAKE))))
         {
-            setMotorsPower(POWER_OFF_, POWER_OFF_);
+            if (Math.abs(intake_motor_power_) > 0.01 || Math.abs(shooter_motor_power_) > 0.01) {
+                setMotorsPower(POWER_OFF_, POWER_OFF_);
+                logger.startMessage(MessageType.Debug, getLoggerID()) ;
+                logger.add("ConveyorSubsystem: shutting down as requested.") ;
+                logger.endMessage();
+            }
 
-            logger.startMessage(MessageType.Debug, getLoggerID()) ;
-            logger.add("ConveyorSubsystem: shutting down as requested.") ;
-            logger.endMessage();
+            stop_collect_requested_ = false ;
         }
 
         putDashboard("ballcount", DisplayType.Always, ball_count_);
@@ -281,6 +273,18 @@ public class ConveyorSubsystem extends Subsystem {
     @Override
     public void run() throws Exception {
         super.run() ;
+    }
+    
+    public boolean isFull() {
+        return ball_count_ == MAX_BALLS ;
+    }
+
+    public boolean isEmpty() {
+        return ball_count_ == 0 ;
+    }
+
+    public int getBallCount() {
+        return ball_count_ ;
     }
 
     private void setShooterMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
@@ -294,12 +298,8 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     protected void setMotorsPower(double intake, double shooter) throws BadMotorRequestException, MotorRequestFailedException {
-        stop_collect_requested_ = false;
-        intake_motor_.set(intake) ;
-        intake_motor_power_ = intake ;
-
-        shooter_motor_.set(shooter) ;
-        shooter_motor_power_ = shooter ;
+        setIntakeMotor(intake);
+        setShooterMotor(shooter);
     }
 
     protected void setStopCollect()
@@ -312,7 +312,7 @@ public class ConveyorSubsystem extends Subsystem {
         stop_collect_requested_ = true;
     }
 
-    protected void setPreloadedBall() 
+    public void setPreloadedBall()
     {
         ball_types_ [0] =  CargoType.Same;
         state_ [0] = State.START_UPTAKE;
@@ -320,11 +320,13 @@ public class ConveyorSubsystem extends Subsystem {
     }
         
     protected void setShootMode() throws BadMotorRequestException, MotorRequestFailedException {
+        stop_collect_requested_ = false;
         setMotorsPower(intake_motor_on_, shooter_motor_on_) ;
         state_[0] = State.WAIT_SHOOTER1;
     }  
 
     protected void setCollectMode() throws BadMotorRequestException, MotorRequestFailedException  {
+        stop_collect_requested_ = false;
         setMotorsPower(intake_motor_on_, 0.0) ;
     }
 

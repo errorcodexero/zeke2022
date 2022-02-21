@@ -1,6 +1,8 @@
 package frc.robot.automodes;
 
 import org.xero1425.base.actions.DelayAction;
+import org.xero1425.base.actions.InvalidActionRequest;
+import org.xero1425.base.actions.LambdaAction;
 import org.xero1425.base.actions.ParallelAction;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.controllers.AutoMode;
@@ -8,6 +10,7 @@ import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
+import frc.robot.conveyor.ConveyorSubsystem;
 import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
@@ -26,7 +29,10 @@ public class ZekeAutoMode extends AutoMode {
     //
     // Add the actions to set the initial ball count
     //
-    protected void setInitialBallCount(int count) {
+    protected void setInitialBallCount(int count) throws InvalidActionRequest {
+        ConveyorSubsystem conveyor = getZekeRobotSubsystem().getGPMSubsystem().getConveyor() ;
+        LambdaAction a = new LambdaAction(getAutoController().getRobot().getMessageLogger(), "set-ball-count",  () -> { conveyor.setPreloadedBall(); }) ;
+        addAction(a);
     }
 
     //

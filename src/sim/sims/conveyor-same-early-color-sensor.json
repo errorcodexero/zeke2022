@@ -15,7 +15,8 @@
                         "autonomous" : 0.0,
                         "between" : 0.0,
                         "teleop" : 5.0,
-                        "fms" : false
+                        "fms" : false,
+                        "alliance" : "blue1"
                     }
                 },
                 {
@@ -70,7 +71,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "horizontal",
-                    "value" : 1.0
+                    "setting" : "subsystems:conveyor:power:intake"
                 },
                 {
                     "subsystem" : "conveyor",
@@ -144,7 +145,7 @@
                     "values" : 
                     {
                         "comment" : "Collect button released",
-                        "button14" : false
+                        "button3" : false
                     }
                 }
             ]
@@ -173,12 +174,12 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "horizontal",
-                    "value" : 1.0
+                    "setting" : "subsystems:conveyor:power:intake"
                 },
                 {
                     "subsystem" : "conveyor",
                     "property" : "vertical",
-                    "value" : 1.0
+                    "setting" : "subsystems:conveyor:power:shooter"
                 },
                 {
                     "subsystem" : "conveyor",

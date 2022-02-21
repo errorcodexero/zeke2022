@@ -46,7 +46,8 @@ public class ZekeOISubsystem extends OISubsystem {
             }
             catch(Exception ex) {
                 logger.startMessage(MessageType.Error) ;
-                logger.add("OI HID device was not created ").endMessage();
+                logger.add("OI HID device was not created - ") ;
+                logger.add(ex.getMessage()).endMessage(); ;
             }
         }
     }
