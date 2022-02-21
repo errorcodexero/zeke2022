@@ -97,6 +97,10 @@ public class TargetTrackerSubsystem extends Subsystem {
         enable(false) ;
     }
 
+    public double getLatency() {
+        return ll_.getTotalLatency() ;
+    }
+
     public void enable(boolean b) {
         enabled_ = b ;
 

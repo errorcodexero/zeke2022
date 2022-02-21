@@ -169,7 +169,8 @@
             "fire-action" : {
                 "hood_pos_threshold" : 10.0,
                 "db_vel_threshold" : 6.0,
-                "shooter_vel_threshold" : 20.0
+                "shooter_vel_threshold" : 20.0,
+                "fire-action:shoot-latency" : 0.4
 
             }
         },

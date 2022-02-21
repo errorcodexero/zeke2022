@@ -1,6 +1,7 @@
 package org.xero1425.base.tankdrive;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Twist2d;
 
@@ -206,6 +207,18 @@ public class TankDriveSubsystem extends Subsystem {
     /// \returns the velocity of the robot
     public double getVelocity() {
         return (left_linear_.getVelocity() + right_linear_.getVelocity()) / 2.0 ;
+    }
+
+    /// \brief returns the velocity of the robot as a vector
+    /// \returns the velocity of the robot as a vector
+    public Vector2d getVelocityVector() {
+        //
+        // The velocity vector has an angle that is the heading of the robot, and a size
+        // that is the velocity of the wheels
+        //
+        double angle = gyro_.getAngle() ;
+        double velabs = getVelocity() ;
+        return new Vector2d(Math.cos(angle) * velabs, Math.sin(angle) * velabs) ;
     }
 
     /// \brief returns the acceleration of the left side of the robot
