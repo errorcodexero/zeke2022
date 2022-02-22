@@ -65,7 +65,7 @@ public class ZekeOIDevice extends OIPanel {
         fire_action_ = new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()) ;
 
         collect_ = new GPMStartCollectAction(gpm);
-        climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
+        // climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker());
     }
 
@@ -96,7 +96,7 @@ public class ZekeOIDevice extends OIPanel {
     public void generateActions(SequenceAction seq) throws InvalidActionRequest {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();
-        ClimberSubsystem climber = zeke.getClimber();
+        // ClimberSubsystem climber = zeke.getClimber();
         TurretSubsystem turret = zeke.getTurret();
 
         setLEDs() ;
@@ -124,12 +124,12 @@ public class ZekeOIDevice extends OIPanel {
             if (turret.getAction() == follow_)
                 turret.setAction(null);
 
-            if (climber != null) {
-                if (getValue(climb_gadget_) == 1) {
-                    if (climber.getAction() != climb_)
-                        climber.setAction(climb_);
-                }
-            }
+            // if (climber != null) {
+            //     if (getValue(climb_gadget_) == 1) {
+            //         if (climber.getAction() != climb_)
+            //             climber.setAction(climb_);
+            //     }
+            // }
         }
     }
 

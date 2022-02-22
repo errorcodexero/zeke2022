@@ -348,7 +348,7 @@ public abstract class XeroRobot extends TimedRobot {
             }
         } catch (Exception ex) {
             logger_.startMessage(MessageType.Error);
-            logger_.add("exception thrown in hardwareInit() - ").add(ex.getMessage());
+            logger_.add("exception thrown in hardwareInit() - ").add(ex.toString()) ;
             logger_.endMessage();
 
             robot_subsystem_ = null;
@@ -378,8 +378,9 @@ public abstract class XeroRobot extends TimedRobot {
         try {
             robot_subsystem_.postHWInit();
         } catch (Exception ex) {
+            ex.printStackTrace();
             logger_.startMessage(MessageType.Error);
-            logger_.add("Exception caught in postHWInit() - ").add(ex.getMessage());
+            logger_.add("Exception caught in postHWInit() - ").add(ex.toString());
             logger_.endMessage();
         }
 

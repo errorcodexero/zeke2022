@@ -287,6 +287,14 @@ public class ConveyorSubsystem extends Subsystem {
         return ball_count_ ;
     }
 
+    public void closeExit() {
+        exit_.set(ExitCloseState);
+    }
+
+    public void openExit() {
+        exit_.set(ExitOpenState) ;
+    }
+
     private void setShooterMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
         shooter_motor_power_ = power ;
         shooter_motor_.set(power) ;

@@ -47,11 +47,11 @@ public class ZekeSubsystem extends RobotSubsystem {
         turret_ = new TurretSubsystem(this) ;
         addChild(turret_) ;
 
-        tracker_ = new TargetTrackerSubsystem(this, limelight_, turret_) ;
-        addChild(tracker_) ;
+        // tracker_ = new TargetTrackerSubsystem(this, limelight_, turret_) ;
+        // addChild(tracker_) ;
 
-        climber_ = new ClimberSubsystem(this) ;
-        addChild(climber_) ;
+        // climber_ = new ClimberSubsystem(this) ;
+        // addChild(climber_) ;
     }
 
     public TurretSubsystem getTurret() {

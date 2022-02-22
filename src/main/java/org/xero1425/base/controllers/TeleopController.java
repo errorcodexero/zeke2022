@@ -44,7 +44,8 @@ public class TeleopController extends BaseController
         try {
             // Generate a set of actions based on the OI
             sequence_.clear() ;
-            oi.generateActions(sequence_) ;
+            if (oi != null)
+                oi.generateActions(sequence_) ;
         }
         catch(InvalidActionRequest ex) {
             MessageLogger logger = getRobot().getMessageLogger() ;

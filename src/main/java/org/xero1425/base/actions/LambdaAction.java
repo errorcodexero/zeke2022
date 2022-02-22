@@ -1,6 +1,7 @@
 package org.xero1425.base.actions;
 
 import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 
 public class LambdaAction extends Action {
     @FunctionalInterface
@@ -36,15 +37,22 @@ public class LambdaAction extends Action {
 
     @Override
     public void start() {
+        getMessageLogger().startMessage(MessageType.Debug).add("Starting Lambda Action").endMessage();
         func_.evaluate() ;
+
         if (done_ == null || done_.evaluate() == true)
             setDone() ;
+
+        getMessageLogger().startMessage(MessageType.Debug).add("Ending Start Lambda Action").endMessage();
     }
 
     @Override
     public void run() {
+        getMessageLogger().startMessage(MessageType.Debug).add("Running Lambda Action").endMessage();
         if (done_.evaluate())
             setDone() ;
+
+        getMessageLogger().startMessage(MessageType.Debug).add("ENding RUnning Lambda Action").endMessage();            
     }
 
     @Override

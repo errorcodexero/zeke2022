@@ -152,8 +152,13 @@
                     "automode": 0,
                     "shoot_collect_mode": 6,
                     "collect_onoff": 3,
-                    "climb_lock": 10,
-                    "climb": 14
+                    "climb_lock": 4,
+                    "climb": 9,
+                    "manual_climb" : 7,
+                    "force_shoot" : 1,
+                    "eject" : 2,
+                    "shoot_manual_mode" : 5,
+                    "throughput" : 8
                 },
                 "outputs" : {
                     "ball1" : 0,
@@ -213,7 +218,8 @@
                     },
                     "shooter": {
                         "type": "sparkmax_brushless",
-                        "canid": 5
+                        "canid": 5,
+                        "inverted" : true
                     }
                 },
                 "solenoids": {
@@ -380,8 +386,7 @@
             "hw": {
                 "motors": {
                     "type": "sparkmax_brushless",
-                    "canid": 9,
-                    "inverted": true
+                    "canid": 9
                 },
                 "encoder": {
                     "type": "motor",
@@ -423,16 +428,24 @@
             }
         },
         "shooter-h": {
+            // Valid raw analog range 1.03 - 4.0
             "hw": {
                 "motors": {
                     "type": "sparkmax_brushless",
-                    "canid": 12,
-                    "inverted": true
+                    "canid": 12
                 },
                 "encoder": {
-                    "type": "motor",
-                    "m": 1,
-                    "b": 0.0
+                    "type": "analog",
+                    "ainput": 0,
+                    "rmin": -180.0,
+                    "rmax": 180.0,
+                    "emin": 5.0,
+                    "emax": 0.0,
+                    "ec": {
+                        "COMPETITION": 1.44653,
+                        "PRACTICE": 0.62133
+                    },
+                    "rc": 0.0
                 }
             },
             "hood": {
@@ -476,9 +489,9 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 0,
-        "power": 0.3,
-        "duration": 1.0,
+        "which": 100,
+        "power": 1.0,
+        "duration": 2.0,
         "distance": 0.0,
         "name": "Test_Straight"
     }
