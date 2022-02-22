@@ -22,35 +22,37 @@ import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeOIDevice extends OIPanel {
-    GPMStartCollectAction start_collect_action_;
-    GPMStopCollectAction stop_collect_action_;
-    GPMFireAction fire_action_;
+    private GPMStartCollectAction start_collect_action_;
+    private GPMStopCollectAction stop_collect_action_;
+    private GPMFireAction fire_action_;
 
-    GPMStartCollectAction collect_;
-    ClimbAction climb_;
-    FollowTargetAction follow_;
+    private GPMStartCollectAction collect_;
+    private ClimbAction climb_;
+    private FollowTargetAction follow_;
 
-    int start_collect_gadget_;
-    int automode_gadget_;
-    int collect_v_shoot_gadget_;
-    int climb_gadget_;
-    int climb_lock_gadget_;
+    private int start_collect_gadget_;
+    private int automode_gadget_;
+    private int collect_v_shoot_gadget_;
+    private int climb_gadget_;
+    private int climb_lock_gadget_;
 
-    int ball1_output_ ;
-    int ball2_output_ ;
+    private int ball1_output_ ;
+    private int ball2_output_ ;
 
-    int climber_left_a_output_ ;
-    int climber_right_a_output_ ;
-    int climber_left_b_output_ ;
-    int climber_right_b_output_ ;
+    private int climber_left_a_output_ ;
+    private int climber_right_a_output_ ;
+    private int climber_left_b_output_ ;
+    private int climber_right_b_output_ ;
 
-    boolean has_climber_ ;
+    private boolean has_climber_ ;
+    private String last_status_ ;
 
     public ZekeOIDevice(OISubsystem sub, String name, int index, boolean hasClimber)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
 
         has_climber_ = hasClimber ;
+        last_status_ = "" ;
 
         initializeGadgets();
 
@@ -143,7 +145,11 @@ public class ZekeOIDevice extends OIPanel {
                 }
             }
         }
-        logger.startMessage(MessageType.Debug, getSubsystem().getLoggerID()).add(status).endMessage() ;
+
+        if (!last_status_.equals(status)) {
+            logger.startMessage(MessageType.Debug, getSubsystem().getLoggerID()).add(status).endMessage() ;
+            last_status_ = status ;
+        }
     }
 
     private boolean isCollectButtonPressed() {

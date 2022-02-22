@@ -28,7 +28,7 @@
                         "button6" : false,
 
                         // The climb lock button is set to locked
-                        "button10" : true
+                        "button4" : true
                     }
                 },
                 {
@@ -198,8 +198,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "vertical",
-                    "setting" : "subsystems:conveyor:power:shooter
-                    "
+                    "setting" : "subsystems:conveyor:power:shooter"
                 },
                 {
                     "subsystem" : "conveyor",
@@ -275,7 +274,7 @@
                     "values" :
                     {
                         "comment" : "Collect/shoot mode switch set to shoot",                        
-                        "button11" : true,
+                        "button6" : true,
                     }
                 }                
             ]

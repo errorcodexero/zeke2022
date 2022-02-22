@@ -23,7 +23,7 @@
                     "values" :
                     {
                         "comment" : "Climb lock button set to unlocked",                        
-                        "button10" : false
+                        "button4" : false
                     }
                 }
             ]

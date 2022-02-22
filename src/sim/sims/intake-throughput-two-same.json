@@ -18,6 +18,18 @@
                         "fms" : false,
                         "alliance" : "blue1"                        
                     }
+                },
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
+                        "comment" : "Collect/shoot mode switch set to collect",                        
+                        "button6" : false,
+                        
+                        // The climb lock button is in the locked state
+                        "button4" : true                        
+                    }
                 }
             ]
         },

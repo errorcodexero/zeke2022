@@ -29,7 +29,7 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": false,
+            "conveyor": true,
             "shooter": false,
             "fire-action" : false,
             "shooter-w1" : false,
@@ -37,8 +37,11 @@
             "shooter-h" : false,
 
             // Climber related
-            "climber": true,
-            "climber-model": true
+            "climber": false,
+            "climber-model": false,
+
+            // OI
+            "zekeoi" : true
         },
         //
         // This section controls, what data shows up on the smart dashboard when the item has a

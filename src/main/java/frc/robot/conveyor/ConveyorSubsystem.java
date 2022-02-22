@@ -49,7 +49,7 @@ public class ConveyorSubsystem extends Subsystem {
     // The state of the exit XeroSolenoid when the exit portal is open
     private static final boolean ExitOpenState = true ;
 
-    private static final String[] SensorNames = { "Intake", "Exit", "Chimney", "Shooter"} ;
+    private static final String[] SensorNames = { "intake", "exit", "chimney", "shooter"} ;
 
     private boolean bypass_ ;
     private int ball_count_ ;                       // The number of balls stored in the conveyor
@@ -115,7 +115,7 @@ public class ConveyorSubsystem extends Subsystem {
         String name = null ;
         for (int i = 0; i < SENSOR_COUNT; i++) {
             name = SensorNames[i] ;
-            num = getSettingsValue(name).getInteger() ;
+            num = getSettingsValue("hw:sensors:" + name).getInteger() ;
             sensors_[i] = new DigitalInput(num);
             sensor_states_[i] = false;
             sensor_states_prev_[i] = false;
