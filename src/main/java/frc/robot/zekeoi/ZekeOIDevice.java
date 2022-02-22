@@ -6,6 +6,8 @@ import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.oi.Gamepad;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 import org.xero1425.base.oi.OIPanelButton;
 
@@ -42,9 +44,13 @@ public class ZekeOIDevice extends OIPanel {
     int climber_left_b_output_ ;
     int climber_right_b_output_ ;
 
-    public ZekeOIDevice(OISubsystem sub, String name, int index)
+    boolean has_climber_ ;
+
+    public ZekeOIDevice(OISubsystem sub, String name, int index, boolean hasClimber)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
+
+        has_climber_ = hasClimber ;
 
         initializeGadgets();
 
@@ -94,21 +100,23 @@ public class ZekeOIDevice extends OIPanel {
 
     @Override
     public void generateActions(SequenceAction seq) throws InvalidActionRequest {
+        MessageLogger logger = getSubsystem().getRobot().getMessageLogger() ;
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();
-        // ClimberSubsystem climber = zeke.getClimber();
+        ClimberSubsystem climber = zeke.getClimber();
         TurretSubsystem turret = zeke.getTurret();
+        String status = "ZekeOI: " ;
 
         setLEDs() ;
 
         if (getValue(climb_lock_gadget_) == 1) {
-
+            status += "climber locked" ;
             if (turret.getAction() != follow_)
                 turret.setAction(follow_);
 
             if (getValue(collect_v_shoot_gadget_) == 0) {
+                status += ", collect mode" ;
 
-                // Collect mode
                 if (isCollectButtonPressed()) {
                     if (gpm.getAction() != start_collect_action_)
                         gpm.setAction(start_collect_action_);
@@ -117,20 +125,25 @@ public class ZekeOIDevice extends OIPanel {
                         gpm.setAction(stop_collect_action_) ;
                 }
             } else {
+                status += ", fire mode" ;
                 if (gpm.getAction() != fire_action_)
                     gpm.setAction(fire_action_);
             }
         } else {
+            status += "climber unlocked" ;
             if (turret.getAction() == follow_)
                 turret.setAction(null);
 
-            // if (climber != null) {
-            //     if (getValue(climb_gadget_) == 1) {
-            //         if (climber.getAction() != climb_)
-            //             climber.setAction(climb_);
-            //     }
-            // }
+            if (has_climber_) {
+                status += ", has climber" ;
+                if (getValue(climb_gadget_) == 1) {
+                    status += ", asking to climb" ;
+                    if (climber.getAction() != climb_)
+                        climber.setAction(climb_);
+                }
+            }
         }
+        logger.startMessage(MessageType.Debug, getSubsystem().getLoggerID()).add(status).endMessage() ;
     }
 
     private boolean isCollectButtonPressed() {

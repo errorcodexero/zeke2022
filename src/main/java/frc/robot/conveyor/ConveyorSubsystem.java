@@ -14,6 +14,7 @@ import frc.robot.zeke_color_sensor.ZekeColorSensor;
 import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;
 
 public class ConveyorSubsystem extends Subsystem {
+    // States in the state machine
     private enum State {
         WAIT_INTAKE, 
         WAIT_COLOR,
@@ -27,9 +28,30 @@ public class ConveyorSubsystem extends Subsystem {
         WAIT_SHOOTER0,
     }
 
-    private static final boolean ExitCloseState = false ;
-    private static final boolean ExitOpenState = true ;
+
+    // Constanst
+
+    // The maximum number of balls present
     public static final int MAX_BALLS = 2;
+
+    // The total number of sensors
+    private static final int SENSOR_COUNT = 4;
+
+    // The indexes of the various sensors
+    private static final int SENSOR_IDX_INTAKE = 0;
+    private static final int SENSOR_IDX_EXIT = 1;
+    private static final int SENSOR_IDX_CHIMNEY = 2;
+    private static final int SENSOR_IDX_SHOOTER = 3;
+
+    // The state of the exit XeroSolenoid when the exit portal is closed
+    private static final boolean ExitCloseState = false ;
+
+    // The state of the exit XeroSolenoid when the exit portal is open
+    private static final boolean ExitOpenState = true ;
+
+    private static final String[] SensorNames = { "Intake", "Exit", "Chimney", "Shooter"} ;
+
+    private boolean bypass_ ;
     private int ball_count_ ;                       // The number of balls stored in the conveyor
     private int ball_count_staged_ ;
     private boolean stop_collect_requested_;
@@ -45,11 +67,7 @@ public class ConveyorSubsystem extends Subsystem {
 
     private XeroSolenoid exit_ ;    
     private ZekeColorSensor color_sensor_;
-    private static final int SENSOR_COUNT = 4;
-    private static final int SENSOR_IDX_INTAKE = 0;
-    private static final int SENSOR_IDX_EXIT = 1;
-    private static final int SENSOR_IDX_CHIMNEY = 2;
-    private static final int SENSOR_IDX_SHOOTER = 3;
+
     private State[] state_;
 
     private static final double POWER_OFF_ = 0;
@@ -68,6 +86,8 @@ public class ConveyorSubsystem extends Subsystem {
       
         color_sensor_ = color;
         exit_ = new XeroSolenoid(this, "exit") ;
+
+        bypass_ = false ;
 
         sensors_ = new DigitalInput[SENSOR_COUNT];
         sensor_states_ = new boolean[SENSOR_COUNT];
@@ -94,30 +114,11 @@ public class ConveyorSubsystem extends Subsystem {
         int num;
         String name = null ;
         for (int i = 0; i < SENSOR_COUNT; i++) {
-            switch(i) {
-                case 0:
-                    name = "hw:sensors:intake" ;
-                    break ;
-
-                case 1:
-                    name = "hw:sensors:exit" ;
-                    break ;
-
-                case 2:
-                    name = "hw:sensors:chimney" ;
-                    break ;
-
-                case 3:
-                    name = "hw:sensors:shooter" ;
-                    break ;
-            }
-
+            name = SensorNames[i] ;
             num = getSettingsValue(name).getInteger() ;
             sensors_[i] = new DigitalInput(num);
             sensor_states_[i] = false;
             sensor_states_prev_[i] = false;
-            String sname = Character.toString((char) ('A' + i));
-            putDashboard(sname, Subsystem.DisplayType.Verbose, sensor_states_[i]);
         }
     }
 
@@ -141,7 +142,6 @@ public class ConveyorSubsystem extends Subsystem {
         return v ;
     }
 
-
     @Override
     public void postHWInit() {
         setDefaultAction(new ConveyorStopAction(this));
@@ -149,6 +149,8 @@ public class ConveyorSubsystem extends Subsystem {
 
     @Override
     public void computeMyState() throws Exception {
+
+        CargoType cargoType =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
 
         MessageLogger logger = getRobot().getMessageLogger() ;
         for (int i = 0; i < SENSOR_COUNT; i++) {
@@ -158,113 +160,113 @@ public class ConveyorSubsystem extends Subsystem {
             sensor_states_prev_[i] = sensor_states_[i];
             sensor_states_[i] = !sensors_[i].get();
 
-            String sname = Character.toString((char) ('A' + i));
+            String sname = SensorNames[i] ;
             putDashboard(sname, Subsystem.DisplayType.Always, sensor_states_[i]);
         }
 
-       CargoType cargoType =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
+        if (!bypass_) {
+            int loops = Math.min(ball_count_ + 1, MAX_BALLS);
+            for (int i = 0; i < loops; i++) {
+                State prevst = state_[i] ;
 
-       int loops = Math.min(ball_count_ + 1, MAX_BALLS);
-       for (int i = 0; i < loops; i++) {
-            State prevst = state_[i] ;
-
-            switch (state_[i]) {
-            case WAIT_INTAKE:
-                if (sensor_states_[SENSOR_IDX_INTAKE]==true && sensor_states_[SENSOR_IDX_INTAKE] != sensor_states_prev_[SENSOR_IDX_INTAKE])
-                {
-                    ball_count_ ++;
-                    state_[i] = State.WAIT_COLOR;
-                }
-                break;
-            case  WAIT_COLOR:
-                if (cargoType == CargoType.Opposite)
-                {
-                    exit_.set(ExitOpenState);
-                    state_[i] = State.WAIT_EXIT1;
-                }
-                else if (cargoType == CargoType.Same)
-                    state_[i] = State.START_UPTAKE;
-                break;
-            case  WAIT_EXIT1:
-                if (sensor_states_[SENSOR_IDX_EXIT]==true)
-                    state_[i] = State.WAIT_EXIT0;
-                break;
-            case  WAIT_EXIT0:
-                if (sensor_states_[SENSOR_IDX_EXIT]==false)
-                {
-                    exit_.set(ExitCloseState);
-                    state_[i] = State.WAIT_INTAKE; 
-                    removeBall(i);
-                }
-                break;
-            case  START_UPTAKE:
-                if (i == 0)
-                {
-                    setShooterMotor(shooter_motor_on_);
-                    state_[i] = State.WAIT_CHIMNEY1;
-                }
-                else
-                {
-                    ball_count_staged_ = 2;
-                    setIntakeMotor(POWER_OFF_);
-                }
-                break;
-            case  WAIT_CHIMNEY1:
-                if (sensor_states_[SENSOR_IDX_CHIMNEY]==true)
-                    state_[i] = State.WAIT_CHIMNEY0;
-                break;
-            case  WAIT_CHIMNEY0:
-                if (sensor_states_[SENSOR_IDX_CHIMNEY]==false)
-                {
-                    ball_count_staged_ = 1;
-                    setShooterMotor(POWER_OFF_);
-                    state_[i] = State.WAIT_SHOOTER;
-                }
-                break;
-            case  WAIT_SHOOTER:
-                if (ball_count_ == 2 && i == 1) {
-                    if (Math.abs(intake_motor_power_) > 0.01 || Math.abs(shooter_motor_power_) > 0.01) {
-                        setMotorsPower(0.0, 0.0) ;
+                switch (state_[i]) {
+                case WAIT_INTAKE:
+                    if (sensor_states_[SENSOR_IDX_INTAKE]==true && sensor_states_[SENSOR_IDX_INTAKE] != sensor_states_prev_[SENSOR_IDX_INTAKE])
+                    {
+                        ball_count_ ++;
+                        state_[i] = State.WAIT_COLOR;
                     }
+                    break;
+                case  WAIT_COLOR:
+                    if (cargoType == CargoType.Opposite)
+                    {
+                        exit_.set(ExitOpenState);
+                        state_[i] = State.WAIT_EXIT1;
+                    }
+                    else if (cargoType == CargoType.Same)
+                        state_[i] = State.START_UPTAKE;
+                    break;
+                case  WAIT_EXIT1:
+                    if (sensor_states_[SENSOR_IDX_EXIT]==true)
+                        state_[i] = State.WAIT_EXIT0;
+                    break;
+                case  WAIT_EXIT0:
+                    if (sensor_states_[SENSOR_IDX_EXIT]==false)
+                    {
+                        exit_.set(ExitCloseState);
+                        state_[i] = State.WAIT_INTAKE; 
+                        removeBall(i);
+                    }
+                    break;
+                case  START_UPTAKE:
+                    if (i == 0)
+                    {
+                        setShooterMotor(shooter_motor_on_);
+                        state_[i] = State.WAIT_CHIMNEY1;
+                    }
+                    else
+                    {
+                        ball_count_staged_ = 2;
+                        setIntakeMotor(POWER_OFF_);
+                    }
+                    break;
+                case  WAIT_CHIMNEY1:
+                    if (sensor_states_[SENSOR_IDX_CHIMNEY]==true)
+                        state_[i] = State.WAIT_CHIMNEY0;
+                    break;
+                case  WAIT_CHIMNEY0:
+                    if (sensor_states_[SENSOR_IDX_CHIMNEY]==false)
+                    {
+                        ball_count_staged_ = 1;
+                        setShooterMotor(POWER_OFF_);
+                        state_[i] = State.WAIT_SHOOTER;
+                    }
+                    break;
+                case  WAIT_SHOOTER:
+                    if (ball_count_ == 2 && i == 1) {
+                        if (Math.abs(intake_motor_power_) > 0.01 || Math.abs(shooter_motor_power_) > 0.01) {
+                            setMotorsPower(0.0, 0.0) ;
+                        }
+                    }
+                    break;
+                case WAIT_SHOOTER1:
+                    if (sensor_states_[SENSOR_IDX_SHOOTER]==true)
+                        state_[i] = State.WAIT_SHOOTER0;
+                    break;
+                case WAIT_SHOOTER0:
+                    if (sensor_states_[SENSOR_IDX_SHOOTER]==false)
+                    {
+                        setMotorsPower(0.0, 0.0) ;
+                        ball_count_staged_--;
+                        state_[i] = State.WAIT_INTAKE;
+                        removeBall(i);
+                    }
+                    break;
                 }
-                break;
-            case WAIT_SHOOTER1:
-                if (sensor_states_[SENSOR_IDX_SHOOTER]==true)
-                    state_[i] = State.WAIT_SHOOTER0;
-                break;
-            case WAIT_SHOOTER0:
-                if (sensor_states_[SENSOR_IDX_SHOOTER]==false)
-                {
-                    setMotorsPower(0.0, 0.0) ;
-                    ball_count_staged_--;
-                    state_[i] = State.WAIT_INTAKE;
-                    removeBall(i);
+
+                if (prevst != state_[i]) {
+                    logger.startMessage(MessageType.Debug, getLoggerID()) ;
+                    logger.add("ConveyorSubsystem:") ;
+                    logger.add("loop", i) ;
+                    logger.add(" ").add(prevst.toString()).add(" --> ").add(state_[i].toString()) ;
+                    logger.endMessage();
                 }
-                break;
             }
 
-            if (prevst != state_[i]) {
-                logger.startMessage(MessageType.Debug, getLoggerID()) ;
-                logger.add("ConveyorSubsystem:") ;
-                logger.add("loop", i) ;
-                logger.add(" ").add(prevst.toString()).add(" --> ").add(state_[i].toString()) ;
-                logger.endMessage();
-            }
-        }
+            if (stop_collect_requested_ && (
+                (ball_count_ == 0) ||
+                ((ball_count_ == 1) && (state_[0] == State.WAIT_SHOOTER)) ||
+                ((ball_count_ == 2) && (state_[0] == State.WAIT_SHOOTER) && (state_[1] == State.START_UPTAKE))))
+            {
+                if (Math.abs(intake_motor_power_) > 0.01 || Math.abs(shooter_motor_power_) > 0.01) {
+                    setMotorsPower(POWER_OFF_, POWER_OFF_);
+                    logger.startMessage(MessageType.Debug, getLoggerID()) ;
+                    logger.add("ConveyorSubsystem: shutting down as requested.") ;
+                    logger.endMessage();
+                }
 
-        if (stop_collect_requested_ && (
-            (ball_count_ == 0) ||
-            ((ball_count_ == 1) && (state_[0] == State.WAIT_SHOOTER)) ||
-            ((ball_count_ == 2) && (state_[0] == State.WAIT_SHOOTER) && (state_[1] == State.START_UPTAKE))))
-        {
-            if (Math.abs(intake_motor_power_) > 0.01 || Math.abs(shooter_motor_power_) > 0.01) {
-                setMotorsPower(POWER_OFF_, POWER_OFF_);
-                logger.startMessage(MessageType.Debug, getLoggerID()) ;
-                logger.add("ConveyorSubsystem: shutting down as requested.") ;
-                logger.endMessage();
+                stop_collect_requested_ = false ;
             }
-
-            stop_collect_requested_ = false ;
         }
 
         putDashboard("ballcount", DisplayType.Always, ball_count_);
@@ -287,6 +289,10 @@ public class ConveyorSubsystem extends Subsystem {
         return ball_count_ ;
     }
 
+    public void setBypass(boolean bypass) {
+        bypass_ = bypass ;
+    }
+
     public void closeExit() {
         exit_.set(ExitCloseState);
     }
@@ -305,7 +311,7 @@ public class ConveyorSubsystem extends Subsystem {
         intake_motor_.set(power) ;
     }
 
-    protected void setMotorsPower(double intake, double shooter) throws BadMotorRequestException, MotorRequestFailedException {
+    public void setMotorsPower(double intake, double shooter) throws BadMotorRequestException, MotorRequestFailedException {
         setIntakeMotor(intake);
         setShooterMotor(shooter);
     }

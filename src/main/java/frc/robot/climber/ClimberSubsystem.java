@@ -98,6 +98,10 @@ public class ClimberSubsystem extends Subsystem {
         traversal_right_ = new DigitalInput(index) ;
     }
 
+    public MotorEncoderSubsystem getWindmillMotor() {
+        return windmill_ ;
+    }
+
     //windmills
     public void setWindmill(SetWindmillTo windmill_power_) throws BadMotorRequestException, MotorRequestFailedException {
         switch (windmill_power_) {

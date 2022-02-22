@@ -17,14 +17,14 @@ public class ZekeAutoController extends AutoController {
     private AutoMode test_mode_ ;
     private AutoMode [] modes_ ;
 
-    public ZekeAutoController(Zeke2022 robot) throws MissingParameterException, BadParameterTypeException {
+    public ZekeAutoController(Zeke2022 robot, boolean hasClimber) throws MissingParameterException, BadParameterTypeException {
         super(robot, "zeke-auto");
 
         MessageLogger logger = getRobot().getMessageLogger() ;
         modes_ = new AutoMode[10] ;
         
         try {
-            test_mode_ = new ZekeTestModeAuto(this);
+            test_mode_ = new ZekeTestModeAuto(this, hasClimber);
             modes_[0] = new NearTarmac2BallAuto(this, "NearTarmac2BallAuto");
             modes_[1] = new FarTarmac2BallAuto(this, "FarTarmac2BallAuto");
             modes_[2] = new FarTarmac4BallAuto(this, "FarTarmac4BallAuto");

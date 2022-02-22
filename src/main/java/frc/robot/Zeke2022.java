@@ -8,32 +8,37 @@ import org.xero1425.misc.SimArgs;
 import org.xero1425.simulator.engine.ModelFactory;
 import org.xero1425.simulator.engine.SimulationEngine;
 import frc.robot.automodes.ZekeAutoController;
-import frc.robot.zekesubsystem.ZekeSubsystem ;
+import frc.robot.zekesubsystem.ZekeSubsystem;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the
+ * build.gradle file in the
  * project.
  */
 public class Zeke2022 extends XeroRobot {
+  private static final boolean hasClimber = false ;
+
   public Zeke2022() {
-    super(0.02) ;
+    super(0.02);
   }
-  
+
   public String getName() {
     return "zeke2022";
   }
 
   public AutoController createAutoController() throws MissingParameterException, BadParameterTypeException {
-    return new ZekeAutoController(this);
+    return new ZekeAutoController(this, hasClimber);
   }
-  
-  protected void hardwareInit() throws Exception {
-    enablePneumaticsAnalog() ;
 
-    ZekeSubsystem robotsub = new ZekeSubsystem(this) ;
-    setRobotSubsystem(robotsub) ;
+  protected void hardwareInit() throws Exception {
+    enablePneumaticsAnalog();
+
+    ZekeSubsystem robotsub = new ZekeSubsystem(this, hasClimber);
+    setRobotSubsystem(robotsub);
   }
 
   public String getSimulationFileName() {
@@ -45,12 +50,12 @@ public class Zeke2022 extends XeroRobot {
   }
 
   protected void addRobotSimulationModels() {
-    ModelFactory factory = SimulationEngine.getInstance().getModelFactory() ;
-    factory.registerModel("climber", "frc.models.ClimberModel");    
-    factory.registerModel("color-sensor-model", "frc.models.ColorSensorModel") ;
-    factory.registerModel("zeke-limelight", "frc.models.ZekeLimeLightModel") ;
-    factory.registerModel("turret", "frc.models.TurretModel") ;
-    factory.registerModel("conveyor", "frc.models.ConveyorModel") ;
+    ModelFactory factory = SimulationEngine.getInstance().getModelFactory();
+    factory.registerModel("climber", "frc.models.ClimberModel");
+    factory.registerModel("color-sensor-model", "frc.models.ColorSensorModel");
+    factory.registerModel("zeke-limelight", "frc.models.ZekeLimeLightModel");
+    factory.registerModel("turret", "frc.models.TurretModel");
+    factory.registerModel("conveyor", "frc.models.ConveyorModel");
     factory.registerModel("zekeoi", "frc.models.ZekeOIModel");
   }
 }

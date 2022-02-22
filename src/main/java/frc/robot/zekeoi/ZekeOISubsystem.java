@@ -11,13 +11,16 @@ import org.xero1425.misc.MissingParameterException;
 public class ZekeOISubsystem extends OISubsystem {
     
     private ZekeOIDevice oi_;
+    private boolean has_climber_ ;
     
     public final static String SubsystemName = "zekeoi";
     private final static String OIHIDIndexName = "oi:index";
 
-    public ZekeOISubsystem(Subsystem parent, TankDriveSubsystem db)
+    public ZekeOISubsystem(Subsystem parent, TankDriveSubsystem db, boolean hasClimber)
             throws BadParameterTypeException, MissingParameterException {
         super(parent, SubsystemName, GamePadType.Xero1425Historic, db);
+
+        has_climber_ = hasClimber ;
 
         int index ;
         MessageLogger logger = getRobot().getMessageLogger() ;
@@ -41,7 +44,7 @@ public class ZekeOISubsystem extends OISubsystem {
 
         if (index != -1) {
             try {
-                oi_ = new ZekeOIDevice(this, "OI", index) ;
+                oi_ = new ZekeOIDevice(this, "OI", index, has_climber_) ;
                 addHIDDevice(oi_) ;
             }
             catch(Exception ex) {

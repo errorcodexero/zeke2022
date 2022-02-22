@@ -26,13 +26,13 @@ public class ZekeSubsystem extends RobotSubsystem {
     private ClimberSubsystem climber_ ;
     private ZekeColorSensor color_sensor_ ;
 
-    public ZekeSubsystem(XeroRobot robot) throws Exception {
+    public ZekeSubsystem(XeroRobot robot, boolean hasClimber) throws Exception {
         super(robot, SubsystemName) ;
 
         db_ = new TankDriveSubsystem(this, TankdriveSubsystemName, "tankdrive") ;
         addChild(db_) ;
 
-        oi_ = new ZekeOISubsystem(this, db_) ;
+        oi_ = new ZekeOISubsystem(this, db_, hasClimber) ;
         addChild(oi_) ;
 
         color_sensor_ = new ZekeColorSensor(this, I2C.Port.kMXP) ;
@@ -47,11 +47,13 @@ public class ZekeSubsystem extends RobotSubsystem {
         turret_ = new TurretSubsystem(this) ;
         addChild(turret_) ;
 
-        // tracker_ = new TargetTrackerSubsystem(this, limelight_, turret_) ;
-        // addChild(tracker_) ;
+        tracker_ = new TargetTrackerSubsystem(this, limelight_, turret_) ;
+        addChild(tracker_) ;
 
-        // climber_ = new ClimberSubsystem(this) ;
-        // addChild(climber_) ;
+        if (hasClimber) {
+            climber_ = new ClimberSubsystem(this) ;
+            addChild(climber_) ;
+        }
     }
 
     public TurretSubsystem getTurret() {
