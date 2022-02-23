@@ -72,6 +72,7 @@ public class ConveyorSubsystem extends Subsystem {
 
     private String prev_str_st_ ;
     private CargoType cargo_type_ ;
+    private CargoType prev_cargo_type_ ;
 
     private static final double POWER_OFF_ = 0;
 
@@ -168,6 +169,7 @@ public class ConveyorSubsystem extends Subsystem {
             putDashboard(sname, Subsystem.DisplayType.Always, sensor_states_[i]);
         }
 
+        prev_cargo_type_ = cargo_type_ ;
         cargo_type_ =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
         senstr += ", color " + cargo_type_.toString() ;
 
@@ -198,13 +200,16 @@ public class ConveyorSubsystem extends Subsystem {
                     }
                     break;
                 case  WAIT_COLOR:
-                    if (cargo_type_ == CargoType.Opposite)
+                    if (prev_cargo_type_ != cargo_type_ && cargo_type_ == CargoType.Opposite)
                     {
                         exit_.set(ExitOpenState);
                         state_[i] = State.WAIT_EXIT1;
                     }
-                    else if (cargo_type_ == CargoType.Same)
+                    else if (prev_cargo_type_ != cargo_type_ && cargo_type_ == CargoType.Same)
                     {
+                        if (loops == 1) {
+                            exit_.set(ExitCloseState) ;
+                        }
                         state_[i] = State.START_UPTAKE;
                     }
                     break;
@@ -217,9 +222,11 @@ public class ConveyorSubsystem extends Subsystem {
                 case  WAIT_EXIT0:
                     if (sensor_states_[SENSOR_IDX_EXIT]==false)
                     {
-                        if (i != 0 || loops == 0 || state_[1] != State.WAIT_EXIT0)
+                        if (!(i == 0 && loops > 0 && (state_[1] == State.WAIT_EXIT1 || state_[1] == State.WAIT_EXIT0 || state_[1] == State.WAIT_COLOR)))
                         {
-                            logger.startMessage(MessageType.Debug).add("Closing the exit gate").endMessage();
+                            logger.startMessage(MessageType.Debug).add("Closing the exit gate") ;
+                            logger.add("i", i).add("loops", loops).add("state[1]", state_[1].toString()) ;
+                            logger.endMessage();
                             exit_.set(ExitCloseState);
                         }
 
