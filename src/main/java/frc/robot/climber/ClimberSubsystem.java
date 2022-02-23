@@ -21,12 +21,10 @@ public class ClimberSubsystem extends Subsystem {
     // they follow each other so only one motorencoder subsystem is defined here
     private MotorEncoderSubsystem windmill_ ;
 
-    // 4 double-solenoids
-    // 2 on each windmill; 1 on either end
-    private XeroDoubleSolenoid clamp_a_left_ ;
-    private XeroDoubleSolenoid clamp_b_left_ ;
-    private XeroDoubleSolenoid clamp_a_right_ ;
-    private XeroDoubleSolenoid clamp_b_right_ ;
+    // 2 double-solenoids
+    // connect between the two windmills; 1 on either end
+    private XeroDoubleSolenoid clamp_a_ ;
+    private XeroDoubleSolenoid clamp_b_ ;
 
     private static DoubleSolenoid.Value GripperCloseState = DoubleSolenoid.Value.kForward ;
     private static DoubleSolenoid.Value GripperOpenState = DoubleSolenoid.Value.kReverse ;
@@ -70,10 +68,8 @@ public class ClimberSubsystem extends Subsystem {
 
         windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
 
-        clamp_a_left_ = new XeroDoubleSolenoid(this, "clamp_a_left") ;
-        clamp_b_left_ = new XeroDoubleSolenoid(this, "clamp_b_left") ;
-        clamp_a_right_ = new XeroDoubleSolenoid(this, "clamp_a_right") ;
-        clamp_b_right_ = new XeroDoubleSolenoid(this, "clamp_b_right") ;
+        clamp_a_ = new XeroDoubleSolenoid(this, "clamp_a") ;
+        clamp_b_ = new XeroDoubleSolenoid(this, "clamp_b") ;
 
         double doublyindex ;
         doublyindex = getSettingsValue("hw:windmill:windmill_power_forwards").getDouble() ;
@@ -132,21 +128,17 @@ public class ClimberSubsystem extends Subsystem {
         
         if (clamp_name == WhichClamp.CLAMP_A) {
             if (clamp_setting == ChangeClampTo.CLOSED) {
-                clamp_a_left_.set(GripperCloseState);
-                clamp_a_right_.set(GripperCloseState);
+                clamp_a_.set(GripperCloseState);
             }
             else if (clamp_setting == ChangeClampTo.OPEN) {
-                clamp_a_left_.set(GripperOpenState);
-                clamp_a_right_.set(GripperOpenState);
+                clamp_a_.set(GripperOpenState);
             }
         } else if (clamp_name == WhichClamp.CLAMP_B) {
             if (clamp_setting == ChangeClampTo.CLOSED) {
-                clamp_b_left_.set(GripperCloseState);
-                clamp_b_right_.set(GripperCloseState);
+                clamp_b_.set(GripperCloseState);
             }
             else if (clamp_setting == ChangeClampTo.OPEN) {
-                clamp_b_left_.set(GripperOpenState);
-                clamp_b_right_.set(GripperOpenState);
+                clamp_b_.set(GripperOpenState);
             }
         }
     }

@@ -321,21 +321,13 @@
         "climber": {
             "hw": {
                 "solenoids": {
-                    "clamp_a_left": {
+                    "clamp_a": {
                         "forward": 2,
                         "reverse": 3
                     },
-                    "clamp_b_left": {
+                    "clamp_b": {
                         "forward": 4,
                         "reverse": 5
-                    },
-                    "clamp_a_right": {
-                        "forward": 6,
-                        "reverse": 7
-                    },
-                    "clamp_b_right": {
-                        "forward": 8,
-                        "reverse": 9
                     }
                 },
                 "motors": {
