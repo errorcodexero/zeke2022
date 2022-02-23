@@ -242,8 +242,11 @@ public class ZekeTestModeAuto extends TestAutoMode {
             //////////////////////////////////////////////////////////////////////////////////
             //
             case 100:  
-                break ;      
-
+                addSubActionPair(conveyor, new ConveyorBypassAction(conveyor, true), true);
+                addSubActionPair(shooter.getWheelMotor1(), new MotorEncoderPowerAction(shooter.getWheelMotor1(), getPower(), getDuration()), false) ;
+                addSubActionPair(shooter.getWheelMotor2(), new MotorEncoderPowerAction(shooter.getWheelMotor2(), getPower(), getDuration()), false) ;
+                addSubActionPair(conveyor, new ConveyorPowerAction(conveyor, 1.0, 1.0, getDuration()), true) ;
+                break ;
         }
     }
 }

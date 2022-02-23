@@ -70,6 +70,9 @@ public class ConveyorSubsystem extends Subsystem {
 
     private State[] state_;
 
+    private String prev_str_st_ ;
+    private CargoType cargo_type_ ;
+
     private static final double POWER_OFF_ = 0;
 
 
@@ -80,7 +83,6 @@ public class ConveyorSubsystem extends Subsystem {
     public static final String SubsystemName = "conveyor";
     public static final String SensorLoggerName = "conveyor:sensors:messages";
 
-
     public ConveyorSubsystem(Subsystem parent, ZekeColorSensor color) throws Exception {
         super(parent, SubsystemName);
       
@@ -88,6 +90,7 @@ public class ConveyorSubsystem extends Subsystem {
         exit_ = new XeroSolenoid(this, "exit") ;
 
         bypass_ = false ;
+        prev_str_st_ = "" ;
 
         sensors_ = new DigitalInput[SENSOR_COUNT];
         sensor_states_ = new boolean[SENSOR_COUNT];
@@ -147,12 +150,10 @@ public class ConveyorSubsystem extends Subsystem {
         setDefaultAction(new ConveyorStopAction(this));
     }
 
-    @Override
-    public void computeMyState() throws Exception {
-
-        CargoType cargoType =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
-
+    private void readSensors() {
         MessageLogger logger = getRobot().getMessageLogger() ;
+        String senstr = "" ;
+
         for (int i = 0; i < SENSOR_COUNT; i++) {
             //
             // Get the sensor state
@@ -160,9 +161,28 @@ public class ConveyorSubsystem extends Subsystem {
             sensor_states_prev_[i] = sensor_states_[i];
             sensor_states_[i] = !sensors_[i].get();
 
+            senstr += " " ;
+            senstr += (sensor_states_[i] ? "true" : "false") ;
+
             String sname = SensorNames[i] ;
             putDashboard(sname, Subsystem.DisplayType.Always, sensor_states_[i]);
         }
+
+        cargo_type_ =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
+        senstr += ", color " + cargo_type_.toString() ;
+
+        if (!senstr.equals(prev_str_st_)) {
+            logger.startMessage(MessageType.Debug).add("sensors", senstr).endMessage(); 
+            prev_str_st_ = senstr ;
+        }
+    }
+
+    @Override
+    public void computeMyState() throws Exception {
+        MessageLogger logger = getRobot().getMessageLogger() ;
+
+
+        readSensors();
 
         if (!bypass_) {
             int loops = Math.min(ball_count_ + 1, MAX_BALLS);
@@ -178,22 +198,31 @@ public class ConveyorSubsystem extends Subsystem {
                     }
                     break;
                 case  WAIT_COLOR:
-                    if (cargoType == CargoType.Opposite)
+                    if (cargo_type_ == CargoType.Opposite)
                     {
                         exit_.set(ExitOpenState);
                         state_[i] = State.WAIT_EXIT1;
                     }
-                    else if (cargoType == CargoType.Same)
+                    else if (cargo_type_ == CargoType.Same)
+                    {
                         state_[i] = State.START_UPTAKE;
+                    }
                     break;
                 case  WAIT_EXIT1:
-                    if (sensor_states_[SENSOR_IDX_EXIT]==true)
+                    if (sensor_states_[SENSOR_IDX_EXIT]==true && sensor_states_[SENSOR_IDX_EXIT] != sensor_states_prev_[SENSOR_IDX_EXIT])
+                    {
                         state_[i] = State.WAIT_EXIT0;
+                    }
                     break;
                 case  WAIT_EXIT0:
                     if (sensor_states_[SENSOR_IDX_EXIT]==false)
                     {
-                        exit_.set(ExitCloseState);
+                        if (i != 0 || loops == 0 || state_[1] != State.WAIT_EXIT0)
+                        {
+                            logger.startMessage(MessageType.Debug).add("Closing the exit gate").endMessage();
+                            exit_.set(ExitCloseState);
+                        }
+
                         state_[i] = State.WAIT_INTAKE; 
                         removeBall(i);
                     }
@@ -217,6 +246,7 @@ public class ConveyorSubsystem extends Subsystem {
                 case  WAIT_CHIMNEY0:
                     if (sensor_states_[SENSOR_IDX_CHIMNEY]==false)
                     {
+                        logger.startMessage(MessageType.Debug).add("We are shutting down the shooter motor").endMessage();
                         ball_count_staged_ = 1;
                         setShooterMotor(POWER_OFF_);
                         state_[i] = State.WAIT_SHOOTER;
@@ -272,6 +302,13 @@ public class ConveyorSubsystem extends Subsystem {
         putDashboard("ballcount", DisplayType.Always, ball_count_);
     } 
 
+    public void resetBallCount() {
+        while (ball_count_ > 0) {
+            removeBall(0);
+        }
+        ball_count_staged_ = 0 ;
+    }
+
     @Override
     public void run() throws Exception {
         super.run() ;
@@ -302,11 +339,15 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     private void setShooterMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
+        MessageLogger logger = getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Debug).add("setShooterMotor").add("power", power).endMessage();
         shooter_motor_power_ = power ;
         shooter_motor_.set(power) ;
     }
 
     private void setIntakeMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
+        MessageLogger logger = getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Debug).add("setIntakeMotor").add("power", power).endMessage();
         intake_motor_power_ = power ;
         intake_motor_.set(power) ;
     }
@@ -346,6 +387,10 @@ public class ConveyorSubsystem extends Subsystem {
 
     private void removeBall(int ball_idx) 
     {
+        MessageLogger logger = getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Debug) ;
+        logger.add("removing ball", ball_idx).endMessage();
+
         ball_count_ --;
         if (0 == ball_idx)
         {

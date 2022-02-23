@@ -21,11 +21,17 @@ public class GPMStartCollectAction extends Action {
     @Override
     public void start() throws Exception {
         super.start();
-        // collect on action -> intake
-        sub_.getIntake().setAction(intake_on_action_, true) ;
 
-        // collect on action -> conveyor
-        sub_.getConveyor().setAction(conveyor_collect_action_, true) ;
+        if (sub_ .getConveyor().isFull()) {
+            setDone(); 
+        }
+        else {
+            // collect on action -> intake
+            sub_.getIntake().setAction(intake_on_action_, true) ;
+
+            // collect on action -> conveyor
+            sub_.getConveyor().setAction(conveyor_collect_action_, true) ;
+        }
     }
 
     @Override

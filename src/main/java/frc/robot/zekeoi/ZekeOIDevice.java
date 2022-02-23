@@ -13,6 +13,8 @@ import org.xero1425.base.oi.OIPanelButton;
 
 import frc.robot.climber.ClimbAction;
 import frc.robot.climber.ClimberSubsystem;
+import frc.robot.conveyor.ConveyorEjectAction;
+import frc.robot.conveyor.ConveyorExitAction;
 import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
@@ -26,7 +28,7 @@ public class ZekeOIDevice extends OIPanel {
     private GPMStopCollectAction stop_collect_action_;
     private GPMFireAction fire_action_;
 
-    private GPMStartCollectAction collect_;
+    private ConveyorEjectAction eject_action_ ;
     private ClimbAction climb_;
     private FollowTargetAction follow_;
 
@@ -35,6 +37,7 @@ public class ZekeOIDevice extends OIPanel {
     private int collect_v_shoot_gadget_;
     private int climb_gadget_;
     private int climb_lock_gadget_;
+    private int eject_gadget_ ;
 
     private int ball1_output_ ;
     private int ball2_output_ ;
@@ -71,8 +74,8 @@ public class ZekeOIDevice extends OIPanel {
         start_collect_action_ = new GPMStartCollectAction(gpm);
         stop_collect_action_ = new GPMStopCollectAction(gpm);
         fire_action_ = new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()) ;
+        eject_action_ = new ConveyorEjectAction(gpm.getConveyor()) ;
 
-        collect_ = new GPMStartCollectAction(gpm);
         // climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker());
     }
@@ -113,10 +116,14 @@ public class ZekeOIDevice extends OIPanel {
 
         if (getValue(climb_lock_gadget_) == 1) {
             status += "climber locked" ;
-            if (turret.getAction() != follow_)
-                turret.setAction(follow_);
+            // if (turret.getAction() != follow_)
+            //     turret.setAction(follow_);
 
-            if (getValue(collect_v_shoot_gadget_) == 0) {
+            if (getValue(eject_gadget_) == 1) {
+                if (gpm.getConveyor().getAction() != eject_action_)
+                    gpm.getConveyor().setAction(eject_action_) ;
+            }
+            else if (getValue(collect_v_shoot_gadget_) == 0) {
                 status += ", collect mode" ;
 
                 if (isCollectButtonPressed()) {
@@ -178,6 +185,9 @@ public class ZekeOIDevice extends OIPanel {
         climb_lock_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
 
         num = getSubsystem().getSettingsValue("oi:gadgets:climb").getInteger();
-        climb_gadget_ = mapButton(num, OIPanelButton.ButtonType.LowToHigh);
+        climb_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
+
+        num = getSubsystem().getSettingsValue("oi:gadgets:eject").getInteger();
+        eject_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
     }
 }

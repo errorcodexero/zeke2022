@@ -231,13 +231,17 @@
                 "sensors": {
                     "intake": 11,
                     "exit": 10,
-                    "chimney": 12,
-                    "shooter": 13
+                    "chimney": 13,
+                    "shooter": 12
                 }
             },
             "power" : {
                 "intake" : 1.0,
                 "shooter" : 1.0
+            },
+            "eject-action" : {
+                "power" : -1.0,
+                "duration" : 3.0
             }
         },
         "turret": {
@@ -493,8 +497,8 @@
     "testmode": {
         "enabled": true,
         "which": 100,
-        "power": 1.0,
-        "duration": 2.0,
+        "power": 0.8,
+        "duration": 3000,
         "distance": 0.0,
         "name": "Test_Straight"
     }

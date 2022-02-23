@@ -13,11 +13,20 @@ public class ConveyorCollectAction extends Action {
     public void start() throws Exception {
         super.start() ;
 
-        sub_.setCollectMode() ;
+        if (sub_.getBallCount() == 2) {
+            setDone();
+        }
+        else {
+            sub_.setCollectMode() ;
+        }
     }
 
     @Override
     public void run() {
+        if (sub_.getBallCount() == 2) {
+            sub_.setStopCollect();
+            setDone() ;
+        }
     }
 
     @Override

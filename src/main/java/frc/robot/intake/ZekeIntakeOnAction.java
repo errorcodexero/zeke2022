@@ -134,6 +134,7 @@ public class ZekeIntakeOnAction extends Action {
         try {
             subsystem_.setRightCollectorPower(0);
             subsystem_.setLeftCollectorPower(0);
+            subsystem_.retractIntake();
         } catch(Exception ignored) {}
     }
 
