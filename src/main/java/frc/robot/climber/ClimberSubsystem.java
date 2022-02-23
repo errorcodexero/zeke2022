@@ -30,15 +30,13 @@ public class ClimberSubsystem extends Subsystem {
     private static DoubleSolenoid.Value GripperOpenState = DoubleSolenoid.Value.kReverse ;
 
     // there are 6 touch-sensors; aka wobble switch sensors
-    // there are 2 per each "a-clamp" and 1 per each "b-clamp"
-    // they are named after which bar they'll hit/sensee (medium, high, traversal)
+    // two clamps on a, and 2 on b - left and right
     // they are also named after which side of the robot they're on (left or right)
-    private DigitalInput mid_left_ ;
-    private DigitalInput mid_right_ ;
-    private DigitalInput high_left_ ;
-    private DigitalInput high_right_ ;
-    private DigitalInput traversal_left_ ;
-    private DigitalInput traversal_right_ ;
+    // either A's or B's on the bars at one point in time
+    private DigitalInput left_a_ ;
+    private DigitalInput right_a_ ;
+    private DigitalInput left_b_ ;
+    private DigitalInput right_b_ ;
     
     // perhaps rename these as "A to B" and "B to A"
     private MotorEncoderPowerAction windmill_power_forwards_; 
@@ -80,18 +78,14 @@ public class ClimberSubsystem extends Subsystem {
         windmill_power_off_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
 
         int index ;
-        index = getSettingsValue("hw:touchsensors:mid_left").getInteger() ;
-        mid_left_ = new DigitalInput(index) ;
-        index = getSettingsValue("hw:touchsensors:mid_right").getInteger() ;
-        mid_right_ = new DigitalInput(index) ;
-        index = getSettingsValue("hw:touchsensors:high_left").getInteger() ;
-        high_left_ = new DigitalInput(index) ;
-        index = getSettingsValue("hw:touchsensors:high_right").getInteger() ;
-        high_right_ = new DigitalInput(index) ;
-        index = getSettingsValue("hw:touchsensors:traversal_left").getInteger() ;
-        traversal_left_ = new DigitalInput(index) ;
-        index = getSettingsValue("hw:touchsensors:traversal_right").getInteger() ;
-        traversal_right_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:left_a").getInteger() ;
+        left_a_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:right_a").getInteger() ;
+        right_a_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:left_b").getInteger() ;
+        left_b_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:right_b").getInteger() ;
+        right_b_ = new DigitalInput(index) ;
     }
 
     public MotorEncoderSubsystem getWindmillMotor() {
@@ -144,23 +138,16 @@ public class ClimberSubsystem extends Subsystem {
     }
  
     //touch sensors
-    public boolean isMidLeftTouched() {
-        return mid_left_.get() ;
+    public boolean isLeftATouched() {
+        return left_a_.get() ;
     }
-    public boolean isMidRightTouched() {    
-        return mid_right_.get() ;
+    public boolean isRightATouched() {    
+        return right_a_.get() ;
     }
-    public boolean isHighLeftTouched() {
-        return high_left_.get();
+    public boolean isLeftBTouched() {
+        return left_b_.get();
     }
-    public boolean isHighRightTouched() {
-        return high_right_.get();
+    public boolean isRightBTouched() {
+        return right_b_.get();
     }
-    public boolean isTraversalLeftTouched() {
-        return traversal_left_.get();
-    }
-    public boolean isTraversalRightTouched() {
-        return traversal_right_.get();
-    }
-
 }
