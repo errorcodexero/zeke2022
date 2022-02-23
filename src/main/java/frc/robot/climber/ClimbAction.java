@@ -151,7 +151,7 @@ public class ClimbAction extends Action {
     //        Go to the SQUARING state
     //
     private void doIdle() {
-        if (sub_.isMidRightTouched() && sub_.isMidLeftTouched()) {
+        if (sub_.isLeftATouched() && sub_.isRightATouched()) {
             // The driver drove up to the bar perfectly and both sensors
             // touched in the same robot loop.  Unlikely, but it could happen.
             // Do:
@@ -166,14 +166,14 @@ public class ClimbAction extends Action {
             // - go to CLAMP_ONE state (we skip SQUARING)
             state_ = ClimbingStates.CLAMP_ONE ;
         }
-        else if (sub_.isMidLeftTouched() || sub_.isMidRightTouched()) {
+        else if (sub_.isLeftATouched() || sub_.isRightATouched()) {
             // The driver drove up to the bar and only one sensor hit in this
             // robot loop.
             // Do: 
             //   - disable driving from gamepad
 
             //   - turn on motor on side of drivebase that has not hit the sensor
-            if (sub_.isMidLeftTouched()) {
+            if (sub_.isLeftATouched()) {
                 db_.setAction(right_wheel_) ;
             } else { // mid right touched
                 db_.setAction(left_wheel_) ;
@@ -197,7 +197,7 @@ public class ClimbAction extends Action {
     //
     private void doSquaring() {
         // both sensors are touching
-        if (sub_.isMidLeftTouched() && sub_.isMidRightTouched()) { 
+        if (sub_.isLeftATouched() && sub_.isRightATouched()) { 
             // - turn off the db
             db_.setAction(stop_db_) ;
 
@@ -243,7 +243,7 @@ public class ClimbAction extends Action {
     //
     private void doWindmillOne() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
-        if (sub_.isHighLeftTouched() && sub_.isHighRightTouched()) {
+        if (sub_.isLeftBTouched() && sub_.isRightBTouched()) {
             sub_.setWindmill(SetWindmillTo.OFF) ;
             sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.CLOSED);
             
@@ -303,7 +303,7 @@ public class ClimbAction extends Action {
     //
     private void doWindmillTwo() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
-        if (sub_.isTraversalLeftTouched() && sub_.isTraversalRightTouched()) {
+        if (sub_.isLeftBTouched() && sub_.isRightBTouched()) {
             // turns off windmill
             sub_.setWindmill(SetWindmillTo.OFF) ;
             // sets clamp A to be closed

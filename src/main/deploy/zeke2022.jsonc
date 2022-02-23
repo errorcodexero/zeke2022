@@ -325,21 +325,13 @@
         "climber": {
             "hw": {
                 "solenoids": {
-                    "clamp_a_left": {
+                    "clamp_a": {
                         "forward": 2,
                         "reverse": 3
                     },
-                    "clamp_b_left": {
+                    "clamp_b": {
                         "forward": 4,
                         "reverse": 5
-                    },
-                    "clamp_a_right": {
-                        "forward": 6,
-                        "reverse": 7
-                    },
-                    "clamp_b_right": {
-                        "forward": 8,
-                        "reverse": 9
                     }
                 },
                 "motors": {
@@ -358,12 +350,10 @@
                     "b": 0.0
                 },
                 "touchsensors": {
-                    "mid_left": 4,
-                    "mid_right": 5,
-                    "high_left": 6,
-                    "high_right": 7,
-                    "traversal_left": 8,
-                    "traversal_right": 9
+                    "left_a": 4,
+                    "right_a": 5,
+                    "left_b": 6,
+                    "right_b": 7
                 },
                 "windmill": {
                     "windmill_power_forwards": 0.7,
