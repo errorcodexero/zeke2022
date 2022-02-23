@@ -37,7 +37,7 @@ public class TalonFXMotorController extends MotorController
     /// \brief the name of the device when simulating
     public final static String SimDeviceName = "CTREMotorController" ;
 
-    private final int ControllerTimeout = 100 ;
+    private final int ControllerTimeout = 1000 ;
 
     /// \brief Create a new TalonFX Motor Controller.
     /// \param name the name of this motor
@@ -84,22 +84,6 @@ public class TalonFXMotorController extends MotorController
             code = controller_.configNeutralDeadband(0.001, ControllerTimeout);
             if (code != ErrorCode.OK)
                 throw new MotorRequestFailedException(this, "CTRE configNeutralDeadband() call failed during initialization", code) ;
-
-            code = controller_.configNominalOutputForward(0, ControllerTimeout) ;
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE configNominalOutputForward() call failed during initialization", code) ;
-
-            code = controller_.configNominalOutputReverse(0, ControllerTimeout) ;
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE configNominalOutputReverse() call failed during initialization", code) ;
-
-            code = controller_.configPeakOutputForward(1, ControllerTimeout) ;
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE configPeakOutputForward() call failed during initialization", code) ;
-
-            code = controller_.configPeakOutputReverse(-1, ControllerTimeout) ;
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE configPeakOutputReverse() call failed during initialization", code) ;               
         }
     }
 
