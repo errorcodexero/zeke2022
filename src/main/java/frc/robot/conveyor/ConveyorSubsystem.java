@@ -34,14 +34,16 @@ public class ConveyorSubsystem extends Subsystem {
     {
         public CargoType type_ ;
         public State state_ ;
+        public int which_ ;
 
         public BallInfo() {
             type_ = CargoType.None ;
             state_ = State.INTAKE ;
+            which_ = which_ball_++ ;
         }
 
         public String toString() {
-            return type_.toString() + " " + state_.toString() ;
+            return Integer.toString(which_) + " " + type_.toString() + " " + state_.toString() ;
         }
     }
 
@@ -74,6 +76,8 @@ public class ConveyorSubsystem extends Subsystem {
 
     // If true, print sensor info and ball state info on change
     private static final boolean PrintOnChanged = true ;
+
+    private static int which_ball_ = 0 ;
 
     private boolean bypass_ ;                       // Bypass the conveyor state machine
     private boolean stop_requested_;                // If true, stop the current conveyor operation as soon as possible
@@ -394,7 +398,7 @@ public class ConveyorSubsystem extends Subsystem {
             //            
             setShooterMotor(0.0);
         }
-        else if (balls_info_.get(0).type_ == CargoType.Opposite) {
+        else if (balls_info_.get(0).type_ == CargoType.Opposite || balls_info_.get(0).type_ == CargoType.None) {
             //
             // The ball at the front of the conveyor is going to the exit, stop the shooter
             //
