@@ -31,10 +31,11 @@ public class ConveyorCollectAction extends Action {
 
     @Override
     public void cancel() {
+        super.cancel() ;
+
         if (!isDone()) {
             sub_.setStopRequest();
         }
-        super.cancel() ;
     }
 
     @Override

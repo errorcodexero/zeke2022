@@ -185,8 +185,6 @@ public class ConveyorSubsystem extends Subsystem {
                 return ;
             }
 
-            setDoorState() ;
-            setMotorState() ;
 
             if (risingEdge(SENSOR_IDX_INTAKE)) {
                 //
@@ -250,6 +248,9 @@ public class ConveyorSubsystem extends Subsystem {
                     balls_info_.remove(0) ;
                 }
             }
+
+            setDoorState() ;
+            setMotorState() ;
         }
 
         putDashboard("ballcount", DisplayType.Always, getBallCount());
