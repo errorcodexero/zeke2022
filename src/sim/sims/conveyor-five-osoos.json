@@ -318,7 +318,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "ball-count",
-                    "value" : 0
+                    "value" : 1
                 },
                 {
                     "subsystem" : "conveyor",
@@ -734,6 +734,20 @@
                 }
             ]
         },
+        {
+            "time" : 6.9,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #5 set the chimney sensor",
+                        "chimney" : false
+                    }
+                }               
+            ]
+        },        
         {
             "time" : 7.0,
             "asserts" : 

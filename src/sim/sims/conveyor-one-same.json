@@ -169,7 +169,7 @@
                 {
                     "subsystem" : "conveyor",
                     "property" : "ball-count",
-                    "value" : 0
+                    "value" : 1
                 },
                 {
                     "subsystem" : "conveyor",

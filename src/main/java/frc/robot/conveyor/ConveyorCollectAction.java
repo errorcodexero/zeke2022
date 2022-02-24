@@ -24,7 +24,7 @@ public class ConveyorCollectAction extends Action {
     @Override
     public void run() {
         if (sub_.isFull()) {
-            sub_.setStopCollect();
+            sub_.setStopRequest();
             setDone() ;
         }
     }
@@ -32,7 +32,7 @@ public class ConveyorCollectAction extends Action {
     @Override
     public void cancel() {
         if (!isDone()) {
-            sub_.setStopCollect();
+            sub_.setStopRequest();
         }
         super.cancel() ;
     }

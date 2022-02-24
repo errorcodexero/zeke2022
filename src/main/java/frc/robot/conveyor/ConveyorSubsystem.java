@@ -1,12 +1,17 @@
 package frc.robot.conveyor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorController;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.pneumatics.XeroSolenoid;
+import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
+import org.xero1425.misc.MissingParameterException;
 import org.xero1425.misc.SettingsValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -15,31 +20,30 @@ import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;
 
 public class ConveyorSubsystem extends Subsystem {
 
-    // States in the state machine
+    // States in the state machine, basically the last sensor seen
     private enum State {
-        WAIT_INTAKE, 
-        WAIT_COLOR,
-        WAIT_EXIT1,
-        WAIT_EXIT0,
-        START_UPTAKE,
-        SAME_PARKED,
-        WAIT_CHIMNEY1,
-        WAIT_CHIMNEY0,
-        WAIT_SHOOTER,
-        WAIT_SHOOTER1,
-        WAIT_SHOOTER0,
+        INTAKE,
+        COLORSENSOR,
+        EXIT,
+        CHIMNEY,
+        REMOVE,
+        PARK
     }
 
     private class BallInfo
     {
         public CargoType type_ ;
         public State state_ ;
+
+        public BallInfo() {
+            type_ = CargoType.None ;
+            state_ = State.INTAKE ;
+        }
+
+        public String toString() {
+            return type_.toString() + " " + state_.toString() ;
+        }
     }
-
-    // Constanst
-
-    // The maximum number of balls present
-    public static final int MAX_BALLS = 4;
 
     // The total number of sensors
     private static final int SENSOR_COUNT = 4;
@@ -50,90 +54,75 @@ public class ConveyorSubsystem extends Subsystem {
     private static final int SENSOR_IDX_CHIMNEY = 2;
     private static final int SENSOR_IDX_SHOOTER = 3;
 
+    // The maximum ball count
+    private static final int MAX_BALL_COUNT = 2 ;
+
     // The state of the exit XeroSolenoid when the exit portal is closed
     private static final boolean ExitCloseState = false ;
 
     // The state of the exit XeroSolenoid when the exit portal is open
     private static final boolean ExitOpenState = true ;
 
+    // The names of the sensors
     private static final String[] SensorNames = { "intake", "exit", "chimney", "shooter"} ;
 
-    private boolean bypass_ ;
-    private int ball_count_ ;                       // The number of balls stored in the conveyor
-    private int ball_count_staged_ ;
-    private boolean stop_collect_requested_;
-    private BallInfo [] balls_ ;
+    // The name of the subsystem
+    public static final String SubsystemName = "conveyor";
+
+    // If true, print detailed information every robot loop
+    private static final boolean PrintDetailed = false ;
+
+    // If true, print sensor info and ball state info on change
+    private static final boolean PrintOnChanged = true ;
+
+    private boolean bypass_ ;                       // Bypass the conveyor state machine
+    private boolean stop_requested_;                // If true, stop the current conveyor operation as soon as possible
+    private List<BallInfo> balls_info_ ;            // The state of the balls
+    private BallInfo parked_ ;                      // The ball, if any, parked in the chimney
 
     private MotorController intake_motor_ ;         // The motor for the flash intake piece
-    private double intake_motor_power_ ;
-    private double intake_motor_on_ ;
+    private double intake_motor_power_ ;            // The currently assigned motor power
+    private double intake_motor_on_ ;               // The power when the motor is on
 
-    private MotorController shooter_motor_ ;        // The motor for the shooter sidef of the conveyor
-    private double shooter_motor_power_ ;
-    private double shooter_motor_on_ ;
+    private MotorController shooter_motor_ ;        // The motor for the shooter side of the conveyor
+    private double shooter_motor_power_ ;           // The currently assigned motor power
+    private double shooter_motor_on_ ;              // The power when the motor is on
 
-    private XeroSolenoid exit_ ;    
+    private XeroSolenoid exit_ ;                    // The solenoid that controls the exit door
     private boolean exit_door_state_ ;              // TRUE means door is open
 
-    private ZekeColorSensor color_sensor_;
+    private ZekeColorSensor color_sensor_;          // The color sensor for the conveyor
 
-    private String prev_str_st_ ;
-    private CargoType cargo_type_ ;
-    private CargoType prev_cargo_type_ ;
+    private String prev_sensors_state_ ;            // The previous state string for the conveyor
+    private String prev_balls_state_ ;              // The previous balls state for the conveyor
+ 
+    private CargoType cargo_type_ ;                 // The current robot loop cargo type
+    private CargoType prev_cargo_type_ ;            // The previous robot loop cargo type
 
-    private static final double POWER_OFF_ = 0;
-
-    private DigitalInput[] sensors_; // The array of ball detect sensors
-    private boolean[] sensor_states_; // The states of ball detect sensors
-    private boolean[] sensor_states_prev_; // The states of ball detect sensors
+    private DigitalInput[] sensors_;                // The array of ball detect sensors
+    private boolean[] sensor_states_;               // The states of ball detect sensors
+    private boolean[] sensor_states_prev_;          // The states of ball detect sensors
     
-    public static final String SubsystemName = "conveyor";
-    public static final String SensorLoggerName = "conveyor:sensors:messages";
 
     public ConveyorSubsystem(Subsystem parent, ZekeColorSensor color) throws Exception {
         super(parent, SubsystemName);
       
         color_sensor_ = color;
-        exit_ = new XeroSolenoid(this, "exit") ;
 
         bypass_ = false ;
-        prev_str_st_ = "" ;
+        prev_sensors_state_ = "" ;
 
         sensors_ = new DigitalInput[SENSOR_COUNT];
         sensor_states_ = new boolean[SENSOR_COUNT];
         sensor_states_prev_ = new boolean[SENSOR_COUNT];
 
-        ball_count_ = 0 ;
-        ball_count_staged_ = 0;
-
         exit_door_state_ = false ;
+        stop_requested_ = false ;
 
-        balls_ = new BallInfo [MAX_BALLS];
-        for (int i = 0; i < MAX_BALLS; i++) {
-            balls_[i] = new BallInfo() ;
-            balls_[i].state_ = State.WAIT_INTAKE ;
-            balls_[i].type_ = CargoType.None ;
-        }
+        balls_info_ = new ArrayList<BallInfo>() ;
+        parked_ = null ;
 
-        intake_motor_ = getRobot().getMotorFactory().createMotor("intake", "subsystems:conveyor:hw:motors:intake");
-        intake_motor_power_ = 0.0 ;
-        intake_motor_on_ = getSettingsValue("power:intake").getDouble() ;
-
-        shooter_motor_ = getRobot().getMotorFactory().createMotor("shooter", "subsystems:conveyor:hw:motors:shooter");
-        shooter_motor_power_ = 0.0 ;
-        shooter_motor_on_ = getSettingsValue("power:shooter").getDouble() ;
-
-        stop_collect_requested_ = false;
-
-        int num;
-        String name = null ;
-        for (int i = 0; i < SENSOR_COUNT; i++) {
-            name = SensorNames[i] ;
-            num = getSettingsValue("hw:sensors:" + name).getInteger() ;
-            sensors_[i] = new DigitalInput(num);
-            sensor_states_[i] = false;
-            sensor_states_prev_[i] = false;
-        }
+        attachHardware() ;
     }
 
     @Override
@@ -141,7 +130,7 @@ public class ConveyorSubsystem extends Subsystem {
         SettingsValue v = null ;
 
         if (name.equals("ball-count")) {
-            v = new SettingsValue(ball_count_staged_) ;
+            v = new SettingsValue(getBallCount()) ;
         }
         else if (name.equals("exit")) {
             v = new SettingsValue(exit_.get() == ExitOpenState) ;
@@ -159,240 +148,125 @@ public class ConveyorSubsystem extends Subsystem {
     @Override
     public void postHWInit() {
         setDefaultAction(new ConveyorStopAction(this));
-    }
-
-    private void readSensors() {
-        MessageLogger logger = getRobot().getMessageLogger() ;
-        String senstr = "" ;
-
-        for (int i = 0; i < SENSOR_COUNT; i++) {
-            //
-            // Get the sensor state
-            //
-            sensor_states_prev_[i] = sensor_states_[i];
-            sensor_states_[i] = !sensors_[i].get();
-
-            senstr += " " ;
-            senstr += (sensor_states_[i] ? "true" : "false") ;
-
-            String sname = SensorNames[i] ;
-            putDashboard(sname, Subsystem.DisplayType.Always, sensor_states_[i]);
-        }
-
-        prev_cargo_type_ = cargo_type_ ;
-        cargo_type_ =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
-        senstr += ", color " + cargo_type_.toString() ;
-
-        if (!senstr.equals(prev_str_st_)) {
-            logger.startMessage(MessageType.Debug).add("sensors", senstr).endMessage(); 
-            prev_str_st_ = senstr ;
-        }
-    }
-
-    private boolean risingEdge(int which) {
-        return sensor_states_[which] == true && sensor_states_prev_[which] == false ;
-    }
-
-    private boolean fallingEdge(int which) {
-        return sensor_states_[which] == false && sensor_states_prev_[which] == true ;
-    }
-
-    private boolean changedToCargoType(CargoType t) {
-        return cargo_type_ == t && prev_cargo_type_ == CargoType.None ;
-    }
-
-    private boolean shouldShutExit() {
-        if (exit_door_state_ == false)
-            return false ;
-
-        if (balls_[ball_count_staged_].state_ == State.WAIT_INTAKE)
-            return true ;
-
-        if (balls_[ball_count_staged_].type_ == CargoType.Same)
-            return true ;
-
-        return false ;
-    }
+    }    
 
     @Override
-    public void computeMyState() throws Exception {
+    public void computeMyState() throws Exception {        
         MessageLogger logger = getRobot().getMessageLogger() ;
-        logger.startMessage(MessageType.Debug) ;
-        logger.add("bypass", bypass_ ? "true" : "false") ;
-        logger.add("States:") ;
-        for(int i = 0 ; i < MAX_BALLS ; i++) {
-            logger.add(" ").add(i).add(" ").add(balls_[i].state_.toString()).add(" ").add(balls_[i].type_.toString()) ;
+
+        if (PrintOnChanged) {
+            String bstate = "" ;
+
+            for(BallInfo b : balls_info_) {
+                bstate += "[" + b.toString() + "]" ;
+            }
+
+            if (!bstate.equals(prev_balls_state_)) {
+                logger.startMessage(MessageType.Debug, getLoggerID()) ;
+                logger.add("Balls:").add(bstate) ;
+                logger.endMessage();
+                prev_balls_state_ = bstate ;
+            }
         }
-        logger.endMessage();
 
         readSensors();
 
         if (!bypass_) {
-            int loops = Math.min(ball_count_ + 1, MAX_BALLS);
 
-            if (shouldShutExit())
-            {
-                //
-                // The state of a second ball may be in a variety of places when the first
-                // ball exits, and the state of the system when a first balls exits may not be
-                // well enough defined to know to close the exit door.  For instance, if a first
-                // ball is leaving the exit, but a second ball has not cross the color sensor, we
-                // may not know what to do.
-                //
-                // This code ensures, that if we get into a state where there is only one ball, and
-                // it is the same color of the robot and the exit door is still open, we close it.
-                //
+            if (stop_requested_ && isValidStopState()) {
+                stop_requested_ = false ;
+                setIntakeMotor(0.0);
+                setShooterMotor(0.0);
                 closeExit();
+                return ;
             }
 
-            for (int i = 0; i < loops; i++) {
-                State prevst = balls_[i].state_ ;
+            setDoorState() ;
+            setMotorState() ;
 
-                switch (prevst) {
-                case WAIT_INTAKE:
-                    if (risingEdge(SENSOR_IDX_INTAKE))
-                    {
-                        ball_count_ ++;
-                        balls_[i].state_ = State.WAIT_COLOR;
-                        balls_[i].type_ = CargoType.None ;
+            if (risingEdge(SENSOR_IDX_INTAKE)) {
+                //
+                // There is a rising edge on the intake sensor, add a new ball
+                // to the conveyor
+                //
+                balls_info_.add(new BallInfo()) ;
+            }
 
-                        // Consume the rising edge, so no other ball can us it
-                        sensor_states_prev_[SENSOR_IDX_INTAKE] = sensor_states_[SENSOR_IDX_INTAKE] ;
-                    }
-                    break;
-
-                case  WAIT_COLOR:
-                    if (changedToCargoType(CargoType.Opposite))
-                    {
-                        openExit(); 
-                        balls_[i].state_ = State.WAIT_EXIT1;
-                        balls_[i].type_ = CargoType.Opposite ;
-
-                        // Consume the color change so no other ball can use it
-                        prev_cargo_type_ = cargo_type_ ;
-                    }
-                    else if (changedToCargoType(CargoType.Same))
-                    {
-                        balls_[i].type_ = CargoType.Same ;
-
-                        if (ball_count_staged_ > 0) {
-                            balls_[i].state_ = State.SAME_PARKED;
-                        }
-                        else {
-                            balls_[i].state_ = State.START_UPTAKE;
-                        }
-
-                        // Consume the color change so no other ball can use it
-                        prev_cargo_type_ = cargo_type_ ;
-                    }
-                    break;
-                case SAME_PARKED:
-                    if (risingEdge(SENSOR_IDX_CHIMNEY)) {
-                        setIntakeMotor(0.0);
-                    }
-                    balls_[i].state_ = State.WAIT_SHOOTER ;
-                    break ;
-                case  WAIT_EXIT1:
-                    if (risingEdge(SENSOR_IDX_EXIT))
-                    {
-                        balls_[i].state_ = State.WAIT_EXIT0;
-                        sensor_states_prev_[SENSOR_IDX_EXIT] = sensor_states_[SENSOR_IDX_EXIT] ;
-                    }
-                    break;
-                case  WAIT_EXIT0:
-                    if (fallingEdge(SENSOR_IDX_EXIT))
-                    {
-                        balls_[i].state_ = State.WAIT_INTAKE; 
-                        sensor_states_prev_[SENSOR_IDX_EXIT] = sensor_states_[SENSOR_IDX_EXIT] ;
-                        removeBall(i);
-                    }
-                    break;
-                case  START_UPTAKE:
-                    if (i == 1 && ball_count_staged_ == 1)
-                    {
-                        ball_count_staged_ = 2;
-                        setIntakeMotor(POWER_OFF_);
-                    }
-                    else
-                    {
-                        setShooterMotor(shooter_motor_on_);
-                        balls_[i].state_ = State.WAIT_CHIMNEY1;
-                    }
-                    break;
-                case  WAIT_CHIMNEY1:
-                    if (risingEdge(SENSOR_IDX_CHIMNEY)) {
-                        balls_[i].state_ = State.WAIT_CHIMNEY0;
-                        sensor_states_prev_[SENSOR_IDX_CHIMNEY] = sensor_states_[SENSOR_IDX_CHIMNEY] ;
-                    }
-                    break;
-                case  WAIT_CHIMNEY0:
-                    if (fallingEdge(SENSOR_IDX_CHIMNEY))
-                    {
-                        ball_count_staged_ = 1;
-                        setShooterMotor(POWER_OFF_);
-                        balls_[i].state_ = State.WAIT_SHOOTER;
-                        sensor_states_prev_[SENSOR_IDX_CHIMNEY] = sensor_states_[SENSOR_IDX_CHIMNEY] ;
-                    }
-                    break;
-                case  WAIT_SHOOTER:
-                    if (ball_count_ == 2 && i == 1) {
-                        if (Math.abs(intake_motor_power_) > 0.01 || Math.abs(shooter_motor_power_) > 0.01) {
-                            setMotorsPower(0.0, 0.0) ;
-                        }
-                    }
-                    break;
-                case WAIT_SHOOTER1:
-                    if (risingEdge(SENSOR_IDX_SHOOTER)) {
-                        balls_[i].state_ = State.WAIT_SHOOTER0;
-                        sensor_states_prev_[SENSOR_IDX_SHOOTER] = sensor_states_[SENSOR_IDX_SHOOTER] ;
-                    }
-                    break;
-                case WAIT_SHOOTER0:
-                    if (fallingEdge(SENSOR_IDX_SHOOTER))
-                    {
-                        setMotorsPower(0.0, 0.0) ;
-                        ball_count_staged_--;
-                        balls_[i].state_ = State.WAIT_INTAKE;
-                        removeBall(i);
-                        
-                        sensor_states_prev_[SENSOR_IDX_SHOOTER] = sensor_states_[SENSOR_IDX_SHOOTER] ;                        
-                    }
-                    break;
-                }
-
-                if (prevst != balls_[i].state_) {
-                    logger.startMessage(MessageType.Debug, getLoggerID()) ;
-                    logger.add("ConveyorSubsystem:") ;
-                    logger.add("loop", i) ;
-                    logger.add(" ").add(prevst.toString()).add(" --> ").add(balls_[i].state_.toString()) ;
-                    logger.endMessage();
+            if (fallingEdge(SENSOR_IDX_SHOOTER)) {
+                if (parked_ != null) {
+                    //
+                    // The parked ball has left the robot
+                    //
+                    parked_ = null ;
                 }
             }
 
-            if (stop_collect_requested_ && (
-                (ball_count_ == 0) ||
-                ((ball_count_ == 1) && (balls_[0].state_ == State.WAIT_SHOOTER)) ||
-                ((ball_count_ == 2) && (balls_[0].state_ == State.WAIT_SHOOTER) && (balls_[0].state_ == State.START_UPTAKE))))
-            {
-                if (Math.abs(intake_motor_power_) > 0.01 || Math.abs(shooter_motor_power_) > 0.01) {
-                    setMotorsPower(POWER_OFF_, POWER_OFF_);
-                    logger.startMessage(MessageType.Debug, getLoggerID()) ;
-                    logger.add("ConveyorSubsystem: shutting down as requested.") ;
-                    logger.endMessage();
-                }
+            for(BallInfo binfo : balls_info_) {
+                switch(binfo.state_) {
+                    case INTAKE:
+                        if (changeToCargoType()) {
+                            binfo.type_ = cargo_type_ ;
+                            binfo.state_ = State.COLORSENSOR ;
+                        }
+                        break ;
 
-                stop_collect_requested_ = false ;
+                    case COLORSENSOR:
+                        if (risingEdge(SENSOR_IDX_EXIT)) {
+                            binfo.state_ = State.EXIT ;
+                        }
+                        else if (risingEdge(SENSOR_IDX_CHIMNEY)) {
+                            binfo.state_ = State.CHIMNEY ;
+                        }
+                        break ;
+
+                    case EXIT:
+                        if (fallingEdge(SENSOR_IDX_EXIT)) {
+                            binfo.state_ = State.REMOVE ;
+                        }
+                        break ;
+
+                    case CHIMNEY:
+                        if (fallingEdge(SENSOR_IDX_CHIMNEY)) {
+                            binfo.state_ = State.PARK ;
+                        }
+                        break ;
+
+                    case PARK:
+                    case REMOVE:
+                        assert false ;
+                }
+            }
+
+            if (!balls_info_.isEmpty()) {
+                if (balls_info_.get(0).state_ == State.REMOVE) {
+                    removeBall();
+                }
+                else if (balls_info_.get(0).state_ == State.PARK) {
+                    parked_ = balls_info_.get(0) ;
+                    balls_info_.remove(0) ;
+                }
             }
         }
 
-        putDashboard("ballcount", DisplayType.Always, ball_count_);
-    } 
+        putDashboard("ballcount", DisplayType.Always, getBallCount());
+    }
+
+    public int getBallCount() {
+        int ret = 0 ;
+
+        for(BallInfo b : balls_info_) {
+            if (b.type_ == CargoType.Same)
+                ret++ ;
+        }
+
+        if (parked_ != null)
+            ret++ ;
+
+        return ret ;
+    }
 
     public void resetBallCount() {
-        while (ball_count_ > 0) {
-            removeBall(0);
-        }
-        ball_count_staged_ = 0 ;
+        balls_info_.clear();
     }
 
     @Override
@@ -401,15 +275,11 @@ public class ConveyorSubsystem extends Subsystem {
     }
     
     public boolean isFull() {
-        return ball_count_staged_ == 1 && balls_[1].type_ == CargoType.Same ;
+        return getBallCount() == MAX_BALL_COUNT ;
     }
 
     public boolean isEmpty() {
-        return ball_count_ == 0 ;
-    }
-
-    public int getBallCount() {
-        return ball_count_ ;
+        return getBallCount() == 0 ;
     }
 
     public void setBypass(boolean bypass) {
@@ -427,15 +297,19 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     private void setShooterMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
-        MessageLogger logger = getRobot().getMessageLogger() ;
-        logger.startMessage(MessageType.Debug).add("setShooterMotor").add("power", power).endMessage();
+        if (PrintDetailed) {
+            MessageLogger logger = getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Debug, getLoggerID()).add("setShooterMotor").add("power", power).endMessage();
+        }
         shooter_motor_power_ = power ;
         shooter_motor_.set(power) ;
     }
 
     private void setIntakeMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
-        MessageLogger logger = getRobot().getMessageLogger() ;
-        logger.startMessage(MessageType.Debug).add("setIntakeMotor").add("power", power).endMessage();
+        if (PrintDetailed) {
+            MessageLogger logger = getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Debug, getLoggerID()).add("setIntakeMotor").add("power", power).endMessage();
+        }
         intake_motor_power_ = power ;
         intake_motor_.set(power) ;
     }
@@ -445,49 +319,212 @@ public class ConveyorSubsystem extends Subsystem {
         setShooterMotor(shooter);
     }
 
-    protected void setStopCollect()
+    protected void setStopRequest()
     {
         MessageLogger logger = getRobot().getMessageLogger();
         logger.startMessage(MessageType.Debug, getLoggerID());
-        logger.add("Conveyor: stop collect requested.") ;
+        logger.add("Conveyor: stop requested.") ;
         logger.endMessage();
 
-        stop_collect_requested_ = true;
+        stop_requested_ = true;
     }
 
     public void setPreloadedBall()
     {
-        balls_[0] = new BallInfo() ;
-        balls_[0].state_ = State.START_UPTAKE ;
-        balls_[0].type_ = CargoType.Same ;
-        ball_count_ = 1;
+        BallInfo b = new BallInfo() ;
+        b.state_ = State.COLORSENSOR ;
+        b.type_ = CargoType.Same ;
+        balls_info_.add(b) ;
     }
         
     protected void setShootMode() throws BadMotorRequestException, MotorRequestFailedException {
-        stop_collect_requested_ = false;
+        stop_requested_ = false;
         setMotorsPower(intake_motor_on_, shooter_motor_on_) ;
-        balls_[0].state_ = State.WAIT_SHOOTER1;
     }  
 
     protected void setCollectMode() throws BadMotorRequestException, MotorRequestFailedException  {
-        stop_collect_requested_ = false;
+        stop_requested_ = false;
         setMotorsPower(intake_motor_on_, 0.0) ;
     }
 
-    private void removeBall(int ball_idx) 
+    private void removeBall() 
     {
-        MessageLogger logger = getRobot().getMessageLogger() ;
-        logger.startMessage(MessageType.Debug) ;
-        logger.add("removing ball", ball_idx).endMessage();
-
-        ball_count_--;
-        if (0 == ball_idx)
-        {
-            balls_[0] = balls_[1] ;
+        if(PrintOnChanged) {
+            MessageLogger logger = getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Debug, getLoggerID()) ;
+            logger.add("removing ball").endMessage();
         }
 
-        balls_[1] = new BallInfo() ;
-        balls_[1].state_ = State.WAIT_INTAKE ;
-        balls_[1].type_ = CargoType.None ;
+        balls_info_.remove(0) ;
     }
+
+    private boolean isValidStopState() {
+        if (balls_info_.size() == 0)
+            return true ;
+
+        if (PrintOnChanged) {
+            MessageLogger logger = getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Debug, getLoggerID()) ;
+            logger.add("ValidStopState:");
+            logger.add("parked", (parked_ != null ? "true" : "false")) ;
+            logger.endMessage();
+        }
+
+        //
+        // The only valid stop state is if the horizontal conveyor is empty, or if I already have a ball of my
+        // color parked in the chimney, and the current ball in the conveyor is my color, and it has tripped the
+        // chimney sensor (so we park it here).
+        //
+        if (parked_ != null && balls_info_.get(0).type_ == CargoType.Same && balls_info_.get(0).state_ == State.CHIMNEY)
+            return true ;
+
+        return false ;
+    }
+
+    private void setMotorState() throws BadMotorRequestException, MotorRequestFailedException {
+        if (parked_ != null) {
+            //
+            // We have a ball in the chimney, stop the shooter motor
+            //
+            setShooterMotor(0.0);
+        }
+        else if (balls_info_.size() == 0) {
+            //
+            // There are no balls in the conveyor to be moved, stop the shooter
+            //            
+            setShooterMotor(0.0);
+        }
+        else if (balls_info_.get(0).type_ == CargoType.Opposite) {
+            //
+            // The ball at the front of the conveyor is going to the exit, stop the shooter
+            //
+            setShooterMotor(0.0);
+        }
+        else {
+            //
+            // We have a ball, it is our color, and we don't already have one parked,
+            // turn on the shooter motor
+            //
+            setShooterMotor(shooter_motor_on_);
+        }
+
+        //
+        // The collect action starts the intake motor.  We never turn it on in the conveyor state machine.  We just turn it off
+        // when it is time.
+        //
+
+        if (parked_ != null && balls_info_.size() > 0 && balls_info_.get(0).type_ == CargoType.Same && balls_info_.get(0).state_ == State.CHIMNEY) {
+            //
+            // We have a ball in the chimney laready, and we have a ball in the horizontal conveyor, and the
+            // ball in the horizontal conveyor is the same color as the robot, and it has triggered the chimney sensor, 
+            // shut down the motors
+            //
+            setIntakeMotor(0.0);
+        }
+    }
+
+    private void setDoorState() {
+
+        boolean state = ExitCloseState ;
+
+        if (balls_info_.size() > 0) {
+            BallInfo b = balls_info_.get(0) ;
+            if (b.type_ == CargoType.Opposite)
+                state = ExitOpenState ;
+            else if (b.type_ == CargoType.Same)
+                state = ExitCloseState ;
+            else
+                state = exit_door_state_ ;
+        }
+
+        if (state != exit_door_state_) {
+            if (state == ExitCloseState)
+                closeExit();
+            else
+                openExit();
+        }
+
+    }
+
+    private boolean risingEdge(int which) {
+        boolean ret = sensor_states_[which] == true && sensor_states_prev_[which] == false ;
+        sensor_states_prev_[which] = sensor_states_[which] ;
+        return ret ;
+    }
+
+    private boolean fallingEdge(int which) {
+        boolean ret = sensor_states_[which] == false && sensor_states_prev_[which] == true ;
+        sensor_states_prev_[which] = sensor_states_[which] ;
+        return ret ;        
+    }
+
+    private boolean changeToCargoType() {
+        boolean ret = cargo_type_ != CargoType.None && prev_cargo_type_ == CargoType.None ;
+        prev_cargo_type_ = cargo_type_ ;
+        return ret ;
+    }
+
+    //
+    // Read the beam break and color sensors for this robot loop
+    //
+    private void readSensors() {
+        MessageLogger logger = getRobot().getMessageLogger() ;
+        String senstr = "" ;
+
+        for (int i = 0; i < SENSOR_COUNT; i++) {
+            //
+            // Get the sensor state
+            //
+            sensor_states_prev_[i] = sensor_states_[i];
+            sensor_states_[i] = !sensors_[i].get();
+
+            if (PrintOnChanged) {
+                senstr += " " ;
+                senstr += SensorNames[i] ;
+                senstr += " " ;
+                senstr += (sensor_states_[i] ? "true" : "false") ;
+            }
+
+            String sname = SensorNames[i] ;
+            putDashboard(sname, Subsystem.DisplayType.Verbose, sensor_states_[i]);
+        }
+
+        prev_cargo_type_ = cargo_type_ ;
+        cargo_type_ =  color_sensor_.getCargoType(color_sensor_.getConveyorIndex());
+
+        if (PrintOnChanged) {
+            senstr += ", color " + cargo_type_.toString() ;
+            if (!senstr.equals(prev_sensors_state_)) {
+                logger.startMessage(MessageType.Debug, getLoggerID()).add(senstr).endMessage(); 
+            }
+        }
+
+        prev_sensors_state_ = senstr ;
+    }    
+
+    //
+    // Attach all of the required hardware to the conveyor
+    //
+    private void attachHardware() throws BadParameterTypeException, MissingParameterException {
+        exit_ = new XeroSolenoid(this, "exit") ;
+
+        intake_motor_ = getRobot().getMotorFactory().createMotor("intake", "subsystems:conveyor:hw:motors:intake");
+        intake_motor_power_ = 0.0 ;
+        intake_motor_on_ = getSettingsValue("power:intake").getDouble() ;
+
+        shooter_motor_ = getRobot().getMotorFactory().createMotor("shooter", "subsystems:conveyor:hw:motors:shooter");
+        shooter_motor_power_ = 0.0 ;
+        shooter_motor_on_ = getSettingsValue("power:shooter").getDouble() ;
+
+        int num;
+        String name = null ;
+        for (int i = 0; i < SENSOR_COUNT; i++) {
+            name = SensorNames[i] ;
+            num = getSettingsValue("hw:sensors:" + name).getInteger() ;
+            sensors_[i] = new DigitalInput(num);
+            sensor_states_[i] = false;
+            sensor_states_prev_[i] = false;
+        }
+    }    
  } ;
+

@@ -66,20 +66,12 @@ public class TalonFXMotorController extends MotorController
             sim_encoder_ = null ;
 
             controller_ = new TalonFX(index) ;
-
-            code = controller_.configFactoryDefault(ControllerTimeout) ;
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE configFactoryDefault() call failed during initialization", code) ;
-                
+               
             code = controller_.configVoltageCompSaturation(12.0, ControllerTimeout) ;
             if (code != ErrorCode.OK)
                 throw new MotorRequestFailedException(this, "CTRE configVoltageCompSaturation() call failed during initialization", code) ;
 
             controller_.enableVoltageCompensation(true);
-
-            code = controller_.setSelectedSensorPosition(0, 0, ControllerTimeout) ;
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE setSelectedSensorPosition() call failed during initialization", code) ;
 
             code = controller_.configNeutralDeadband(0.001, ControllerTimeout);
             if (code != ErrorCode.OK)

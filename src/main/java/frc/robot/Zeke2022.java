@@ -46,7 +46,7 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "conveyor-two-same-space";
+    return "conveyor-one-same";
   }
 
   protected void addRobotSimulationModels() {

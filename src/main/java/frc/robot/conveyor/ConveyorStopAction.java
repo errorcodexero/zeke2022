@@ -13,7 +13,7 @@ public class ConveyorStopAction extends Action {
     public void start() throws Exception {
         super.start() ;
 
-        sub_.setStopCollect();
+        sub_.setStopRequest();
         setDone() ;
     }
 

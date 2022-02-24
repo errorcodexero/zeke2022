@@ -140,8 +140,8 @@
             "instance" : "1",
             "props" : {
                 "intake-sensor" : 11,
-                "chimney-sensor" : 12,
-                "shooter-sensor" : 13,
+                "chimney-sensor" : 13,
+                "shooter-sensor" : 12,
                 "exit-sensor" : 10
             }
         },

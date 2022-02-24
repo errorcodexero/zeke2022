@@ -1,8 +1,6 @@
 package frc.robot.conveyor;
 
 import org.xero1425.base.actions.Action;
-import org.xero1425.base.motors.BadMotorRequestException;
-import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 

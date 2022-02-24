@@ -347,9 +347,23 @@
                     }
                 }
             ]
-        },        
+        },   
         {
             "time" : 2.9,
+            "events" : 
+            [
+                {
+                    "model" : "conveyor",
+                    "instance" : "1",
+                    "values" : {
+                        "comment" : "cargo #2 set the chimney sensor",
+                        "chimney" : false
+                    }
+                }
+            ]
+        },             
+        {
+            "time" : 3.0,
             "asserts" : 
             [
                 {
