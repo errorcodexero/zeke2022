@@ -27,7 +27,8 @@ public class ConveyorSubsystem extends Subsystem {
         EXIT,
         CHIMNEY,
         REMOVE,
-        PARK
+        WANTPARK,
+        PARKED
     }
 
     private class BallInfo
@@ -45,6 +46,12 @@ public class ConveyorSubsystem extends Subsystem {
         public String toString() {
             return Integer.toString(which_) + " " + type_.toString() + " " + state_.toString() ;
         }
+    }
+
+    private enum Mode {
+        IDLE,
+        COLLECT,
+        SHOOT
     }
 
     // The total number of sensors
@@ -80,6 +87,7 @@ public class ConveyorSubsystem extends Subsystem {
     private static int which_ball_ = 0 ;
 
     private boolean bypass_ ;                       // Bypass the conveyor state machine
+    private Mode mode_ ;                            // The mode we are in
     private boolean stop_requested_;                // If true, stop the current conveyor operation as soon as possible
     private List<BallInfo> balls_info_ ;            // The state of the balls
     private BallInfo parked_ ;                      // The ball, if any, parked in the chimney
@@ -125,6 +133,8 @@ public class ConveyorSubsystem extends Subsystem {
 
         balls_info_ = new ArrayList<BallInfo>() ;
         parked_ = null ;
+
+        mode_ = Mode.IDLE ;
 
         attachHardware() ;
     }
@@ -178,13 +188,13 @@ public class ConveyorSubsystem extends Subsystem {
         if (!bypass_) {
 
             if (stop_requested_ && isValidStopState()) {
+                mode_ = Mode.IDLE ;
                 stop_requested_ = false ;
                 setIntakeMotor(0.0);
                 setShooterMotor(0.0);
                 closeExit();
                 return ;
             }
-
 
             if (risingEdge(SENSOR_IDX_INTAKE)) {
                 //
@@ -229,11 +239,16 @@ public class ConveyorSubsystem extends Subsystem {
 
                     case CHIMNEY:
                         if (fallingEdge(SENSOR_IDX_CHIMNEY)) {
-                            binfo.state_ = State.PARK ;
+                            binfo.state_ = State.WANTPARK ;
                         }
                         break ;
 
-                    case PARK:
+                    case WANTPARK:
+                        break ;
+
+                    case PARKED:
+                        break ;
+
                     case REMOVE:
                         assert false ;
                 }
@@ -243,8 +258,9 @@ public class ConveyorSubsystem extends Subsystem {
                 if (balls_info_.get(0).state_ == State.REMOVE) {
                     removeBall();
                 }
-                else if (balls_info_.get(0).state_ == State.PARK) {
+                else if (balls_info_.get(0).state_ == State.WANTPARK && parked_ == null) {
                     parked_ = balls_info_.get(0) ;
+                    parked_.state_ = State.PARKED ;
                     balls_info_.remove(0) ;
                 }
             }
@@ -271,6 +287,7 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     public void resetBallCount() {
+        parked_ = null ;
         balls_info_.clear();
     }
 
@@ -341,13 +358,19 @@ public class ConveyorSubsystem extends Subsystem {
         b.type_ = CargoType.Same ;
         balls_info_.add(b) ;
     }
+
+    public boolean isIdle() {
+        return mode_ == Mode.IDLE ;
+    }
         
     protected void setShootMode() throws BadMotorRequestException, MotorRequestFailedException {
+        mode_ = Mode.SHOOT ;
         stop_requested_ = false;
         setMotorsPower(intake_motor_on_, shooter_motor_on_) ;
     }  
 
     protected void setCollectMode() throws BadMotorRequestException, MotorRequestFailedException  {
+        mode_ = Mode.COLLECT ;
         stop_requested_ = false;
         setMotorsPower(intake_motor_on_, 0.0) ;
     }
@@ -387,30 +410,35 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     private void setMotorState() throws BadMotorRequestException, MotorRequestFailedException {
-        if (parked_ != null) {
-            //
-            // We have a ball in the chimney, stop the shooter motor
-            //
-            setShooterMotor(0.0);
-        }
-        else if (balls_info_.size() == 0) {
-            //
-            // There are no balls in the conveyor to be moved, stop the shooter
-            //            
-            setShooterMotor(0.0);
-        }
-        else if (balls_info_.get(0).type_ == CargoType.Opposite || balls_info_.get(0).type_ == CargoType.None) {
-            //
-            // The ball at the front of the conveyor is going to the exit, stop the shooter
-            //
-            setShooterMotor(0.0);
+        if (mode_ == Mode.SHOOT) {
+            setShooterMotor(shooter_motor_on_);
         }
         else {
-            //
-            // We have a ball, it is our color, and we don't already have one parked,
-            // turn on the shooter motor
-            //
-            setShooterMotor(shooter_motor_on_);
+            if (parked_ != null) {
+                //
+                // We have a ball in the chimney, stop the shooter motor
+                //
+                setShooterMotor(0.0);
+            }
+            else if (balls_info_.size() == 0) {
+                //
+                // There are no balls in the conveyor to be moved, stop the shooter
+                //            
+                setShooterMotor(0.0);
+            }
+            else if (balls_info_.get(0).type_ == CargoType.Opposite || balls_info_.get(0).type_ == CargoType.None) {
+                //
+                // The ball at the front of the conveyor is going to the exit, stop the shooter
+                //
+                setShooterMotor(0.0);
+            }
+            else {
+                //
+                // We have a ball, it is our color, and we don't already have one parked,
+                // turn on the shooter motor
+                //
+                setShooterMotor(shooter_motor_on_);
+            }
         }
 
         //

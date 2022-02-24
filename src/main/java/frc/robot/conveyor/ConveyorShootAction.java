@@ -13,11 +13,22 @@ public class ConveyorShootAction extends Action {
     public void start() throws Exception {
         super.start() ;
 
-        sub_.setShootMode() ;
+        if (sub_.isEmpty()) {
+            setDone() ;
+        }
+        else {
+            sub_.setShootMode() ;
+        }
     }
 
     @Override
-    public void run() {
+    public void run() throws Exception {
+        super.run() ;
+
+        if (sub_.isEmpty()) {
+            sub_.setStopRequest();
+            setDone() ;
+        }
     }
 
     @Override
