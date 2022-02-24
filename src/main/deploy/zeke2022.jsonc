@@ -17,7 +17,7 @@
             // Robot framework settings settings
             "actions": true,
             "pathmanager": false,
-            "xerorobot": false,
+            "xerorobot": true,
 
             // Tank drive related settings
             "pathfollowing": false,
@@ -29,7 +29,7 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": true,
+            "conveyor": false,
             "shooter": false,
             "fire-action" : false,
             "shooter-w1" : false,
@@ -41,7 +41,7 @@
             "climber-model": false,
 
             // OI
-            "zekeoi" : true
+            "zekeoi" : false
         },
         //
         // This section controls, what data shows up on the smart dashboard when the item has a

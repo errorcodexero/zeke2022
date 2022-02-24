@@ -1,8 +1,11 @@
 package org.xero1425.base;
 
 import java.util.List;
+import java.util.Map;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.ISettingsSupplier;
@@ -320,28 +323,28 @@ public class Subsystem {
     /// the exception from propogating up and crashing the robot code.
     ///
     public void computeState() {
-        
+        double start = 0.0 ;
         for(Subsystem sub : children_) {
             sub.computeState();
         }
 
         try {
-            computeMyState() ;
+            start = getRobot().getTime() ;
 
+            computeMyState() ;
+            
             if (timing_)
             {
-                double start = getRobot().getTime() ;
                 double elapsed = getRobot().getTime() - start ;
                 total_time_ += elapsed ;
                 total_cnt_++ ;
 
                 min_time_ = Math.min(min_time_, elapsed) ;
                 max_time_ = Math.max(max_time_, elapsed) ;
-
                 
                 // Turn this on to see where execution time is going
                 
-                if (total_cnt_ > 0 && (total_cnt_ % 500) == 0) {
+                if (total_cnt_ > 0 && (total_cnt_ % 50) == 0) {
                     MessageLogger logger = getRobot().getMessageLogger() ;
                     logger.startMessage(MessageType.Debug, getRobot().getLoggerID()) ;
                     logger.add("subsystem ").addQuoted(getName()) ;
