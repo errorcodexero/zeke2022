@@ -2,6 +2,7 @@ package frc.robot.automodes;
 
 import org.xero1425.base.actions.DelayAction;
 import org.xero1425.base.controllers.TestAutoMode;
+import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderPowerAction;
 import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
@@ -192,6 +193,12 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break; 
 
             case 41:
+                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 30.0, true), true) ;
+                addAction(new DelayAction(getAutoController().getRobot(), 3.0)) ;
+                addSubActionPair(turret, new MotorEncoderGotoAction(turret, -30.0, true), true) ;
+                break ;
+
+            case 42:
                 // Have the turret follow the target
                 addSubActionPair(turret, new FollowTargetAction(turret, tracker), false);
                 break ;

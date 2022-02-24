@@ -44,7 +44,4 @@ public class SetShooterAction extends Action {
     public String toString(int indent){
         return spaces(indent) + "SetShooterAction";
     }
-
-
-
 }

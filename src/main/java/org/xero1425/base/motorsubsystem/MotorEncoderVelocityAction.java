@@ -131,7 +131,7 @@ public class MotorEncoderVelocityAction extends MotorAction {
                 getSubsystem().endPlot(plot_id_) ;
                 plot_id_ = -1 ;
             }
-            }
+        }
     }
 
     /// \brief Cancel the velocity action, settings the power of the motor to zero

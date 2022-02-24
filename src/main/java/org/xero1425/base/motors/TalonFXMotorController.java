@@ -37,7 +37,7 @@ public class TalonFXMotorController extends MotorController
     /// \brief the name of the device when simulating
     public final static String SimDeviceName = "CTREMotorController" ;
 
-    private final int ControllerTimeout = 1000 ;
+    private final int ControllerTimeout = 5000 ;
 
     /// \brief Create a new TalonFX Motor Controller.
     /// \param name the name of this motor

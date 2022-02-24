@@ -16,6 +16,14 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
     // The time the last loop was run
     private double last_time_ ;
 
+    private double start_ ;
+
+    // The plot ID for the action
+    private int plot_id_ ;
+
+    // The columns to plot
+    private static String [] columns_ = { "time", "target", "actual", "error", "power"}  ;
+
     /// \brief Create the action
     /// \param sub the MotorEncoderSubsystem subsystem for the action    
     /// \param target the target position
@@ -29,6 +37,8 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
         target_ = target ;
         
         ctrl_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:" + sub.getName() + ":" + name, false) ;
+
+        plot_id_ = sub.initPlot(toString()) ;  
     }
 
     public double getError() {
@@ -39,6 +49,11 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
     /// initializes the PID controller based on whether or not the motion us "up" or "down".
     public void start() throws Exception {
         super.start() ;
+
+        start_ = getSubsystem().getRobot().getTime() ;
+
+        if (plot_id_ != -1)
+            getSubsystem().startPlot(plot_id_, columns_) ;        
     }
 
     public void setTarget(double t) {
@@ -61,11 +76,32 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
         last_time_ = t ;
 
         error_ = Math.abs(target_ - sub.getPosition()) ;
+
+        if (plot_id_ != -1) {
+            Double[] data = new Double[columns_.length] ;
+            data[0] = getSubsystem().getRobot().getTime() - start_ ;
+            data[1] = target_ ;
+            data[2] = sub.getPosition() ;
+            data[3] = error_ ;
+            data[4] = out ;
+            getSubsystem().addPlotData(plot_id_, data);
+
+            if (getSubsystem().getRobot().getTime() - start_ > 5.0)
+            {
+                getSubsystem().endPlot(plot_id_) ;
+                plot_id_ = -1 ;
+            }
+        }        
     }
 
     /// \brief Cancel the action and set the motor power to zero
     public void cancel() {
         super.cancel() ;
+
+        if (plot_id_ == -1) {
+            getSubsystem().endPlot(plot_id_) ;
+            plot_id_ = -1 ;            
+        }
 
         getSubsystem().setPower(0.0) ;
     }

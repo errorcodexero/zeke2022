@@ -13,7 +13,7 @@ public class ConveyorCollectAction extends Action {
     public void start() throws Exception {
         super.start() ;
 
-        if (sub_.getBallCount() == 2) {
+        if (sub_.isFull()) {
             setDone();
         }
         else {
@@ -23,7 +23,7 @@ public class ConveyorCollectAction extends Action {
 
     @Override
     public void run() {
-        if (sub_.getBallCount() == 2) {
+        if (sub_.isFull()) {
             sub_.setStopCollect();
             setDone() ;
         }

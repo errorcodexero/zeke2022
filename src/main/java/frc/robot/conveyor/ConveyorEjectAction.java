@@ -21,7 +21,9 @@ public class ConveyorEjectAction extends Action {
     }
 
     @Override
-    public void start() throws BadMotorRequestException, MotorRequestFailedException {
+    public void start() throws Exception {
+        super.start() ;
+
         sub_.setBypass(true);
         start_ = sub_.getRobot().getTime() ;
         sub_.setMotorsPower(power_, power_) ;
@@ -34,13 +36,18 @@ public class ConveyorEjectAction extends Action {
 
         if (sub_.getRobot().getTime() - start_ > duration_) {
             sub_.setMotorsPower(0.0, 0.0);
-            sub_.setBypass(false) ;;
+            sub_.setBypass(false) ;
         }
     }
 
     @Override
     public void cancel() {
         super.cancel();
+        try {
+            sub_.setMotorsPower(0.0, 0.0);
+        }
+        catch(Exception ex) {
+        }
         sub_.setBypass(false) ;
     }
 

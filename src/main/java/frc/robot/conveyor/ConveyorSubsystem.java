@@ -22,6 +22,7 @@ public class ConveyorSubsystem extends Subsystem {
         WAIT_EXIT1,
         WAIT_EXIT0,
         START_UPTAKE,
+        SAME_PARKED,
         WAIT_CHIMNEY1,
         WAIT_CHIMNEY0,
         WAIT_SHOOTER,
@@ -38,7 +39,7 @@ public class ConveyorSubsystem extends Subsystem {
     // Constanst
 
     // The maximum number of balls present
-    public static final int MAX_BALLS = 2;
+    public static final int MAX_BALLS = 4;
 
     // The total number of sensors
     private static final int SENSOR_COUNT = 4;
@@ -81,7 +82,6 @@ public class ConveyorSubsystem extends Subsystem {
     private CargoType prev_cargo_type_ ;
 
     private static final double POWER_OFF_ = 0;
-
 
     private DigitalInput[] sensors_; // The array of ball detect sensors
     private boolean[] sensor_states_; // The states of ball detect sensors
@@ -194,24 +194,44 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     private boolean fallingEdge(int which) {
-        return sensor_states_[which] == true && sensor_states_prev_[which] == false ;
+        return sensor_states_[which] == false && sensor_states_prev_[which] == true ;
     }
 
     private boolean changedToCargoType(CargoType t) {
         return cargo_type_ == t && prev_cargo_type_ == CargoType.None ;
     }
 
+    private boolean shouldShutExit() {
+        if (exit_door_state_ == false)
+            return false ;
+
+        if (balls_[ball_count_staged_].state_ == State.WAIT_INTAKE)
+            return true ;
+
+        if (balls_[ball_count_staged_].type_ == CargoType.Same)
+            return true ;
+
+        return false ;
+    }
+
     @Override
     public void computeMyState() throws Exception {
         MessageLogger logger = getRobot().getMessageLogger() ;
-
+        logger.startMessage(MessageType.Debug) ;
+        logger.add("bypass", bypass_ ? "true" : "false") ;
+        logger.add("States:") ;
+        for(int i = 0 ; i < MAX_BALLS ; i++) {
+            logger.add(" ").add(i).add(" ").add(balls_[i].state_.toString()).add(" ").add(balls_[i].type_.toString()) ;
+        }
+        logger.endMessage();
 
         readSensors();
 
         if (!bypass_) {
             int loops = Math.min(ball_count_ + 1, MAX_BALLS);
 
-            if (loops == 1 && balls_[0].type_ == CargoType.Same && exit_door_state_) {
+            if (shouldShutExit())
+            {
                 //
                 // The state of a second ball may be in a variety of places when the first
                 // ball exits, and the state of the system when a first balls exits may not be
@@ -244,7 +264,7 @@ public class ConveyorSubsystem extends Subsystem {
                 case  WAIT_COLOR:
                     if (changedToCargoType(CargoType.Opposite))
                     {
-                        exit_.set(ExitOpenState);
+                        openExit(); 
                         balls_[i].state_ = State.WAIT_EXIT1;
                         balls_[i].type_ = CargoType.Opposite ;
 
@@ -253,13 +273,25 @@ public class ConveyorSubsystem extends Subsystem {
                     }
                     else if (changedToCargoType(CargoType.Same))
                     {
-                        balls_[i].state_ = State.START_UPTAKE;
                         balls_[i].type_ = CargoType.Same ;
+
+                        if (ball_count_staged_ > 0) {
+                            balls_[i].state_ = State.SAME_PARKED;
+                        }
+                        else {
+                            balls_[i].state_ = State.START_UPTAKE;
+                        }
 
                         // Consume the color change so no other ball can use it
                         prev_cargo_type_ = cargo_type_ ;
                     }
                     break;
+                case SAME_PARKED:
+                    if (risingEdge(SENSOR_IDX_CHIMNEY)) {
+                        setIntakeMotor(0.0);
+                    }
+                    balls_[i].state_ = State.WAIT_SHOOTER ;
+                    break ;
                 case  WAIT_EXIT1:
                     if (risingEdge(SENSOR_IDX_EXIT))
                     {
@@ -270,28 +302,21 @@ public class ConveyorSubsystem extends Subsystem {
                 case  WAIT_EXIT0:
                     if (fallingEdge(SENSOR_IDX_EXIT))
                     {
-                        //
-                        // We are about to remove the first ball.  If this is the only ball, close the exit door.
-                        //
-                        if (loops == 1) {
-                            exit_.set(ExitCloseState);
-                        }
-
                         balls_[i].state_ = State.WAIT_INTAKE; 
                         sensor_states_prev_[SENSOR_IDX_EXIT] = sensor_states_[SENSOR_IDX_EXIT] ;
                         removeBall(i);
                     }
                     break;
                 case  START_UPTAKE:
-                    if (i == 0)
-                    {
-                        setShooterMotor(shooter_motor_on_);
-                        balls_[i].state_ = State.WAIT_CHIMNEY1;
-                    }
-                    else
+                    if (i == 1 && ball_count_staged_ == 1)
                     {
                         ball_count_staged_ = 2;
                         setIntakeMotor(POWER_OFF_);
+                    }
+                    else
+                    {
+                        setShooterMotor(shooter_motor_on_);
+                        balls_[i].state_ = State.WAIT_CHIMNEY1;
                     }
                     break;
                 case  WAIT_CHIMNEY1:
@@ -376,7 +401,7 @@ public class ConveyorSubsystem extends Subsystem {
     }
     
     public boolean isFull() {
-        return ball_count_ == MAX_BALLS ;
+        return ball_count_staged_ == 1 && balls_[1].type_ == CargoType.Same ;
     }
 
     public boolean isEmpty() {
