@@ -12,8 +12,6 @@ import frc.robot.zekesubsystem.ZekeSubsystem;
 public class ZekeManualClimbGamepad extends Gamepad {
     private double max_power_ ;
 
-    private double current_power_ ;
-
     public ZekeManualClimbGamepad(OISubsystem oi, int index) throws BadParameterTypeException, MissingParameterException {
         super(oi, "climber", index) ;
 
@@ -30,7 +28,7 @@ public class ZekeManualClimbGamepad extends Gamepad {
         ClimberSubsystem climber = zeke.getClimber() ;
 
         //
-        // Read the joystick from the game pad and apply power to the climber
+        // TODO: Read the joystick from the game pad and apply power to the climber
         //
         double stick = DriverStation.getStickAxis(getIndex(), AxisNumber.RIGHTX.value) ;
 
@@ -39,6 +37,7 @@ public class ZekeManualClimbGamepad extends Gamepad {
         //
 
 
+        // TODO: make the gamepad buttons open and close the grabbers
         if (isLBackButtonPrssed()) {
             // Open A grabbers
         }
