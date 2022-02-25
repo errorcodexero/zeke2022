@@ -1,10 +1,8 @@
 package org.xero1425.base;
 
 import java.util.List;
-import java.util.Map;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;
@@ -37,7 +35,7 @@ public class Subsystem {
     //
     // If true, we turn on subsystem timing
     //
-    static private boolean timing_ = false ;
+    static private boolean timing_ = true ;
 
     //
     // The current action assigned to this subsystme

@@ -17,7 +17,7 @@
             // Robot framework settings settings
             "actions": true,
             "pathmanager": false,
-            "xerorobot": true,
+            "xerorobot": false,
 
             // Tank drive related settings
             "pathfollowing": false,
@@ -29,7 +29,7 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": false,
+            "conveyor": true,
             "shooter": false,
             "fire-action" : false,
             "shooter-w1" : false,
@@ -486,9 +486,9 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 35,
-        "power": 0.1,
-        "duration":1.0,
+        "which": 100,
+        "power": 0.4,
+        "duration": 10000.0,
         "distance": 13,
         "name": "Test_Straight"
     }

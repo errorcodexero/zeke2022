@@ -223,10 +223,11 @@ public class ConveyorSubsystem extends Subsystem {
                         break ;
 
                     case COLORSENSOR:
-                        if (risingEdge(SENSOR_IDX_EXIT)) {
+                        if (risingEdge(SENSOR_IDX_EXIT) && binfo.type_ == CargoType.Opposite) {
                             binfo.state_ = State.EXIT ;
                         }
-                        else if (risingEdge(SENSOR_IDX_CHIMNEY)) {
+                        else if (risingEdge(SENSOR_IDX_CHIMNEY) && binfo.type_ == CargoType.Same
+                        ) {
                             binfo.state_ = State.CHIMNEY ;
                         }
                         break ;
@@ -453,6 +454,12 @@ public class ConveyorSubsystem extends Subsystem {
             // shut down the motors
             //
             setIntakeMotor(0.0);
+        }
+        else if (getBallCount() == 2 && sensor_states_[SENSOR_IDX_INTAKE]) {
+            setIntakeMotor(-intake_motor_on_);
+        }
+        else if (mode_ == Mode.COLLECT) {
+            setIntakeMotor(intake_motor_on_);
         }
     }
 
