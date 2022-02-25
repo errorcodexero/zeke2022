@@ -46,14 +46,13 @@ public class ZekeOIDevice extends OIPanel {
     private int climber_left_b_output_ ;
     private int climber_right_b_output_ ;
 
-    private boolean has_climber_ ;
     private String last_status_ ;
 
-    public ZekeOIDevice(OISubsystem sub, String name, int index, boolean hasClimber)
+    public ZekeOIDevice(OISubsystem sub, String name, int index)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
 
-        has_climber_ = hasClimber ;
+
         last_status_ = "" ;
 
         initializeGadgets();
@@ -65,7 +64,13 @@ public class ZekeOIDevice extends OIPanel {
         climber_left_b_output_ = sub.getSettingsValue("oi:outputs:climber-left-b").getInteger() ;
         climber_right_b_output_ = sub.getSettingsValue("oi:outputs:climber-right-b").getInteger() ;                                        
     }
+    
+    @Override
+    public int getAutoModeSelector() {
+        return getValue(automode_gadget_);
+    }
 
+    @Override
     public void createStaticActions() throws Exception {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();
@@ -83,7 +88,6 @@ public class ZekeOIDevice extends OIPanel {
     {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();   
-        // ClimberSubsystem climber = zeke.getClimber();
 
         switch(gpm.getConveyor().getBallCount())
         {
@@ -99,7 +103,12 @@ public class ZekeOIDevice extends OIPanel {
                 setOutput(ball1_output_, true);
                 setOutput(ball2_output_, true) ;
                 break ;                               
-        }        
+        }
+
+        setOutput(climber_left_a_output_, zeke.getClimber().isLeftATouched()) ;
+        setOutput(climber_right_a_output_, zeke.getClimber().isRightATouched()) ;
+        setOutput(climber_left_b_output_, zeke.getClimber().isLeftBTouched()) ;
+        setOutput(climber_right_b_output_, zeke.getClimber().isRightBTouched()) ;                
     }
 
     @Override
@@ -115,8 +124,8 @@ public class ZekeOIDevice extends OIPanel {
 
         if (getValue(climb_lock_gadget_) == 1) {
             status += "climber locked" ;
-            // if (turret.getAction() != follow_)
-            //     turret.setAction(follow_);
+            if (turret.getAction() != follow_)
+                 turret.setAction(follow_);
 
             if (getValue(eject_gadget_) == 1) {
                 if (gpm.getConveyor().getAction() != eject_action_)
@@ -142,7 +151,7 @@ public class ZekeOIDevice extends OIPanel {
             if (turret.getAction() == follow_)
                 turret.setAction(null);
 
-            if (has_climber_) {
+            if (zeke.getClimber() != null) {
                 status += ", has climber" ;
                 if (getValue(climb_gadget_) == 1) {
                     status += ", asking to climb" ;

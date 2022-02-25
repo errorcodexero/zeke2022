@@ -171,6 +171,10 @@
                     "climber-left-b" : 4,
                     "climber-right-b" : 5
                 }
+            },
+            "manual-climb" : {
+                "index" : 1,
+                "max-windmill-power" : 0.4
             }
         },
         "gpm" : {

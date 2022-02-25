@@ -11,7 +11,7 @@ import org.xero1425.misc.MissingParameterException;
 public class ZekeOISubsystem extends OISubsystem {
     
     private ZekeOIDevice oi_;
-    private boolean has_climber_ ;
+    private ZekeManualClimbGamepad climb_gamepad_ ;
     
     public final static String SubsystemName = "zekeoi";
     private final static String OIHIDIndexName = "oi:index";
@@ -19,8 +19,6 @@ public class ZekeOISubsystem extends OISubsystem {
     public ZekeOISubsystem(Subsystem parent, TankDriveSubsystem db, boolean hasClimber)
             throws BadParameterTypeException, MissingParameterException {
         super(parent, SubsystemName, GamePadType.Xero1425Historic, db);
-
-        has_climber_ = hasClimber ;
 
         int index ;
         MessageLogger logger = getRobot().getMessageLogger() ;
@@ -44,7 +42,7 @@ public class ZekeOISubsystem extends OISubsystem {
 
         if (index != -1) {
             try {
-                oi_ = new ZekeOIDevice(this, "OI", index, has_climber_) ;
+                oi_ = new ZekeOIDevice(this, "OI", index) ;
                 addHIDDevice(oi_) ;
             }
             catch(Exception ex) {
@@ -52,6 +50,23 @@ public class ZekeOISubsystem extends OISubsystem {
                 logger.add("OI HID device was not created - ") ;
                 logger.add(ex.getMessage()).endMessage(); ;
             }
+        }
+
+        if (isSettingDefined("manual-climb")) {
+            try {
+                index = getSettingsValue("manual-climb").getInteger() ;
+            }
+            catch(Exception ex) {
+                logger.startMessage(MessageType.Error) ;
+                logger.add("manual climb OI device was not created - ") ;
+                logger.add(ex.getMessage()).endMessage();
+                index = -1 ;      
+            }
+        }
+
+        if (index != -1) {
+            climb_gamepad_ = new ZekeManualClimbGamepad(this, index) ;
+            addHIDDevice(climb_gamepad_);
         }
     }
 }
