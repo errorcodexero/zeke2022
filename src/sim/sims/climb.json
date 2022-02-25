@@ -30,21 +30,23 @@
         },
         {
             "time" : 2.0,
-            "events" : [
+            "events" : 
+            [
                 {
                     "model" : "zekeoi",
                     "instance" : "1",
                     "values" :
                     {
                         "comment" : "Pushed the climb button",                        
-                        "button14" : true
+                        "button9" : true
                     }
                 }
             ]
         },
         {
             "time" : 2.1,
-            "events" : [
+            "events" : 
+            [
                 {
                     "model" : "climber",
                     "instance" : "1",

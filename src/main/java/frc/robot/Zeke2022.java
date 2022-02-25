@@ -20,7 +20,7 @@ import frc.robot.zekesubsystem.ZekeSubsystem;
  * project.
  */
 public class Zeke2022 extends XeroRobot {
-  private static final boolean hasClimber = false ;
+  private static final boolean hasClimber = true ;
 
   public Zeke2022() {
     super(0.02);
@@ -46,7 +46,7 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "conveyor-one-same";
+    return "climb";
   }
 
   protected void addRobotSimulationModels() {
