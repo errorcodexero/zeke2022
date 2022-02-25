@@ -309,8 +309,8 @@
                 "max": 0.3,
                 "imax": 0.0
             },
-            "min": -100,
-            "max": 100,
+            "min": -60,
+            "max": 60,
             "fire_threshold": 5.0
         },
         "zeke_limelight": {
