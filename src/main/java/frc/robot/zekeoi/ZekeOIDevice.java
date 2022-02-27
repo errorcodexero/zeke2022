@@ -4,6 +4,7 @@ import org.xero1425.base.actions.InvalidActionRequest;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.oi.Gamepad;
+import org.xero1425.base.oi.HIDDevice;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MessageLogger;
@@ -37,6 +38,7 @@ public class ZekeOIDevice extends OIPanel {
     private int climb_gadget_;
     private int climb_lock_gadget_;
     private int eject_gadget_ ;
+    private int manual_climb_gadget_ ;
 
     private int ball1_output_ ;
     private int ball2_output_ ;
@@ -46,14 +48,14 @@ public class ZekeOIDevice extends OIPanel {
     private int climber_left_b_output_ ;
     private int climber_right_b_output_ ;
 
-    private boolean has_climber_ ;
     private String last_status_ ;
 
-    public ZekeOIDevice(OISubsystem sub, String name, int index, boolean hasClimber)
+    private boolean manual_climb_enabled_ ;
+
+    public ZekeOIDevice(OISubsystem sub, String name, int index)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
 
-        has_climber_ = hasClimber ;
         last_status_ = "" ;
 
         initializeGadgets();
@@ -65,7 +67,13 @@ public class ZekeOIDevice extends OIPanel {
         climber_left_b_output_ = sub.getSettingsValue("oi:outputs:climber-left-b").getInteger() ;
         climber_right_b_output_ = sub.getSettingsValue("oi:outputs:climber-right-b").getInteger() ;                                        
     }
+    
+    @Override
+    public int getAutoModeSelector() {
+        return getValue(automode_gadget_);
+    }
 
+    @Override
     public void createStaticActions() throws Exception {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();
@@ -75,15 +83,28 @@ public class ZekeOIDevice extends OIPanel {
         fire_action_ = new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()) ;
         eject_action_ = new ConveyorEjectAction(gpm.getConveyor()) ;
 
-        // climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
+        if (zeke.getClimber() != null)
+            climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
+            
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker());
+
+        manual_climb_enabled_ = (getValue(manual_climb_gadget_) == 1) ;
+        setManualClimb() ;
+    }
+
+    private void setManualClimb() {
+        OISubsystem sub = (OISubsystem)getSubsystem() ;
+        HIDDevice dev = sub.getDevice(1) ;
+        if (manual_climb_enabled_)
+            dev.enable();
+        else
+            dev.disable();
     }
 
     private void setLEDs()
     {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();   
-        // ClimberSubsystem climber = zeke.getClimber();
 
         switch(gpm.getConveyor().getBallCount())
         {
@@ -99,7 +120,12 @@ public class ZekeOIDevice extends OIPanel {
                 setOutput(ball1_output_, true);
                 setOutput(ball2_output_, true) ;
                 break ;                               
-        }        
+        }
+
+        setOutput(climber_left_a_output_, zeke.getClimber().isLeftATouched()) ;
+        setOutput(climber_right_a_output_, zeke.getClimber().isRightATouched()) ;
+        setOutput(climber_left_b_output_, zeke.getClimber().isLeftBTouched()) ;
+        setOutput(climber_right_b_output_, zeke.getClimber().isRightBTouched()) ;                
     }
 
     @Override
@@ -115,8 +141,8 @@ public class ZekeOIDevice extends OIPanel {
 
         if (getValue(climb_lock_gadget_) == 1) {
             status += "climber locked" ;
-            // if (turret.getAction() != follow_)
-            //     turret.setAction(follow_);
+            if (turret.getAction() != follow_)
+                 turret.setAction(follow_);
 
             if (getValue(eject_gadget_) == 1) {
                 if (gpm.getConveyor().getAction() != eject_action_)
@@ -142,7 +168,7 @@ public class ZekeOIDevice extends OIPanel {
             if (turret.getAction() == follow_)
                 turret.setAction(null);
 
-            if (has_climber_) {
+            if (zeke.getClimber() != null) {
                 status += ", has climber" ;
                 if (getValue(climb_gadget_) == 1) {
                     status += ", asking to climb" ;
@@ -150,6 +176,12 @@ public class ZekeOIDevice extends OIPanel {
                         climber.setAction(climb_);
                 }
             }
+        }
+
+        boolean manclimb = getValue(manual_climb_gadget_) == 1 ;
+        if (manual_climb_enabled_ != manclimb) {
+            manual_climb_enabled_ = manclimb ;
+            setManualClimb() ;
         }
 
         if (!last_status_.equals(status)) {
@@ -188,5 +220,8 @@ public class ZekeOIDevice extends OIPanel {
 
         num = getSubsystem().getSettingsValue("oi:gadgets:eject").getInteger();
         eject_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
+
+        num = getSubsystem().getSettingsValue("oi:gadgets:manual_climb").getInteger() ;
+        manual_climb_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level) ;
     }
 }

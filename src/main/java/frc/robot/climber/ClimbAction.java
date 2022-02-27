@@ -41,6 +41,7 @@ public class ClimbAction extends Action {
     
     private enum ClimbingStates {
         IDLE,
+        WAITSWITCH,
         SQUARING,
         CLAMP_ONE,
         WINDMILL_ONE,
@@ -79,12 +80,17 @@ public class ClimbAction extends Action {
     }
 
     @Override
-    public void run() throws BadMotorRequestException, MotorRequestFailedException {
+    public void run() throws Exception {
+        super.run() ;
+        
         ClimbingStates prev = state_ ;
 
         switch (state_) {
             case IDLE:
-                doIdle() ;
+                state_ = ClimbingStates.WAITSWITCH ;
+                break ;
+            case WAITSWITCH:
+                doWaitSwitch() ;
                 break ;
             case SQUARING:
                 doSquaring() ;
@@ -150,7 +156,7 @@ public class ClimbAction extends Action {
     //        Turn on the motor on the side of the drivebase that has not hit the sensor
     //        Go to the SQUARING state
     //
-    private void doIdle() {
+    private void doWaitSwitch() {
         if (sub_.isLeftATouched() && sub_.isRightATouched()) {
             // The driver drove up to the bar perfectly and both sensors
             // touched in the same robot loop.  Unlikely, but it could happen.

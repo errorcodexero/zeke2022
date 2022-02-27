@@ -54,9 +54,9 @@
                 "high_grabber_open_time" : 0.7,
 
                 "touch_left_a": 4,
-                "touch_left_b": 5,
-                "touch_right_a": 7,
-                "touch_right_b": 9,
+                "touch_left_b": 6,
+                "touch_right_a": 5,
+                "touch_right_b": 7,
 
                 "a_module": 0,
                 "a_forward": 2,

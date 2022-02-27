@@ -20,10 +20,14 @@ import frc.robot.zekesubsystem.ZekeSubsystem;
  * project.
  */
 public class Zeke2022 extends XeroRobot {
-  private static final boolean hasClimber = false ;
+  private static final boolean hasClimber_ = true ;
 
   public Zeke2022() {
     super(0.02);
+  }
+
+  public boolean hasClimber() {
+    return hasClimber_ ;
   }
 
   public String getName() {
@@ -31,13 +35,13 @@ public class Zeke2022 extends XeroRobot {
   }
 
   public AutoController createAutoController() throws MissingParameterException, BadParameterTypeException {
-    return new ZekeAutoController(this, hasClimber);
+    return new ZekeAutoController(this);
   }
 
   protected void hardwareInit() throws Exception {
     enablePneumaticsAnalog();
 
-    ZekeSubsystem robotsub = new ZekeSubsystem(this, hasClimber);
+    ZekeSubsystem robotsub = new ZekeSubsystem(this);
     setRobotSubsystem(robotsub);
   }
 
@@ -46,7 +50,7 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "conveyor-one-same";
+    return "climb";
   }
 
   protected void addRobotSimulationModels() {

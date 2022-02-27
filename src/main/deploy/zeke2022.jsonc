@@ -29,7 +29,7 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": true,
+            "conveyor": false,
             "shooter": false,
             "fire-action" : false,
             "shooter-w1" : false,
@@ -37,8 +37,8 @@
             "shooter-h" : false,
 
             // Climber related
-            "climber": false,
-            "climber-model": false,
+            "climber": true,
+            "climber-model": true,
 
             // OI
             "zekeoi" : false
@@ -171,6 +171,10 @@
                     "climber-left-b" : 4,
                     "climber-right-b" : 5
                 }
+            },
+            "manual-climb" : {
+                "index" : 1,
+                "max-windmill-power" : 0.4
             }
         },
         "gpm" : {
@@ -305,8 +309,8 @@
                 "max": 0.3,
                 "imax": 0.0
             },
-            "min": -100,
-            "max": 100,
+            "min": -60,
+            "max": 60,
             "fire_threshold": 5.0
         },
         "zeke_limelight": {

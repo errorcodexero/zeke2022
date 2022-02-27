@@ -32,7 +32,8 @@ public class ColorSensorSubsystem extends Subsystem {
     private int[] ir_ ;
     private Color [] colors_ ;
     private boolean running_ ;
-    private int index_ ;
+    private boolean read_proximity_ ;
+    private boolean read_ir_ ;
 
     private SimDevice i2c_mux_ ;
     private SimDouble[] i2c_mux_red_value_ ;
@@ -47,7 +48,8 @@ public class ColorSensorSubsystem extends Subsystem {
         port_ = port ;
         which_ = -1 ;    
         running_ = false ;
-        index_ = 0 ;
+        read_proximity_ = false ;
+        read_ir_ = false ;
 
         count_ = getSettingsValue("hw:i2cmux:count").getInteger() ;
         muxaddr_ = getSettingsValue("hw:i2cmux:address").getInteger() ;
@@ -98,6 +100,14 @@ public class ColorSensorSubsystem extends Subsystem {
         return ir_[which] ;
     }
 
+    public void enableIR(boolean b) {
+        read_ir_ = b ;
+    }
+
+    public void enableProximity(boolean b) {
+        read_proximity_ = b ;
+    }
+
     @Override
     public void computeMyState() {
         running_ = true ;
@@ -106,8 +116,14 @@ public class ColorSensorSubsystem extends Subsystem {
             select(i) ;
 
             colors_[i] = getColor() ;
-            // proximity_[i] = getProximity();
-            // ir_[i] = getIR() ;
+
+            if (read_proximity_) {
+                proximity_[i] = getProximity();
+            }
+
+            if (read_ir_) {
+                ir_[i] = getIR() ;
+            }
         }
     }
 
