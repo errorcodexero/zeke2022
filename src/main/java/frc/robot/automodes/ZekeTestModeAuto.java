@@ -9,6 +9,7 @@ import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveScrubCharAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
+import frc.robot.Zeke2022;
 import frc.robot.climber.ChangeClampAction;
 import frc.robot.climber.ClimberSubsystem;
 import frc.robot.climber.ClimberSubsystem.ChangeClampTo;
@@ -31,10 +32,11 @@ import frc.robot.zekesubsystem.ZekeSubsystem;
 public class ZekeTestModeAuto extends TestAutoMode {
     private boolean has_climber_ ;
 
-    public ZekeTestModeAuto(ZekeAutoController ctrl, boolean hasClimber) throws Exception {
+    public ZekeTestModeAuto(ZekeAutoController ctrl) throws Exception {
         super(ctrl, "Zeke2022-Test-Mode");
 
-        has_climber_ = hasClimber ;
+        Zeke2022 robot = (Zeke2022)ctrl.getRobot() ;
+        has_climber_ = robot.hasClimber() ;
 
         ZekeSubsystem zeke = (ZekeSubsystem) ctrl.getRobot().getRobotSubsystem() ;
         TankDriveSubsystem db = zeke.getTankDrive() ;

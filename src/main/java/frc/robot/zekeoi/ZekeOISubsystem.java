@@ -8,6 +8,8 @@ import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
+import frc.robot.Zeke2022;
+
 public class ZekeOISubsystem extends OISubsystem {
     
     private ZekeOIDevice oi_;
@@ -16,12 +18,14 @@ public class ZekeOISubsystem extends OISubsystem {
     public final static String SubsystemName = "zekeoi";
     private final static String OIHIDIndexName = "oi:index";
 
-    public ZekeOISubsystem(Subsystem parent, TankDriveSubsystem db, boolean hasClimber)
+    public ZekeOISubsystem(Subsystem parent, TankDriveSubsystem db)
             throws BadParameterTypeException, MissingParameterException {
         super(parent, SubsystemName, GamePadType.Xero1425Historic, db);
 
         int index ;
         MessageLogger logger = getRobot().getMessageLogger() ;
+
+        Zeke2022 robot = (Zeke2022)getRobot() ;
 
         //
         // Add the custom OI for zeke to the OI subsystem
@@ -52,7 +56,7 @@ public class ZekeOISubsystem extends OISubsystem {
             }
         }
 
-        if (isSettingDefined("manual-climb")) {
+        if (isSettingDefined("manual-climb") && robot.hasClimber()) {
             try {
                 index = getSettingsValue("manual-climb").getInteger() ;
             }

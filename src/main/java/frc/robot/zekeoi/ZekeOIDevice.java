@@ -4,6 +4,7 @@ import org.xero1425.base.actions.InvalidActionRequest;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.oi.Gamepad;
+import org.xero1425.base.oi.HIDDevice;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MessageLogger;
@@ -37,6 +38,7 @@ public class ZekeOIDevice extends OIPanel {
     private int climb_gadget_;
     private int climb_lock_gadget_;
     private int eject_gadget_ ;
+    private int manual_climb_gadget_ ;
 
     private int ball1_output_ ;
     private int ball2_output_ ;
@@ -48,10 +50,11 @@ public class ZekeOIDevice extends OIPanel {
 
     private String last_status_ ;
 
+    private boolean manual_climb_enabled_ ;
+
     public ZekeOIDevice(OISubsystem sub, String name, int index)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
-
 
         last_status_ = "" ;
 
@@ -84,6 +87,18 @@ public class ZekeOIDevice extends OIPanel {
             climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
             
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker());
+
+        manual_climb_enabled_ = (getValue(manual_climb_gadget_) == 1) ;
+        setManualClimb() ;
+    }
+
+    private void setManualClimb() {
+        OISubsystem sub = (OISubsystem)getSubsystem() ;
+        HIDDevice dev = sub.getDevice(1) ;
+        if (manual_climb_enabled_)
+            dev.enable();
+        else
+            dev.disable();
     }
 
     private void setLEDs()
@@ -163,6 +178,12 @@ public class ZekeOIDevice extends OIPanel {
             }
         }
 
+        boolean manclimb = getValue(manual_climb_gadget_) == 1 ;
+        if (manual_climb_enabled_ != manclimb) {
+            manual_climb_enabled_ = manclimb ;
+            setManualClimb() ;
+        }
+
         if (!last_status_.equals(status)) {
             logger.startMessage(MessageType.Debug, getSubsystem().getLoggerID()).add(status).endMessage() ;
             last_status_ = status ;
@@ -199,5 +220,8 @@ public class ZekeOIDevice extends OIPanel {
 
         num = getSubsystem().getSettingsValue("oi:gadgets:eject").getInteger();
         eject_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
+
+        num = getSubsystem().getSettingsValue("oi:gadgets:manual_climb").getInteger() ;
+        manual_climb_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level) ;
     }
 }

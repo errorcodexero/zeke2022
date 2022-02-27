@@ -7,6 +7,8 @@ import org.xero1425.misc.MissingParameterException;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.climber.ClimberSubsystem;
+import frc.robot.climber.ClimberSubsystem.ChangeClampTo;
+import frc.robot.climber.ClimberSubsystem.WhichClamp;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeManualClimbGamepad extends Gamepad {
@@ -27,28 +29,21 @@ public class ZekeManualClimbGamepad extends Gamepad {
         ZekeSubsystem zeke = (ZekeSubsystem)getSubsystem().getRobot().getRobotSubsystem() ;
         ClimberSubsystem climber = zeke.getClimber() ;
 
-        //
-        // TODO: Read the joystick from the game pad and apply power to the climber
-        //
         double stick = DriverStation.getStickAxis(getIndex(), AxisNumber.RIGHTX.value) ;
+        double power = (stick  * max_power_) ;
+        climber.getWindmillMotor().setPower(power) ;
 
-        //
-        // Scale the stick value to the max_power_ value and assign to windmill motor
-        //
-
-
-        // TODO: make the gamepad buttons open and close the grabbers
         if (isLBackButtonPrssed()) {
-            // Open A grabbers
+            climber.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.OPEN);
         }
         else if (isLTriggerPressed()) {
-            // Close A grabbers
+            climber.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.CLOSED);
         }
         else if (isRBackButtonPressed()) {
-            // Open B grabbers
+            climber.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.OPEN);
         }
         else if (isRTriggerPressed()) {
-            // Close B grabbers
+            climber.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.CLOSED);
         }
     }
 }
