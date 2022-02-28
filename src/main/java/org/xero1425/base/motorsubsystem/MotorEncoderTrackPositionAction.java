@@ -22,7 +22,7 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
     private int plot_id_ ;
 
     // The columns to plot
-    private static String [] columns_ = { "time", "target", "actual", "error", "power"}  ;
+    private static String [] columns_ = { "time", "target(pos)", "actual(pos)", "error", "power"}  ;
 
     /// \brief Create the action
     /// \param sub the MotorEncoderSubsystem subsystem for the action    
