@@ -175,12 +175,17 @@ public class GPMFireAction extends Action {
     }
 
     public void computeShooterParams(double dist) {
-    
-        // TODO: compute some emperical stuff to control the shooter
-        double v1 = 10.0 * dist ;
-        double v2 = 10.0 * dist ;
-        double hood = 1.0 * dist ;
-
+        double v1, v2, hood ;
+        if (dist < 55.0) {      // Or 67.2
+            v1 = 1.6386 * dist - 15.787 ;
+            v2 = v1 ;
+            hood = 10.0 ;
+        }
+        else {
+            v1 = 5200.0 ;
+            v2 = 5200.0 ;
+            hood = 0.1858 * dist - 1.8723 ;
+        }
         shoot_params_ = new ShootParams(v1, v2, hood) ;
     }
 }
