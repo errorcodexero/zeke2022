@@ -56,16 +56,14 @@ public class ZekeOISubsystem extends OISubsystem {
             }
         }
 
-        if (isSettingDefined("manual-climb") && robot.hasClimber()) {
-            try {
-                index = getSettingsValue("manual-climb").getInteger() ;
-            }
-            catch(Exception ex) {
-                logger.startMessage(MessageType.Error) ;
-                logger.add("manual climb OI device was not created - ") ;
-                logger.add(ex.getMessage()).endMessage();
-                index = -1 ;      
-            }
+        try {
+            index = getSettingsValue("manual-climb:index").getInteger() ;
+        }
+        catch(Exception ex) {
+            logger.startMessage(MessageType.Error) ;
+            logger.add("manual climb OI device was not created - ") ;
+            logger.add(ex.getMessage()).endMessage();
+            index = -1 ;      
         }
 
         if (index != -1) {

@@ -95,10 +95,12 @@ public class ZekeOIDevice extends OIPanel {
     private void setManualClimb() {
         OISubsystem sub = (OISubsystem)getSubsystem() ;
         HIDDevice dev = sub.getDevice(1) ;
-        if (manual_climb_enabled_)
-            dev.enable();
-        else
-            dev.disable();
+        if (dev != null) {
+            if (manual_climb_enabled_)
+                dev.enable();
+            else
+                dev.disable();
+        }
     }
 
     private void setLEDs()
@@ -181,6 +183,7 @@ public class ZekeOIDevice extends OIPanel {
         boolean manclimb = getValue(manual_climb_gadget_) == 1 ;
         if (manual_climb_enabled_ != manclimb) {
             manual_climb_enabled_ = manclimb ;
+            status += ", settings manual climb " + (manual_climb_enabled_? " true" : " false") ;
             setManualClimb() ;
         }
 

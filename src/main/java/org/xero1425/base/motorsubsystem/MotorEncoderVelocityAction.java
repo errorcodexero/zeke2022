@@ -126,7 +126,7 @@ public class MotorEncoderVelocityAction extends MotorAction {
             data[2] = me.getVelocity() ;
             getSubsystem().addPlotData(plot_id_, data);
 
-            if (getSubsystem().getRobot().getTime() - start_ > 10.0)
+            if (getSubsystem().getRobot().getTime() - start_ > 4.0)
             {
                 getSubsystem().endPlot(plot_id_) ;
                 plot_id_ = -1 ;

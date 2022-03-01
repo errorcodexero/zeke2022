@@ -37,8 +37,8 @@
             "shooter-h" : false,
 
             // Climber related
-            "climber": true,
-            "climber-model": true,
+            "climber": false,
+            "climber-model": false,
 
             // OI
             "zekeoi" : false
@@ -48,7 +48,9 @@
         // display type of DisplayType.Verbose.
         //
         "verbose": {
-            "tankdrive": false
+            "tankdrive": false,
+            "shooter-w2" : true,
+            "shooter-w1" : true
         },
         //
         // Enable plotting for actions that support plotting
@@ -234,9 +236,9 @@
                 },
                 "sensors": {
                     "intake": 3,
-                    "exit": 0,
+                    "exit": 1,
                     "chimney": 2,
-                    "shooter": 1
+                    "shooter": 0
                 }
             },
             "power" : {
@@ -263,7 +265,7 @@
                     "emin": 5.0,
                     "emax": 0.0,
                     "ec": {
-                        "COMPETITION": 2.7,
+                        "COMPETITION": 2.44,
                         "PRACTICE": 0.62133
                     },
                     "rc": 0.0
@@ -317,9 +319,9 @@
             "timeout": 8.0,
             "camera_latency": 0.011,
             "network_latency": 0.010,
-            "camera_angle": 20.08,
-            "camera_height": 21.5,
-            "target_height": 103.0
+            "camera_angle": 27.5,
+            "camera_height": 51.0,
+            "target_height": 102
         },
         "targettracker": {
             "camera_offset_angle": -1.5,
@@ -345,7 +347,8 @@
                     },
                     "2": {
                         "type": "sparkmax_brushless",
-                        "canid": 14
+                        "canid": 14,
+                        "inverted": true                        
                     }
                 },
                 "encoder": {
@@ -354,10 +357,10 @@
                     "b": 0.0
                 },
                 "touchsensors": {
-                    "left_a": 4,
-                    "right_a": 5,
-                    "left_b": 6,
-                    "right_b": 7
+                    "left_a": 6,
+                    "right_a": 7,
+                    "left_b": 9,
+                    "right_b": 8
                 },
                 "windmill": {
                     "windmill_power_forwards": 0.7,
@@ -391,15 +394,15 @@
                 },
                 "encoder": {
                     "type": "motor",
-                    "m": 0.0416666667,
+                    "m": 2.857,
                     "b": 0.0
                 }
             },
             "w1": {
-                "kp": 0.0,
+                "kp": 0.00001,
                 "ki": 0.0,
                 "kd": 0.0,
-                "kf": 0.000315,
+                "kf": 1.0039152695512498745105913060938e-4,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
@@ -414,15 +417,15 @@
                 },
                 "encoder": {
                     "type": "motor",
-                    "m": 0.0416666667,
+                    "m": 2.857,
                     "b": 0.0
                 }
             },
             "w2": {
-                "kp": 0.0,
+                "kp": 0.00001,
                 "ki": 0.0,
                 "kd": 0.0,
-                "kf": 0.000315,
+                "kf": 1.0188487009679062659195109526235e-4,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
@@ -490,10 +493,10 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 100,
-        "power": 0.4,
-        "duration": 10000.0,
-        "distance": 13,
+        "which": 101,
+        "power": 4000,
+        "duration": 5.0,
+        "distance": 1,
         "name": "Test_Straight"
     }
 }

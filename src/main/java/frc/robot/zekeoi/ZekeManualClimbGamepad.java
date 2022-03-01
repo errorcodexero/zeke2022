@@ -3,6 +3,8 @@ package frc.robot.zekeoi;
 import org.xero1425.base.oi.Gamepad;
 import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,6 +27,12 @@ public class ZekeManualClimbGamepad extends Gamepad {
     @Override
     public void computeState() {
         super.computeState();
+
+        MessageLogger logger = getSubsystem().getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Debug, getSubsystem().getLoggerID()) ;
+        logger.add("Running manual climb compute state") ;
+        logger.endMessage();
+        
 
         ZekeSubsystem zeke = (ZekeSubsystem)getSubsystem().getRobot().getRobotSubsystem() ;
         ClimberSubsystem climber = zeke.getClimber() ;

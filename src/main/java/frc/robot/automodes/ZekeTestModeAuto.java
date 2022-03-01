@@ -18,6 +18,7 @@ import frc.robot.conveyor.ConveyorBypassAction;
 import frc.robot.conveyor.ConveyorExitAction;
 import frc.robot.conveyor.ConveyorPowerAction;
 import frc.robot.conveyor.ConveyorSubsystem;
+import frc.robot.gpm.GPMShooterTestAction;
 import frc.robot.intake.ZekeIntakeArmAction;
 import frc.robot.intake.ZekeIntakeOnAction;
 import frc.robot.intake.ZekeIntakePowerAction;
@@ -54,7 +55,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
             //////////////////////////////////////////////////////////////////////////////////
             //
             case 0: // Drive straight, used to test and get Kv number
-                addSubActionPair(db, new TankDrivePowerAction(db, getPower(), getPower(), getDuration()), true);
+                addSubActionPair(db, new TankDrivePowerAction(db, 0, getPower(), getDuration()), true);
                 break;
 
             case 1:
@@ -195,9 +196,11 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break; 
 
             case 41:
-                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 30.0, true), true) ;
+                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 45.0, true), true) ;
                 addAction(new DelayAction(getAutoController().getRobot(), 3.0)) ;
-                addSubActionPair(turret, new MotorEncoderGotoAction(turret, -30.0, true), true) ;
+                addSubActionPair(turret, new MotorEncoderGotoAction(turret, -45.0, true), true) ;
+                addAction(new DelayAction(getAutoController().getRobot(), 3.0)) ;
+                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 0.0, true), true) ;                
                 break ;
 
             case 42:
@@ -255,6 +258,10 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 addSubActionPair(shooter.getWheelMotor1(), new MotorEncoderPowerAction(shooter.getWheelMotor1(), getPower(), getDuration()), false) ;
                 addSubActionPair(shooter.getWheelMotor2(), new MotorEncoderPowerAction(shooter.getWheelMotor2(), getPower(), getDuration()), false) ;
                 addSubActionPair(conveyor, new ConveyorPowerAction(conveyor, 1.0, 1.0, getDuration()), true) ;
+                break ;
+
+            case 101:
+                addSubActionPair(zeke.getGPMSubsystem(), new GPMShooterTestAction(zeke.getGPMSubsystem()), true);
                 break ;
         }
     }
