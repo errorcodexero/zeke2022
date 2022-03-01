@@ -261,6 +261,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break ;
 
             case 101:
+                addSubActionPair(zeke.getTurret(), new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker()), false);
                 addSubActionPair(zeke.getGPMSubsystem(), new GPMShooterTestAction(zeke.getGPMSubsystem()), true);
                 break ;
         }
