@@ -249,6 +249,9 @@
             "eject-action" : {
                 "power" : -1.0,
                 "duration" : 1.5
+            },
+            "shoot-action" : {
+                "second-ball-delay" : 0.2
             }
         },
         "turret": {

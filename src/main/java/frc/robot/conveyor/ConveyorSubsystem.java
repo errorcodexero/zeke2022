@@ -114,6 +114,10 @@ public class ConveyorSubsystem extends Subsystem {
     private DigitalInput[] sensors_;                // The array of ball detect sensors
     private boolean[] sensor_states_;               // The states of ball detect sensors
     private boolean[] sensor_states_prev_;          // The states of ball detect sensors
+
+    private boolean start_intake_motor_during_shoot_ ;
+    private double start_intake_motor_start_ ;
+    private double start_intake_motor_duration_ ;
     
 
     public ConveyorSubsystem(Subsystem parent, ZekeColorSensor color) throws Exception {
@@ -122,6 +126,7 @@ public class ConveyorSubsystem extends Subsystem {
         color_sensor_ = color;
 
         bypass_ = false ;
+        start_intake_motor_during_shoot_ = false ;
         prev_sensors_state_ = "" ;
 
         sensors_ = new DigitalInput[SENSOR_COUNT];
@@ -135,6 +140,8 @@ public class ConveyorSubsystem extends Subsystem {
         parked_ = null ;
 
         mode_ = Mode.IDLE ;
+
+        start_intake_motor_duration_ = getSettingsValue("shoot-action:second-ball-delay").getDouble() ;
 
         attachHardware() ;
     }
@@ -180,6 +187,13 @@ public class ConveyorSubsystem extends Subsystem {
                 logger.add("Balls:").add(bstate) ;
                 logger.endMessage();
                 prev_balls_state_ = bstate ;
+            }
+        }
+
+        if (start_intake_motor_during_shoot_ && mode_ == Mode.SHOOT) {
+            if (getRobot().getTime() - start_intake_motor_start_ > start_intake_motor_duration_) {
+                setIntakeMotor(intake_motor_on_);
+                start_intake_motor_during_shoot_ = false ;
             }
         }
 
@@ -367,7 +381,9 @@ public class ConveyorSubsystem extends Subsystem {
     protected void setShootMode() throws BadMotorRequestException, MotorRequestFailedException {
         mode_ = Mode.SHOOT ;
         stop_requested_ = false;
-        setMotorsPower(intake_motor_on_, shooter_motor_on_) ;
+        start_intake_motor_during_shoot_ = true ;
+        start_intake_motor_start_ = getRobot().getTime() ;
+        setMotorsPower(0.0, shooter_motor_on_) ;
     }  
 
     protected void setCollectMode() throws BadMotorRequestException, MotorRequestFailedException  {
