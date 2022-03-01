@@ -412,7 +412,10 @@ public class ConveyorSubsystem extends Subsystem {
 
     private void setMotorState() throws BadMotorRequestException, MotorRequestFailedException {
         if (mode_ == Mode.SHOOT) {
-            setShooterMotor(shooter_motor_on_);
+            if (getBallCount() > 0)
+                setShooterMotor(shooter_motor_on_);
+            else
+                setShooterMotor(0.0);
         }
         else {
             if (parked_ != null) {
@@ -446,8 +449,15 @@ public class ConveyorSubsystem extends Subsystem {
         // The collect action starts the intake motor.  We never turn it on in the conveyor state machine.  We just turn it off
         // when it is time.
         //
-
-        if (parked_ != null && balls_info_.size() > 0 && balls_info_.get(0).type_ == CargoType.Same && balls_info_.get(0).state_ == State.CHIMNEY) {
+        if (mode_ == Mode.SHOOT) {
+            if (getBallCount() > 0) {
+                setIntakeMotor(intake_motor_on_);
+            }
+            else {
+                setIntakeMotor(0.0);
+            }
+        }
+        else if (parked_ != null && balls_info_.size() > 0 && balls_info_.get(0).type_ == CargoType.Same && balls_info_.get(0).state_ == State.CHIMNEY) {
             //
             // We have a ball in the chimney laready, and we have a ball in the horizontal conveyor, and the
             // ball in the horizontal conveyor is the same color as the robot, and it has triggered the chimney sensor, 

@@ -1,5 +1,6 @@
 package frc.robot.gpm;
 
+import org.xero1425.base.Subsystem.DisplayType;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.MessageLogger;
@@ -44,6 +45,7 @@ public class GPMFireAction extends Action {
     private final double hood_position_threshold_ ;
 
     private int logger_id_ ;
+    private boolean is_conveyor_on_ ;
     
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
             TankDriveSubsystem db, TurretSubsystem turret) 
@@ -54,6 +56,7 @@ public class GPMFireAction extends Action {
         target_tracker_ = target_tracker ;
         db_ = db ;
         turret_ = turret ;
+        is_conveyor_on_ = false ;
 
         logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem(LoggerName) ;
 
@@ -84,7 +87,6 @@ public class GPMFireAction extends Action {
         // set shooter to start, well, shooting...
         // This gets the shooter motors running
         sub_.getShooter().setAction(shooter_action_, true) ;
-
     }
 
     @Override
@@ -92,6 +94,10 @@ public class GPMFireAction extends Action {
         super.run();
 
         boolean shooterReady, dbready ;
+
+        if (is_conveyor_on_ && (sub_.getAction() == null || sub_.getAction().isDone())) {
+            sub_.getShooter().setAction(null) ;
+        }
 
         if (target_tracker_.hasVisionTarget()) {
             //
@@ -123,6 +129,12 @@ public class GPMFireAction extends Action {
         logger.add("FireAction: ready") ;
         logger.add("shooter", shooterReady).add("turret", turret_.isReadyToFire()).add("db", dbready).add("tracker", target_tracker_.hasVisionTarget()) ;
         logger.endMessage();        
+
+        sub_.putDashboard("shootrdy", DisplayType.Always, shooterReady);
+        sub_.putDashboard("dbready", DisplayType.Always, dbready);
+        sub_.putDashboard("trtready", DisplayType.Always, turret_.isReadyToFire());
+        sub_.putDashboard("llready", DisplayType.Always, target_tracker_.hasVisionTarget());
+
         
         // if the
         //  * shooter is up to speed
@@ -132,8 +144,10 @@ public class GPMFireAction extends Action {
         // then, let the conveyor push cargo into the shooter
         if (shooterReady && dbready && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) 
         {
-            if (sub_.getConveyor().getAction() != conveyor_shoot_action_)
-                sub_.getConveyor().setAction(conveyor_shoot_action_, true) ; 
+            if (sub_.getConveyor().getAction() != conveyor_shoot_action_) {
+                sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;
+                is_conveyor_on_ = true ;
+            } 
         }
     }
 
@@ -175,6 +189,8 @@ public class GPMFireAction extends Action {
     }
 
     public void computeShooterParams(double dist) {
+        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+
         double v1, v2, hood ;
         if (dist < 55.0) {      // Or 67.2
             v1 = 1.6386 * dist - 15.787 ;
@@ -187,5 +203,9 @@ public class GPMFireAction extends Action {
             hood = 0.1858 * dist - 1.8723 ;
         }
         shoot_params_ = new ShootParams(v1, v2, hood) ;
+
+        logger.startMessage(MessageType.Debug, logger_id_) ;
+        logger.add("FireAction: compute") ;
+        logger.add("dist", dist).add("vel", v1).add("hood", hood).endMessage();
     }
 }

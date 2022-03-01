@@ -29,19 +29,20 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": false,
+            "conveyor": true,
             "shooter": false,
-            "fire-action" : false,
+            "fire-action" : true,
             "shooter-w1" : false,
             "shooter-w2" : false,
             "shooter-h" : false,
+            "turret" : false,
 
             // Climber related
             "climber": false,
             "climber-model": false,
 
             // OI
-            "zekeoi" : false
+            "zekeoi" : true
         },
         //
         // This section controls, what data shows up on the smart dashboard when the item has a
@@ -166,12 +167,12 @@
                     "throughput" : 8
                 },
                 "outputs" : {
-                    "ball1" : 0,
-                    "ball2" : 1,
-                    "climber-left-a" : 2,
-                    "climber-right-a" : 3,
-                    "climber-left-b" : 4,
-                    "climber-right-b" : 5
+                    "ball1" : 1,
+                    "ball2" : 2,
+                    "climber-left-a" : 3,
+                    "climber-right-a" : 4,
+                    "climber-left-b" : 5,
+                    "climber-right-b" : 6
                 }
             },
             "manual-climb" : {
@@ -254,18 +255,17 @@
             "hw": {
                 "motors": {
                     "type": "sparkmax_brushless",
-                    "canid": 11,
-                    "inverted": true
+                    "canid": 11
                 },
                 "encoder": {
                     "type": "analog",
                     "ainput": 1,
                     "rmin": -180.0,
                     "rmax": 180.0,
-                    "emin": 5.0,
-                    "emax": 0.0,
+                    "emin": 0.0,
+                    "emax": 5.0,
                     "ec": {
-                        "COMPETITION": 2.44,
+                        "COMPETITION": 2.46,
                         "PRACTICE": 0.62133
                     },
                     "rc": 0.0
@@ -495,8 +495,8 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 101,
-        "power": 4000,
+        "which": 30,
+        "power": 0.3,
         "duration": 5.0,
         "distance": 1,
         "name": "Test_Straight"

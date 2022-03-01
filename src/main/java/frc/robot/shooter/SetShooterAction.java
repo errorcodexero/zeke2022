@@ -44,4 +44,10 @@ public class SetShooterAction extends Action {
     public String toString(int indent){
         return spaces(indent) + "SetShooterAction";
     }
+
+    @Override
+    public void cancel() {
+        sub_.getWheelMotor1().cancelAction();
+        sub_.getWheelMotor2().cancelAction();
+    }
 }

@@ -111,16 +111,16 @@ public class ZekeOIDevice extends OIPanel {
         switch(gpm.getConveyor().getBallCount())
         {
             case 0:
-                setOutput(ball1_output_, false);
-                setOutput(ball2_output_, false) ;
-                break ;
-            case 1:
-                setOutput(ball1_output_, true);
-                setOutput(ball2_output_, false) ;
-                break ;    
-            case 2:
                 setOutput(ball1_output_, true);
                 setOutput(ball2_output_, true) ;
+                break ;
+            case 1:
+                setOutput(ball1_output_, false);
+                setOutput(ball2_output_, true) ;
+                break ;    
+            case 2:
+                setOutput(ball1_output_, false);
+                setOutput(ball2_output_, false) ;
                 break ;                               
         }
 
@@ -150,8 +150,14 @@ public class ZekeOIDevice extends OIPanel {
                 if (gpm.getConveyor().getAction() != eject_action_)
                     gpm.getConveyor().setAction(eject_action_) ;
             }
-            else if (getValue(collect_v_shoot_gadget_) == 0) {
+            else if (getValue(collect_v_shoot_gadget_) == 1) {
                 status += ", collect mode" ;
+
+                if (gpm.getAction() == fire_action_) {
+                    status += ", stop fire action" ;
+
+                    gpm.cancelAction();
+                }
 
                 if (isCollectButtonPressed()) {
                     if (gpm.getAction() != start_collect_action_)
@@ -162,8 +168,12 @@ public class ZekeOIDevice extends OIPanel {
                 }
             } else {
                 status += ", fire mode" ;
-                if (gpm.getAction() != fire_action_)
+                if (gpm.getConveyor().getBallCount() == 0) {
+                    gpm.cancelAction();
+                }
+                else if (gpm.getAction() != fire_action_) {
                     gpm.setAction(fire_action_);
+                }
             }
         } else {
             status += "climber unlocked" ;
