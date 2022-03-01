@@ -460,7 +460,9 @@
                 "max": 0.4,
                 "min": -0.4,
                 "imax": 0.0
-            }
+            },
+            "maxpos" : 22.0,
+            "minpos" : 1.0
         },
         "zeke-color-sensor": {
             "hw": {

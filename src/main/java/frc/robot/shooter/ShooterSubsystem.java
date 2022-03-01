@@ -17,7 +17,7 @@ public class ShooterSubsystem extends Subsystem {
         wheelMotor2_ = new MotorEncoderSubsystem(this, SubsystemName + "-w2", false);
         addChild(wheelMotor2_);
         
-        hoodMotor_ = new MotorEncoderSubsystem(this, SubsystemName + "-h", false);
+        hoodMotor_ = new HoodMotorSubsystem(this) ;
         addChild(hoodMotor_) ;
     }
 
