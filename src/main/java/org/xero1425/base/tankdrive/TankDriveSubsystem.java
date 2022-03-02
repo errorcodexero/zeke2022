@@ -467,6 +467,9 @@ public class TankDriveSubsystem extends Subsystem {
         }
 
         if (left_motors_.hasPosition() && right_motors_.hasPosition()) {
+            left_motors_.resetEncoder(); 
+            right_motors_.resetEncoder();
+            
             left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
             right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
         }

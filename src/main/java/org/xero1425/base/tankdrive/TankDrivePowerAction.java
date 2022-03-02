@@ -1,6 +1,8 @@
 package org.xero1425.base.tankdrive;
 
 import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
 /// \file
@@ -128,6 +130,11 @@ public class TankDrivePowerAction extends TankDriveAction {
                 setDone() ;
                 getSubsystem().endPlot(plot_id_) ;
             }
+
+            MessageLogger logger = getSubsystem().getRobot().getMessageLogger() ;
+            logger.startMessage(MessageType.Debug, getSubsystem().getLoggerID()) ;
+            logger.add("dbpower").add("lticks", getSubsystem().getLeftTick()).add("rticks", getSubsystem().getRightTick()) ;
+            logger.endMessage();
 
             Double[] data = new Double[plot_columns_.length] ;
             data[0] = getSubsystem().getRobot().getTime() - start_ ;

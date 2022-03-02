@@ -55,7 +55,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
             //////////////////////////////////////////////////////////////////////////////////
             //
             case 0: // Drive straight, used to test and get Kv number
-                addSubActionPair(db, new TankDrivePowerAction(db, 0, getPower(), getDuration()), true);
+                addSubActionPair(db, new TankDrivePowerAction(db, getPower(), getPower(), getDuration()), true);
                 break;
 
             case 1:

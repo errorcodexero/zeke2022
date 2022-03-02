@@ -21,7 +21,7 @@
 
             // Tank drive related settings
             "pathfollowing": false,
-            "tankdrive": false,
+            "tankdrive": true,
 
             // Turrent/Limelight/Aiming related
             "zeke_limelight": false,
@@ -100,7 +100,7 @@
             "current_limit" : 10.0,
             "width": 30,
             "scrub": 1.0,
-            "inches_per_tick": 0.006,
+            "inches_per_tick": 0.000796548,      // 0.006
             "speedometer": {
                 "linearsamples": 2,
                 "angluarsamples": 2
@@ -108,13 +108,13 @@
             "follower": {
                 "left": {
                     "ka": 0.0003,
-                    "kv": 0.006,
+                    "kv": 0.005740528                    ,
                     "kp": 0.035,
                     "kd": 0.0
                 },
                 "right": {
                     "ka": 0.0003,
-                    "kv": 0.006,
+                    "kv": 0.005740528,
                     "kp": 0.035,
                     "kd": 0.0
                 }
@@ -131,7 +131,7 @@
         },
         "zekeoi": {
             "xero1425_gamepad": {
-                "index_not_used": 0,
+                "index_not_yes": 0,
                 "power": {
                     "max": 1.0,
                     "default": 0.6,
@@ -498,9 +498,9 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 30,
-        "power": 0.3,
-        "duration": 5.0,
+        "which": 0,
+        "power": 0.7,
+        "duration": 2,
         "distance": 1,
         "name": "Test_Straight"
     }
