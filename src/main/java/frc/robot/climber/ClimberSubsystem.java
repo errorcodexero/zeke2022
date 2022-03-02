@@ -35,8 +35,7 @@ public class ClimberSubsystem extends Subsystem {
     // either A's or B's on the bars at one point in time
     private DigitalInput left_a_ ;
     private DigitalInput right_a_ ;
-    private DigitalInput left_b_ ;
-    private DigitalInput right_b_ ;
+    private DigitalInput left_right_b_ ;
     
     // perhaps rename these as "A to B" and "B to A"
     private MotorEncoderPowerAction windmill_power_forwards_; 
@@ -66,6 +65,9 @@ public class ClimberSubsystem extends Subsystem {
 
         windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
 
+        // Reset encoders so that the startup position is the zero position
+        windmill_.reset() ;
+
         clamp_a_ = new XeroDoubleSolenoid(this, "clamp_a") ;
         clamp_b_ = new XeroDoubleSolenoid(this, "clamp_b") ;
 
@@ -82,10 +84,8 @@ public class ClimberSubsystem extends Subsystem {
         left_a_ = new DigitalInput(index) ;
         index = getSettingsValue("hw:touchsensors:right_a").getInteger() ;
         right_a_ = new DigitalInput(index) ;
-        index = getSettingsValue("hw:touchsensors:left_b").getInteger() ;
-        left_b_ = new DigitalInput(index) ;
-        index = getSettingsValue("hw:touchsensors:right_b").getInteger() ;
-        right_b_ = new DigitalInput(index) ;
+        index = getSettingsValue("hw:touchsensors:left_right_b").getInteger() ;
+        left_right_b_ = new DigitalInput(index) ;
     }
 
     public MotorEncoderSubsystem getWindmillMotor() {
@@ -145,9 +145,9 @@ public class ClimberSubsystem extends Subsystem {
         return right_a_.get() ;
     }
     public boolean isLeftBTouched() {
-        return left_b_.get();
+        return left_right_b_.get();
     }
     public boolean isRightBTouched() {
-        return right_b_.get();
+        return left_right_b_.get();
     }
 }

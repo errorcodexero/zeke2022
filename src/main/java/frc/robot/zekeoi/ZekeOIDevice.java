@@ -2,23 +2,24 @@ package frc.robot.zekeoi;
 
 import org.xero1425.base.actions.InvalidActionRequest;
 import org.xero1425.base.actions.SequenceAction;
+import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.oi.Gamepad;
-import org.xero1425.base.oi.HIDDevice;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
-import org.xero1425.misc.MessageLogger;
-import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 import org.xero1425.base.oi.OIPanelButton;
 
 import frc.robot.climber.ClimbAction;
 import frc.robot.climber.ClimberSubsystem;
+import frc.robot.climber.DeployClimberAction;
+import frc.robot.climber.DeployClimberAction.DeployState;
 import frc.robot.conveyor.ConveyorEjectAction;
 import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
+import frc.robot.intake.ZekeIntakeArmAction;
 import frc.robot.turret.FollowTargetAction;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
@@ -30,7 +31,12 @@ public class ZekeOIDevice extends OIPanel {
 
     private ConveyorEjectAction eject_action_ ;
     private ClimbAction climb_;
+    private DeployClimberAction deploy_climber_ ;
+    private DeployClimberAction stow_climber_ ;
     private FollowTargetAction follow_;
+    private MotorEncoderGotoAction zero_turret_ ;
+    private ZekeIntakeArmAction deploy_intake_ ;
+    private ZekeIntakeArmAction stow_intake_ ;
 
     private int start_collect_gadget_;
     private int automode_gadget_;
@@ -38,34 +44,41 @@ public class ZekeOIDevice extends OIPanel {
     private int climb_gadget_;
     private int climb_lock_gadget_;
     private int eject_gadget_ ;
-    private int manual_climb_gadget_ ;
+    private int deploy_climb_gadget_ ;
 
     private int ball1_output_ ;
     private int ball2_output_ ;
 
-    private int climber_left_a_output_ ;
-    private int climber_right_a_output_ ;
-    private int climber_left_b_output_ ;
-    private int climber_right_b_output_ ;
+    private int climber_deploying_led_ ;
+    private int climber_deployed_led_ ;
+    private int climber_climbing_led_ ;
+    private int climber_complete_led_ ;
 
-    private String last_status_ ;
+    private ClimberState climber_state_ ;
 
-    private boolean manual_climb_enabled_ ;
+    private enum ClimberState {
+        Stowed,
+        Deploying,
+        Deployed,
+        Stowing,
+        Climbing,
+        Complete
+    }
 
     public ZekeOIDevice(OISubsystem sub, String name, int index)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
 
-        last_status_ = "" ;
+        climber_state_ = ClimberState.Stowed ;
 
         initializeGadgets();
 
         ball1_output_ = sub.getSettingsValue("oi:outputs:ball1").getInteger() ;
         ball2_output_ = sub.getSettingsValue("oi:outputs:ball2").getInteger() ;
-        climber_left_a_output_ = sub.getSettingsValue("oi:outputs:climber-left-a").getInteger() ;
-        climber_right_a_output_ = sub.getSettingsValue("oi:outputs:climber-right-a").getInteger() ;        
-        climber_left_b_output_ = sub.getSettingsValue("oi:outputs:climber-left-b").getInteger() ;
-        climber_right_b_output_ = sub.getSettingsValue("oi:outputs:climber-right-b").getInteger() ;                                        
+        climber_deploying_led_ = sub.getSettingsValue("oi:outputs:climber-deploying").getInteger() ;
+        climber_deployed_led_ = sub.getSettingsValue("oi:outputs:climber-deployed").getInteger() ;        
+        climber_climbing_led_ = sub.getSettingsValue("oi:outputs:climber-climbing").getInteger() ;
+        climber_complete_led_ = sub.getSettingsValue("oi:outputs:climber-climbed").getInteger() ;                                        
     }
     
     @Override
@@ -82,25 +95,17 @@ public class ZekeOIDevice extends OIPanel {
         stop_collect_action_ = new GPMStopCollectAction(gpm);
         fire_action_ = new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()) ;
         eject_action_ = new ConveyorEjectAction(gpm.getConveyor()) ;
+        zero_turret_ = new MotorEncoderGotoAction(zeke.getTurret(), 0, true) ;
+        deploy_intake_ = new ZekeIntakeArmAction(zeke.getGPMSubsystem().getIntake(), ZekeIntakeArmAction.ArmPos.DEPLOY) ;
+        stow_intake_ = new ZekeIntakeArmAction(zeke.getGPMSubsystem().getIntake(), ZekeIntakeArmAction.ArmPos.RETRACT) ;
 
-        if (zeke.getClimber() != null)
+        if (zeke.getClimber() != null) {
             climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
+            deploy_climber_ = new DeployClimberAction(zeke.getClimber(), DeployState.Deployed) ;
+            stow_climber_ = new DeployClimberAction(zeke.getClimber(), DeployState.Stowed) ;
+        }
             
         follow_ = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker());
-
-        manual_climb_enabled_ = (getValue(manual_climb_gadget_) == 1) ;
-        setManualClimb() ;
-    }
-
-    private void setManualClimb() {
-        OISubsystem sub = (OISubsystem)getSubsystem() ;
-        HIDDevice dev = sub.getDevice(1) ;
-        if (dev != null) {
-            if (manual_climb_enabled_)
-                dev.enable();
-            else
-                dev.disable();
-        }
     }
 
     private void setLEDs()
@@ -124,82 +129,147 @@ public class ZekeOIDevice extends OIPanel {
                 break ;                               
         }
 
-        setOutput(climber_left_a_output_, zeke.getClimber().isLeftATouched()) ;
-        setOutput(climber_right_a_output_, zeke.getClimber().isRightATouched()) ;
-        setOutput(climber_left_b_output_, zeke.getClimber().isLeftBTouched()) ;
-        setOutput(climber_right_b_output_, zeke.getClimber().isRightBTouched()) ;                
+        switch(climber_state_) {
+            case Stowed:
+                setOutput(climber_deploying_led_, true) ;            
+                setOutput(climber_deployed_led_, true) ;
+                setOutput(climber_climbing_led_, true) ;
+                setOutput(climber_complete_led_, true) ;
+                break ;
+            case Stowing:
+                setOutput(climber_deploying_led_, true) ;              
+                setOutput(climber_deployed_led_, false) ;
+                setOutput(climber_climbing_led_, true) ;
+                setOutput(climber_complete_led_, true) ;
+                break;                
+            case Deploying:
+                setOutput(climber_deploying_led_, false) ;                
+                setOutput(climber_deployed_led_, true) ;
+                setOutput(climber_climbing_led_, true) ;
+                setOutput(climber_complete_led_, true) ;
+                break ;           
+            case Deployed:
+                setOutput(climber_deploying_led_, false) ;               
+                setOutput(climber_deployed_led_, false) ;
+                setOutput(climber_climbing_led_, true) ;
+                setOutput(climber_complete_led_, true) ;
+                break ;                         
+            case Climbing:
+                setOutput(climber_deploying_led_, false) ;             
+                setOutput(climber_deployed_led_, false) ;
+                setOutput(climber_climbing_led_, false) ;
+                setOutput(climber_complete_led_, true) ;
+                break ;     
+            case Complete:
+                setOutput(climber_deploying_led_, false) ;
+                setOutput(climber_deployed_led_, false) ;
+                setOutput(climber_climbing_led_, false) ;
+                setOutput(climber_complete_led_, false) ;
+                break ;                    
+        }                
+    }
+
+    private void generateCargoActions() {
+        ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
+        GPMSubsystem gpm = zeke.getGPMSubsystem();
+        TurretSubsystem turret = zeke.getTurret();
+
+        if (turret.getAction() != follow_)
+             turret.setAction(follow_);
+
+        if (getValue(eject_gadget_) == 1) {
+            if (gpm.getConveyor().getAction() != eject_action_)
+                gpm.getConveyor().setAction(eject_action_) ;
+        }
+        else if (getValue(collect_v_shoot_gadget_) == 1) {
+
+            if (gpm.getAction() == fire_action_) {
+
+                gpm.cancelAction();
+            }
+
+            if (isCollectButtonPressed()) {
+                if (gpm.getAction() != start_collect_action_)
+                    gpm.setAction(start_collect_action_);
+            } else {
+                if (gpm.getAction() == start_collect_action_)
+                    gpm.setAction(stop_collect_action_) ;
+            }
+        } else {
+            if (gpm.getConveyor().getBallCount() == 0) {
+                gpm.cancelAction();
+            }
+            else if (gpm.getAction() != fire_action_) {
+                gpm.setAction(fire_action_);
+            }
+        }
+    }
+
+    private void generateClimbActions() {
+        ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
+        ClimberSubsystem climber = zeke.getClimber();
+        TurretSubsystem turret = zeke.getTurret();
+
+        if (turret.getAction() != zero_turret_)
+            turret.setAction(zero_turret_) ;
+            
+        if (climber_state_ == ClimberState.Stowed) {
+            if (getValue(deploy_climb_gadget_) == 1) {
+                zeke.getGPMSubsystem().getIntake().setAction(deploy_intake_) ;
+                zeke.getClimber().setAction(deploy_climber_) ;
+                climber_state_ = ClimberState.Deploying ;
+            }
+        }
+        else if (climber_state_ == ClimberState.Stowing) {
+            if (getValue(deploy_climb_gadget_) == 0) {
+                zeke.getGPMSubsystem().getIntake().setAction(deploy_intake_) ;
+                zeke.getClimber().setAction(deploy_climber_) ;
+                climber_state_ = ClimberState.Deploying ;
+            } else if (deploy_intake_.isDone() && deploy_climber_.isDone()) {
+                climber_state_ = ClimberState.Stowed ;
+            }
+        }
+        else if (climber_state_ == ClimberState.Deploying) {
+            if (getValue(deploy_climb_gadget_) == 0) {
+                zeke.getGPMSubsystem().getIntake().setAction(stow_intake_) ;
+                zeke.getClimber().setAction(stow_climber_) ;
+            }
+            else if (deploy_climber_.isDone() && deploy_intake_.isDone()) {
+                climber_state_ = ClimberState.Deployed ;
+            }
+        }
+        else if (climber_state_ == ClimberState.Deployed) {
+            if (getValue(deploy_climb_gadget_) == 0) {
+                zeke.getGPMSubsystem().getIntake().setAction(deploy_intake_) ;
+                zeke.getClimber().setAction(deploy_climber_) ;
+                climber_state_ = ClimberState.Deploying ;
+            }
+            else {
+                if (getValue(climb_gadget_) == 1) {
+                    if (climber.getAction() != climb_) {
+                        climber.setAction(climb_);
+                        climber_state_ = ClimberState.Climbing ;
+                    }
+                }
+            }
+        }
+        else if (climber_state_ == ClimberState.Climbing)  {
+            if (getValue(deploy_climb_gadget_) == 0 || getValue(climb_lock_gadget_) == 0) {
+                climb_.stopWhenSafe() ;
+            }
+        }
     }
 
     @Override
     public void generateActions(SequenceAction seq) throws InvalidActionRequest {
-        MessageLogger logger = getSubsystem().getRobot().getMessageLogger() ;
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
-        GPMSubsystem gpm = zeke.getGPMSubsystem();
-        ClimberSubsystem climber = zeke.getClimber();
-        TurretSubsystem turret = zeke.getTurret();
-        String status = "ZekeOI: " ;
 
         setLEDs() ;
 
         if (getValue(climb_lock_gadget_) == 1) {
-            status += "climber locked" ;
-            if (turret.getAction() != follow_)
-                 turret.setAction(follow_);
-
-            if (getValue(eject_gadget_) == 1) {
-                if (gpm.getConveyor().getAction() != eject_action_)
-                    gpm.getConveyor().setAction(eject_action_) ;
-            }
-            else if (getValue(collect_v_shoot_gadget_) == 1) {
-                status += ", collect mode" ;
-
-                if (gpm.getAction() == fire_action_) {
-                    status += ", stop fire action" ;
-
-                    gpm.cancelAction();
-                }
-
-                if (isCollectButtonPressed()) {
-                    if (gpm.getAction() != start_collect_action_)
-                        gpm.setAction(start_collect_action_);
-                } else {
-                    if (gpm.getAction() == start_collect_action_)
-                        gpm.setAction(stop_collect_action_) ;
-                }
-            } else {
-                status += ", fire mode" ;
-                if (gpm.getConveyor().getBallCount() == 0) {
-                    gpm.cancelAction();
-                }
-                else if (gpm.getAction() != fire_action_) {
-                    gpm.setAction(fire_action_);
-                }
-            }
-        } else {
-            status += "climber unlocked" ;
-            if (turret.getAction() == follow_)
-                turret.setAction(null);
-
-            if (zeke.getClimber() != null) {
-                status += ", has climber" ;
-                if (getValue(climb_gadget_) == 1) {
-                    status += ", asking to climb" ;
-                    if (climber.getAction() != climb_)
-                        climber.setAction(climb_);
-                }
-            }
-        }
-
-        boolean manclimb = getValue(manual_climb_gadget_) == 1 ;
-        if (manual_climb_enabled_ != manclimb) {
-            manual_climb_enabled_ = manclimb ;
-            status += ", settings manual climb " + (manual_climb_enabled_? " true" : " false") ;
-            setManualClimb() ;
-        }
-
-        if (!last_status_.equals(status)) {
-            logger.startMessage(MessageType.Debug, getSubsystem().getLoggerID()).add(status).endMessage() ;
-            last_status_ = status ;
+            generateCargoActions();
+        } else if (zeke.getClimber() != null) {
+                generateClimbActions() ;
         }
     }
 
@@ -234,7 +304,7 @@ public class ZekeOIDevice extends OIPanel {
         num = getSubsystem().getSettingsValue("oi:gadgets:eject").getInteger();
         eject_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
 
-        num = getSubsystem().getSettingsValue("oi:gadgets:manual_climb").getInteger() ;
-        manual_climb_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level) ;
+        num = getSubsystem().getSettingsValue("oi:gadgets:deploy_climber").getInteger() ;
+        deploy_climb_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level) ;
     }
 }

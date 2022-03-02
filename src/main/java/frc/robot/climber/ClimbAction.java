@@ -3,6 +3,7 @@ package frc.robot.climber;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
+import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.BadParameterTypeException;
@@ -23,8 +24,13 @@ public class ClimbAction extends Action {
     private TankDrivePowerAction left_wheel_ ;
     private TankDrivePowerAction right_wheel_ ;
     private TankDrivePowerAction stop_db_ ;
+    private MotorEncoderGotoAction backup_one_ ;
+    private MotorEncoderGotoAction backup_two_ ;
 
     private double drive_action_power_ ;
+    private double backup_one_delta_ ;
+    private double backup_two_delta_ ;
+    private boolean stop_when_safe_ ;
 
     // timer to judge following delays off of
     private double state_start_time_ ;
@@ -45,13 +51,15 @@ public class ClimbAction extends Action {
         SQUARING,
         CLAMP_ONE,
         WINDMILL_ONE,
+        BACKUP_ONE,
         UNCLAMP_ONE,
         CLAMP_TWO,
         WINDMILL_TWO,
-        UNCLAMP_TWO,
-        CLAMP_THREE
-        //do we need DONE?
+        BACKUP_TWO,
+        CLAMP_THREE,
+        COMPLETE
     }
+
     private ClimbingStates state_ = ClimbingStates.IDLE ;
 
     // todo: also take the gamepad/OI as a param so climber can disable it after it starts climbing
@@ -70,6 +78,13 @@ public class ClimbAction extends Action {
         first_unclamp_wait_ = sub.getSettingsValue("climbaction:first_unclamp_wait").getDouble() ;
         second_clamp_wait_ = sub.getSettingsValue("climbaction:second_clamp_wait").getDouble() ;
         second_unclamp_wait_ = sub.getSettingsValue("climbaction:second_unclamp_wait").getDouble() ;
+
+        backup_one_delta_ = sub.getSettingsValue("climbaction:backup-one").getDouble() ;
+        backup_two_delta_ = sub.getSettingsValue("climbaction:backup-two").getDouble() ;
+    }
+
+    public void stopWhenSafe() {
+        stop_when_safe_ = true ;
     }
 
     @Override
@@ -101,6 +116,9 @@ public class ClimbAction extends Action {
             case WINDMILL_ONE:
                 doWindmillOne() ;
                 break ;
+            case BACKUP_ONE:
+                doBackupOne() ;
+                break ;
             case CLAMP_TWO:
                 doClampTwo() ;
                 break ;
@@ -110,13 +128,15 @@ public class ClimbAction extends Action {
             case WINDMILL_TWO:
                 doWindmillTwo() ;
                 break ;
-            case UNCLAMP_TWO:
-                doUnclampTwo() ;
+            case BACKUP_TWO:
+                doBackupTwo() ;
                 break ;
             case CLAMP_THREE:
                 doClampThree();
-                // setDone() ;
                 break ;
+            case COMPLETE:
+                doComplete() ;
+                break ;                
         }
 
         //
@@ -127,6 +147,7 @@ public class ClimbAction extends Action {
             logger.startMessage(MessageType.Debug, sub_.getLoggerID()) ;
             logger.add("ClimberAction changed states: ") ;
             logger.addQuoted(prev.toString()).add(" --> ").addQuoted(state_.toString()) ;
+            logger.add("encoder", sub_.getWindmillMotor().getPosition()) ;
             logger.endMessage();
         }
     }
@@ -268,13 +289,23 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        Go to the UNCLAMP_ONE state
     //
-    private void doClampTwo() {
+    private void doClampTwo() throws Exception {
         // wait for 2nd "clamp time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_clamp_wait_) {
-            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.OPEN);
-            
+            double target = sub_.getWindmillMotor().getPosition() + backup_one_delta_ ;
+            backup_one_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), target, false) ;
+            state_ = ClimbingStates.BACKUP_ONE ;
+        }
+    }
+
+    private void doBackupOne() {
+        if (backup_one_.isDone()) {
+            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.OPEN);   
             state_start_time_ = sub_.getRobot().getTime() ;
-            state_ = ClimbingStates.UNCLAMP_ONE ;
+            if (stop_when_safe_)
+                state_ = ClimbingStates.COMPLETE ;
+            else
+                state_ = ClimbingStates.UNCLAMP_ONE ;
         }
     }
     
@@ -309,7 +340,7 @@ public class ClimbAction extends Action {
     //
     private void doWindmillTwo() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
-        if (sub_.isLeftBTouched() && sub_.isRightBTouched()) {
+        if (sub_.isLeftATouched() && sub_.isRightATouched()) {
             // turns off windmill
             sub_.setWindmill(SetWindmillTo.OFF) ;
             // sets clamp A to be closed
@@ -320,7 +351,9 @@ public class ClimbAction extends Action {
         }
     }
     
-    // doUnclampTwo() - handles the UNCLAMP_TWO state
+    //
+    // doClampThree() - handles the UNCLAMP_TWO state
+    //
     //    Exit Condition:
     //        clamp A has had sufficient time to close
     //
@@ -330,12 +363,19 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        Go to the UNCLAMP_TWO state
     //
-    private void doClampThree() {     
+    private void doClampThree() throws Exception {     
         //wait for 2nd "unclamping time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_unclamp_wait_) {
-            sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.OPEN);
+            double target = sub_.getWindmillMotor().getPosition() + backup_two_delta_ ;
+            backup_two_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), target, false) ;
+            state_ = ClimbingStates.BACKUP_TWO ;
+        }
+    }
 
-            state_ = ClimbingStates.UNCLAMP_TWO ;
+    private void doBackupTwo() {
+        if (backup_two_.isDone()) {
+            sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.OPEN);
+            state_ = ClimbingStates.COMPLETE ;
         }
     }
      
@@ -349,10 +389,7 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        never exits; not really
     //
-    private void doUnclampTwo() throws BadMotorRequestException, MotorRequestFailedException {
-        // basically do nothing and wait for match to end
-
-        // continuously set clamp A to "closed"?
+    private void doComplete() throws BadMotorRequestException, MotorRequestFailedException {
+        setDone() ;
     }
-
 }

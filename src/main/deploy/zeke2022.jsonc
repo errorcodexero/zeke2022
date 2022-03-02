@@ -160,7 +160,7 @@
                     "collect_onoff": 3,
                     "climb_lock": 4,
                     "climb": 9,
-                    "manual_climb" : 7,
+                    "deploy_climber" : 7,
                     "force_shoot" : 1,
                     "eject" : 2,
                     "shoot_manual_mode" : 5,
@@ -169,15 +169,11 @@
                 "outputs" : {
                     "ball1" : 1,
                     "ball2" : 2,
-                    "climber-left-a" : 3,
-                    "climber-right-a" : 4,
-                    "climber-left-b" : 5,
-                    "climber-right-b" : 6
+                    "climber-deploying" : 3,
+                    "climber-deployed" : 4,
+                    "climber-climbing" : 5,
+                    "climber-climbed" : 6
                 }
-            },
-            "manual-climb" : {
-                "index" : 1,
-                "max-windmill-power" : 0.4
             }
         },
         "gpm" : {
@@ -362,17 +358,16 @@
                 "touchsensors": {
                     "left_a": 6,
                     "right_a": 7,
-                    "left_b": 9,
-                    "right_b": 8
+                    "left_right_b": 9
                 },
                 "windmill": {
-                    "windmill_power_forwards": 0.7,
-                    "windmill_power_backwards": -0.7,
+                    "windmill_power_forwards": 0.1,
+                    "windmill_power_backwards": -0.1,
                     "windmill_power_off": 0.0
                 }
             },
             "climbaction": {
-                "drive_action_power": 0.2,
+                "drive_action_power": 0.1,
                 "first_clamp_wait": 0.5,
                 "second_clamp_wait": 0.5,
                 "first_align_wait": 0.5,
@@ -380,7 +375,9 @@
                 "first_swing_wait": 0.5,
                 "second_swing_wait": 0.5,
                 "first_unclamp_wait": 0.2,
-                "second_unclamp_wait": 0.2
+                "second_unclamp_wait": 0.2,
+                "backup-one" : 100,
+                "backup-two" : 100
             }
         },
         "shooter": {

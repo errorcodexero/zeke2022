@@ -13,7 +13,6 @@ import frc.robot.Zeke2022;
 public class ZekeOISubsystem extends OISubsystem {
     
     private ZekeOIDevice oi_;
-    private ZekeManualClimbGamepad climb_gamepad_ ;
     
     public final static String SubsystemName = "zekeoi";
     private final static String OIHIDIndexName = "oi:index";
@@ -24,8 +23,6 @@ public class ZekeOISubsystem extends OISubsystem {
 
         int index ;
         MessageLogger logger = getRobot().getMessageLogger() ;
-
-        Zeke2022 robot = (Zeke2022)getRobot() ;
 
         //
         // Add the custom OI for zeke to the OI subsystem
@@ -54,21 +51,6 @@ public class ZekeOISubsystem extends OISubsystem {
                 logger.add("OI HID device was not created - ") ;
                 logger.add(ex.getMessage()).endMessage(); ;
             }
-        }
-
-        try {
-            index = getSettingsValue("manual-climb:index").getInteger() ;
-        }
-        catch(Exception ex) {
-            logger.startMessage(MessageType.Error) ;
-            logger.add("manual climb OI device was not created - ") ;
-            logger.add(ex.getMessage()).endMessage();
-            index = -1 ;      
-        }
-
-        if (index != -1) {
-            climb_gamepad_ = new ZekeManualClimbGamepad(this, index) ;
-            addHIDDevice(climb_gamepad_);
         }
     }
 }
