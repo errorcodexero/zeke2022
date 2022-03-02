@@ -21,7 +21,7 @@
 
             // Tank drive related settings
             "pathfollowing": false,
-            "tankdrive": true,
+            "tankdrive": false,
 
             // Turrent/Limelight/Aiming related
             "zeke_limelight": false,
@@ -29,12 +29,12 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": true,
+            "conveyor": false,
             "shooter": false,
             "fire-action" : true,
             "shooter-w1" : false,
             "shooter-w2" : false,
-            "shooter-h" : false,
+            "shooter-h" : true,
             "turret" : false,
 
             // Climber related
@@ -42,7 +42,7 @@
             "climber-model": false,
 
             // OI
-            "zekeoi" : true
+            "zekeoi" : false
         },
         //
         // This section controls, what data shows up on the smart dashboard when the item has a
@@ -366,6 +366,28 @@
                     "windmill_power_off": 0.0
                 }
             },
+            "goto": {
+                "threshold": 1.5,
+                "maxa": 250,
+                "maxd": -250,
+                "maxv": 250
+            },
+            "follower": {
+                "up": {
+                    "kp": 0.001,
+                    "ka": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kv": 0.003211991
+                },
+                "down": {
+                    "kp": 0.001,
+                    "ka": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kv": 0.003211991
+                }
+            },
             "climbaction": {
                 "drive_action_power": 0.1,
                 "first_clamp_wait": 0.5,
@@ -378,6 +400,9 @@
                 "second_unclamp_wait": 0.2,
                 "backup-one" : 100,
                 "backup-two" : 100
+            },
+            "deploy-action" : {
+                "position" : 400
             }
         },
         "shooter": {
@@ -495,10 +520,10 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 0,
+        "which": 35,
         "power": 0.7,
         "duration": 2,
-        "distance": 1,
+        "distance": 22,
         "name": "Test_Straight"
     }
 }
