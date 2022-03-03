@@ -34,11 +34,11 @@
             "fire-action" : true,
             "shooter-w1" : false,
             "shooter-w2" : false,
-            "shooter-h" : true,
+            "shooter-h" : false,
             "turret" : false,
 
             // Climber related
-            "climber": false,
+            "climber": true,
             "climber-model": false,
 
             // OI
@@ -97,7 +97,7 @@
                     }
                 }
             },
-            "current_limit" : 10.0,
+            // "current_limit" : 10.0,
             "width": 30,
             "scrub": 1.0,
             "inches_per_tick": 0.000796548,      // 0.006
@@ -229,7 +229,7 @@
                     }
                 },
                 "solenoids": {
-                    "exit": 0
+                    "exit": 3
                 },
                 "sensors": {
                     "intake": 3,
@@ -332,7 +332,7 @@
                 "solenoids": {
                     "clamp_a": {
                         "forward": 1,
-                        "reverse": 2
+                        "reverse": 0
                     },
                     "clamp_b": {
                         "forward": 14,
@@ -342,17 +342,19 @@
                 "motors": {
                     "1": {
                         "type": "sparkmax_brushless",
-                        "canid": 13
+                        "canid": 13,
+                        "neutral_mode" : "coast"
                     },
                     "2": {
                         "type": "sparkmax_brushless",
                         "canid": 14,
+                        "neutral_mode" : "coast",
                         "inverted": true                        
                     }
                 },
                 "encoder": {
                     "type": "motor",
-                    "m": 1,
+                    "m": 0.039717564,
                     "b": 0.0
                 },
                 "touchsensors": {
@@ -370,32 +372,41 @@
                 "kp": 0.00001,
                 "ki": 0.0,
                 "kd": 0.0,
-                "kf": 1.0039152695512498745105913060938e-4,
+                "kf": 0.006339144,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
             },
             "goto": {
-                "threshold": 1.5,
-                "maxa": 250,
-                "maxd": -250,
-                "maxv": 250
+                "threshold": 2.5,
+                "maxa": 45,
+                "maxd": -45,
+                "maxv": 45
             },
             "follower": {
                 "up": {
-                    "kp": 0.001,
+                    "kp": 0.0,
                     "ka": 0.0,
                     "ki": 0.0,
                     "kd": 0.0,
-                    "kv": 0.003211991
+                    "kv": 0.006339144
                 },
                 "down": {
                     "kp": 0.001,
                     "ka": 0.0,
                     "ki": 0.0,
                     "kd": 0.0,
-                    "kv": 0.003211991
+                    "kv": 0.006339144
                 }
+            },
+            "hold": {
+                "kp": 0.001,
+                "ki": 0,
+                "kd": 0,
+                "kf": 0.006339144,
+                "min": -0.3,
+                "max": 0.3,
+                "imax": 0.0
             },
             "climbaction": {
                 "drive_action_power": 0.1,
@@ -407,11 +418,14 @@
                 "second_swing_wait": 0.5,
                 "first_unclamp_wait": 0.2,
                 "second_unclamp_wait": 0.2,
-                "backup-one" : 100,
-                "backup-two" : 100
+                "backup-one" : 1,
+                "backup-two" : 1
             },
             "deploy-action" : {
-                "position" : 400
+                "position" : 90
+            },
+            "change-clamp-action" : {
+                "wait_time" : 1.0
             }
         },
         "shooter": {
@@ -529,9 +543,9 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 35,
-        "power": 0.7,
-        "duration": 2,
+        "which": 52,
+        "power": 0.4,
+        "duration": 2.0,
         "distance": 22,
         "name": "Test_Straight"
     }

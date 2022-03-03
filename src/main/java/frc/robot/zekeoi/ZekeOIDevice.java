@@ -7,6 +7,8 @@ import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.oi.Gamepad;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 import org.xero1425.base.oi.OIPanelButton;
 
@@ -55,6 +57,7 @@ public class ZekeOIDevice extends OIPanel {
     private int climber_complete_led_ ;
 
     private ClimberState climber_state_ ;
+    private boolean is_turret_holding_ ;
 
     private enum ClimberState {
         Stowed,
@@ -70,6 +73,7 @@ public class ZekeOIDevice extends OIPanel {
         super(sub, name, index);
 
         climber_state_ = ClimberState.Stowed ;
+        is_turret_holding_ = false ;
 
         initializeGadgets();
 
@@ -174,6 +178,8 @@ public class ZekeOIDevice extends OIPanel {
         GPMSubsystem gpm = zeke.getGPMSubsystem();
         TurretSubsystem turret = zeke.getTurret();
 
+        is_turret_holding_ = false ;
+
         if (turret.getAction() != follow_)
              turret.setAction(follow_);
 
@@ -210,8 +216,10 @@ public class ZekeOIDevice extends OIPanel {
         ClimberSubsystem climber = zeke.getClimber();
         TurretSubsystem turret = zeke.getTurret();
 
-        if (turret.getAction() != zero_turret_)
+        if (is_turret_holding_ == false) {
             turret.setAction(zero_turret_) ;
+            is_turret_holding_ = true ;
+        }
             
         if (climber_state_ == ClimberState.Stowed) {
             if (getValue(deploy_climb_gadget_) == 1) {

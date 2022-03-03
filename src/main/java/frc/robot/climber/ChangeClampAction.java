@@ -27,7 +27,7 @@ public class ChangeClampAction extends Action {
         which_clamp_ = which_clamp ;
         clamp_setting_ = clamp_setting ;
 
-        wait_time_ = sub_.getSettingsValue("hw:wait_time").getDouble() ;
+        wait_time_ = sub_.getSettingsValue("change-clamp-action:wait_time").getDouble() ;
 
     }
 
@@ -40,7 +40,6 @@ public class ChangeClampAction extends Action {
 
     @Override
     public void run() {
-        
         // wait for an elapsed time
         if (sub_.getRobot().getTime() - state_start_time_  >= wait_time_) {
             setDone() ;
@@ -56,7 +55,7 @@ public class ChangeClampAction extends Action {
 
     @Override
     public String toString(int indent) {
-        return prefix(indent) + "ChangeClampAction" ;
+        return prefix(indent) + "ChangeClampAction " + which_clamp_.toString() + " " + clamp_setting_.toString() ;
     }
  
 }

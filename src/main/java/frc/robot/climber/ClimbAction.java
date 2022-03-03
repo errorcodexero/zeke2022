@@ -45,6 +45,7 @@ public class ClimbAction extends Action {
     
     private enum ClimbingStates {
         IDLE,
+        UNCLAMP_ZERO,
         WAITSWITCH,
         SQUARING,
         CLAMP_ONE,
@@ -103,7 +104,10 @@ public class ClimbAction extends Action {
 
         switch (state_) {
             case IDLE:
-                state_ = ClimbingStates.WAITSWITCH ;
+                state_ = ClimbingStates.UNCLAMP_ZERO ;
+                break ;
+            case UNCLAMP_ZERO:
+                doUnclampZero() ;
                 break ;
             case WAITSWITCH:
                 doWaitSwitch() ;
@@ -161,6 +165,11 @@ public class ClimbAction extends Action {
     @Override
     public String toString(int indent) {
         return prefix(indent) + "ClimbAction" ;
+    }
+
+    private void doUnclampZero() {
+        sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.OPEN);
+        state_ = ClimbingStates.WAITSWITCH ;
     }
  
     // notes on climber's states/actions
@@ -225,6 +234,11 @@ public class ClimbAction extends Action {
     //
     private void doSquaring() {
         // both sensors are touching
+        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Debug) ;
+        logger.add("lefta" , sub_.isLeftATouched() ? "true" : "false") ;
+        logger.add("leftb" , sub_.isLeftBTouched() ? "true" : "false") ;
+        logger.endMessage();
         if (sub_.isLeftATouched() && sub_.isRightATouched()) { 
             // - turn off the db
             db_.setAction(stop_db_) ;

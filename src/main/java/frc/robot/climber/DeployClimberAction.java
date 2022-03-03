@@ -22,10 +22,10 @@ public class DeployClimberAction extends Action {
 
         if (st == DeployState.Deployed) {
             deploy_position_ = sub_.getSettingsValue("deploy-action:position").getInteger() ;        
-            goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), deploy_position_, true) ;
+            goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), deploy_position_, false) ;
         }
         else {
-            goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), 0.0, true) ;
+            goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), 0.0, false) ;
         }
     }
 

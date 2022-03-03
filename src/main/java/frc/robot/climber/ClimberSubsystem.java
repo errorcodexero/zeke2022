@@ -64,6 +64,7 @@ public class ClimberSubsystem extends Subsystem {
         super(parent, SubsystemName);
 
         windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
+        addChild(windmill_) ;
 
         // Reset encoders so that the startup position is the zero position
         windmill_.reset() ;
