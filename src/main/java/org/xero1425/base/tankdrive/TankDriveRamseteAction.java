@@ -82,12 +82,6 @@ public class TankDriveRamseteAction extends TankDrivePathAction {
             // Current segment in inches
             XeroPathSegment seg = getPath().getSegment(MainRobot, index_) ;
 
-            // Publish the desired path time and pose for external tools
-            getSubsystem().putDashboard("db-path-t", DisplayType.Verbose, getSubsystem().getRobot().getTime()) ;
-            getSubsystem().putDashboard("db-path-x", DisplayType.Verbose, seg.getX()) ;
-            getSubsystem().putDashboard("db-path-y", DisplayType.Verbose, seg.getY()) ;
-            getSubsystem().putDashboard("db-path-a", DisplayType.Verbose, seg.getHeading()) ;
-
             // Desired pose in meters
             Pose2d desiredPose = inchesToMeters(new Pose2d(seg.getX(), seg.getY(), Rotation2d.fromDegrees(seg.getHeading()))) ;
 

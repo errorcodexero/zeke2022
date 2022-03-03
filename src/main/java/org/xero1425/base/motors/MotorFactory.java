@@ -236,5 +236,4 @@ public class MotorFactory {
 
         return v.getBoolean() ;
     }
-
 } ;

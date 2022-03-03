@@ -51,12 +51,14 @@ public class TalonFXMotorController extends MotorController
         if (RobotBase.isSimulation()) {
             sim_ = SimDevice.create(SimDeviceName, index) ;
 
+            //
+            // Create a simulated motor that can be accessed by simulation models
+            //
             sim_power_ = sim_.createDouble(MotorController.SimPowerParamName, SimDevice.Direction.kBidir, 0.0) ;
             sim_encoder_ = sim_.createDouble(MotorController.SimEncoderParamName, SimDevice.Direction.kBidir, 0.0) ;
             sim_motor_inverted_ = sim_.createBoolean(MotorController.SimInvertedParamName, SimDevice.Direction.kBidir, false) ;
             sim_neutral_mode_ = sim_.createBoolean(MotorController.SimNeutralParamName, SimDevice.Direction.kBidir, false) ;
             sim_.createBoolean(MotorController.SimEncoderStoresTicksParamName, SimDevice.Direction.kBidir, true) ;
-
         }
         else {
             ErrorCode code ;

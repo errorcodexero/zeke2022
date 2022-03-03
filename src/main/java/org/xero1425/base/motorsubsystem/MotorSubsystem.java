@@ -42,7 +42,6 @@ public class MotorSubsystem extends Subsystem
             getRobot().getMessageLogger().add("could not create motor for name '" + mname + "'") ;
             getRobot().getMessageLogger().endMessage();
         }
-        putDashboard(getName() + "-subsystem", DisplayType.Verbose, true);
     }
 
     /// \brief Returns true if the motor is running.  Running is defined as a power greater
@@ -114,7 +113,6 @@ public class MotorSubsystem extends Subsystem
             // power ever supplied to the motor
             power_ = limitPower(p) ;
             controller_.set(power_) ;
-            putDashboard(getName() + "-power", DisplayType.Verbose, power_);
         }
         catch(BadMotorRequestException|MotorRequestFailedException ex) {
             MessageLogger logger = getRobot().getMessageLogger() ;

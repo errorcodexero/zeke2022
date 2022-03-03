@@ -129,13 +129,6 @@ public class TankDrivePathFollowerAction extends TankDrivePathAction {
             XeroPathSegment lseg = getPath().getSegment(LeftSide, index_) ;
             XeroPathSegment rseg = getPath().getSegment(RightSide, index_) ;
 
-            // Record the desired position on the path.  Used for programs like XeroSim to graphically display
-            // the path following.
-            getSubsystem().putDashboard("db-path-t", DisplayType.Verbose, getSubsystem().getRobot().getTime()) ;
-            getSubsystem().putDashboard("db-path-x", DisplayType.Verbose, (lseg.getX() + rseg.getX()) / 2.0) ;
-            getSubsystem().putDashboard("db-path-y", DisplayType.Verbose, (lseg.getY() + rseg.getY()) / 2.0) ;
-            getSubsystem().putDashboard("db-path-a", DisplayType.Verbose, lseg.getHeading()) ;
-
             double laccel, lvel, lpos ;
             double raccel, rvel, rpos ;
             double thead, ahead ;

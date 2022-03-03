@@ -114,15 +114,6 @@ public class TankDrivePurePursuitPathAction extends TankDriveAction {
         //
         LookAheadPoint look = findLookAheadPoint(closest) ;
 
-        //
-        // Publish the tank drive path time and position to the dashboard, used by programs like XeroSim to
-        // follow the path.
-        //
-        getSubsystem().putDashboard("db-path-t", DisplayType.Verbose, getSubsystem().getRobot().getTime()) ;
-        getSubsystem().putDashboard("db-path-x", DisplayType.Verbose, look.getPose().getX()) ;
-        getSubsystem().putDashboard("db-path-y", DisplayType.Verbose, look.getPose().getY()) ;
-        getSubsystem().putDashboard("db-path-a", DisplayType.Verbose, look.getPose().getRotation().getDegrees()) ;
-
         if (!look.atEnd())
         {
             //
