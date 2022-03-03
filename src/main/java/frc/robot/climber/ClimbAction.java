@@ -3,6 +3,7 @@ package frc.robot.climber;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
+import org.xero1425.base.motorsubsystem.MotorEncoderPowerAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderTrackPositionAction;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
@@ -22,12 +23,9 @@ public class ClimbAction extends Action {
     private TankDrivePowerAction left_wheel_ ;
     private TankDrivePowerAction right_wheel_ ;
     private TankDrivePowerAction stop_db_ ;
-    private MotorEncoderTrackPositionAction backup_one_ ;
-    private MotorEncoderTrackPositionAction backup_two_ ;
+    private MotorEncoderPowerAction backup_ ;
 
     private double drive_action_power_ ;
-    private double backup_one_delta_ ;
-    private double backup_two_delta_ ;
     private boolean stop_when_safe_ ;
 
     // timer to judge following delays off of
@@ -42,7 +40,6 @@ public class ClimbAction extends Action {
     private double second_clamp_wait_ ;
     private double second_unclamp_wait_ ;
 
-    
     private enum ClimbingStates {
         IDLE,
         UNCLAMP_ZERO,
@@ -78,11 +75,7 @@ public class ClimbAction extends Action {
         second_clamp_wait_ = sub.getSettingsValue("climbaction:second_clamp_wait").getDouble() ;
         second_unclamp_wait_ = sub.getSettingsValue("climbaction:second_unclamp_wait").getDouble() ;
 
-        backup_one_delta_ = sub.getSettingsValue("climbaction:backup-one").getDouble() ;
-        backup_two_delta_ = sub.getSettingsValue("climbaction:backup-two").getDouble() ;
-
-        backup_one_ = new MotorEncoderTrackPositionAction(sub_.getWindmillMotor(), "backup", 0.0) ;
-        backup_two_ = new MotorEncoderTrackPositionAction(sub_.getWindmillMotor(), "backup", 0.0) ;
+        backup_ = new MotorEncoderPowerAction(sub_.getWindmillMotor(), "climbaction:backup-power", "climbaction:backup-duration") ;
     }
 
     public void stopWhenSafe() {
@@ -307,15 +300,13 @@ public class ClimbAction extends Action {
     private void doClampTwo() throws Exception {
         // wait for 2nd "clamp time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_clamp_wait_) {
-            double target = sub_.getWindmillMotor().getPosition() + backup_one_delta_ ;
-            backup_one_.setTarget(target);
-            sub_.getWindmillMotor().setAction(backup_one_) ;
+            sub_.getWindmillMotor().setAction(backup_) ;
             state_ = ClimbingStates.BACKUP_ONE ;
         }
     }
 
     private void doBackupOne() {
-        if (backup_one_.isDone()) {
+        if (backup_.isDone()) {
             sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.OPEN);   
             state_start_time_ = sub_.getRobot().getTime() ;
             if (stop_when_safe_)
@@ -382,15 +373,13 @@ public class ClimbAction extends Action {
     private void doClampThree() throws Exception {     
         //wait for 2nd "unclamping time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_unclamp_wait_) {
-            double target = sub_.getWindmillMotor().getPosition() + backup_two_delta_ ;
-            backup_two_.setTarget(target);
-            sub_.getWindmillMotor().setAction(backup_two_) ;
+            sub_.getWindmillMotor().setAction(backup_) ;
             state_ = ClimbingStates.BACKUP_TWO ;
         }
     }
 
     private void doBackupTwo() {
-        if (backup_two_.isDone()) {
+        if (backup_.isDone()) {
             sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.OPEN);
             state_ = ClimbingStates.COMPLETE ;
         }
