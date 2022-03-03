@@ -40,7 +40,7 @@ public class ParallelAction extends ActionGroup
 
     /// \brief get the done policy for this parallel action
     /// \returns the done policy for this parallel action
-    DonePolicy getDoneMethod() {
+    DonePolicy getDonePolicy() {
         return done_policy_ ;
     }
 
@@ -72,8 +72,9 @@ public class ParallelAction extends ActionGroup
     /// this action will complete in its start method.
     @Override
     public void start() throws Exception {
-        boolean done = false ;
         super.start() ;
+
+        boolean done = false ;
         running_ = true ;
 
         for(Action act : actions_)
@@ -106,6 +107,9 @@ public class ParallelAction extends ActionGroup
                     if (!act.isDone())
                         done = false ;
                 }
+                else {
+                    done = false ;
+                }
             }
         }
         else
@@ -117,6 +121,9 @@ public class ParallelAction extends ActionGroup
                     act.run() ;
                     if (act.isDone())
                         done = true ;
+                }
+                else {
+                    done = true ;
                 }
             }
         }
