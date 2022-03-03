@@ -82,6 +82,11 @@ public class ZekeAutoMode extends AutoMode {
 
         GPMStartCollectAction collect = new GPMStartCollectAction(gpm) ;
         series = new SequenceAction(getAutoController().getRobot().getMessageLogger()); 
+
+        //
+        // Note this collect sequence is a non-blocking dispatch.  The dispatch action will
+        // complete right away and so we really wait for the path action to complete.
+        //
         series.addSubActionPair(gpm, collect, false);
         parallel.addAction(series);
         addAction(parallel);
