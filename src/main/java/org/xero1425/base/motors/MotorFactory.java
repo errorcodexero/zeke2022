@@ -184,20 +184,6 @@ public class MotorFactory {
         if (nm != null)
             ctrl.setNeutralMode(nm);
 
-        // if (ctrl.hasPosition()) {
-        //     ctrl.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
-        // }
-
-        boolean done = false ;
-        while (!done)
-        {
-            try {
-                Thread.sleep(25);
-                done = true ;
-            } catch (InterruptedException e) {
-            }
-        }
-
         return ctrl ;
     }
 
