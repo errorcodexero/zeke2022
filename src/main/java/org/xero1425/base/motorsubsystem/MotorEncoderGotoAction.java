@@ -24,6 +24,12 @@ import org.xero1425.misc.XeroMath;
 ///
 ///     "subsystems" : {
 ///         "NAME" : {
+///             "goto": {
+///                 "threshold": 2.5,
+///                 "maxa": 45,
+///                 "maxd": -45,
+///                 "maxv": 45
+///             },
 ///             "follower" : {
 ///                 "up" : {
 ///                     "kp" : DOUBLE,
