@@ -275,8 +275,8 @@ public class TankDriveSubsystem extends Subsystem {
             case Autonomous:
                 left_motors_.setNeutralMode(automode_neutral_);
                 right_motors_.setNeutralMode(automode_neutral_);
-                //left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
-                //right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
+                left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
+                right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
                 left_motors_.setOpenLoopRampRate(auto_ramp_rate_) ;
                 right_motors_.setOpenLoopRampRate(auto_ramp_rate_) ;    
                 break;
@@ -284,8 +284,8 @@ public class TankDriveSubsystem extends Subsystem {
             case Teleop:
                 left_motors_.setNeutralMode(teleop_neutral_);
                 right_motors_.setNeutralMode(teleop_neutral_);
-                //left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
-                //right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
+                left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
+                right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
                 left_motors_.setOpenLoopRampRate(teleop_ramp_rate_) ;
                 right_motors_.setOpenLoopRampRate(teleop_ramp_rate_) ;
                 break;
@@ -293,13 +293,15 @@ public class TankDriveSubsystem extends Subsystem {
             case Test:
                 left_motors_.setNeutralMode(disabled_neutral_);
                 right_motors_.setNeutralMode(disabled_neutral_);
+                left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
+                right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
                 break;
 
             case Disabled:
                 left_motors_.setNeutralMode(disabled_neutral_);
                 right_motors_.setNeutralMode(disabled_neutral_);      
-                //left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
-                //right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);                      
+                left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
+                right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);                      
                 break ;
             }
         } catch (Exception ex) {

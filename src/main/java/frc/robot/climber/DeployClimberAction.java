@@ -7,7 +7,6 @@ public class DeployClimberAction extends Action {
     private ClimberSubsystem sub_ ;
     private int deploy_position_ ;
     private MotorEncoderGotoAction goto_ ;
-    private DeployState state_ ;
 
     public enum DeployState {
         Deployed,
@@ -18,15 +17,15 @@ public class DeployClimberAction extends Action {
         super(sub.getRobot().getMessageLogger()) ;
         
         sub_ = sub ;
-        state_ = st ;
 
         if (st == DeployState.Deployed) {
-            deploy_position_ = sub_.getSettingsValue("deploy-action:position").getInteger() ;        
-            goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), deploy_position_, false) ;
+            deploy_position_ = sub_.getSettingsValue("deploy-action:deplyed").getInteger() ;        
         }
         else {
-            goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), 0.0, false) ;
+            deploy_position_ = sub_.getSettingsValue("deploy-action:stowed").getInteger() ;    
         }
+
+        goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), deploy_position_, true) ;
     }
 
     @Override

@@ -7,8 +7,6 @@ import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.oi.Gamepad;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
-import org.xero1425.misc.MessageLogger;
-import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 import org.xero1425.base.oi.OIPanelButton;
 
@@ -58,6 +56,7 @@ public class ZekeOIDevice extends OIPanel {
 
     private ClimberState climber_state_ ;
     private boolean is_turret_holding_ ;
+    private boolean is_windmill_holding_ ;
 
     private enum ClimberState {
         Stowed,
@@ -74,6 +73,7 @@ public class ZekeOIDevice extends OIPanel {
 
         climber_state_ = ClimberState.Stowed ;
         is_turret_holding_ = false ;
+        is_windmill_holding_ = false ;
 
         initializeGadgets();
 
@@ -183,6 +183,11 @@ public class ZekeOIDevice extends OIPanel {
         if (turret.getAction() != follow_)
              turret.setAction(follow_);
 
+        if (is_windmill_holding_ == false) {
+            zeke.getClimber().setAction(stow_climber_) ;
+            is_windmill_holding_ = true ;
+        }
+
         if (getValue(eject_gadget_) == 1) {
             if (gpm.getConveyor().getAction() != eject_action_)
                 gpm.getConveyor().setAction(eject_action_) ;
@@ -220,6 +225,8 @@ public class ZekeOIDevice extends OIPanel {
             turret.setAction(zero_turret_) ;
             is_turret_holding_ = true ;
         }
+
+        is_windmill_holding_ = false ;
             
         if (climber_state_ == ClimberState.Stowed) {
             if (getValue(deploy_climb_gadget_) == 1) {

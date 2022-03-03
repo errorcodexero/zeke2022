@@ -442,7 +442,8 @@
                 "backup-two" : 1
             },
             "deploy-action" : {
-                "position" : 90
+                "deployed" : 90,
+                "stowed" : 10,
             },
             "change-clamp-action" : {
                 "wait_time" : 1.0
