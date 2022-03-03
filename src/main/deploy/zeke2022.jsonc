@@ -424,6 +424,10 @@
                 "max": 0.3,
                 "imax": 0.0
             },
+
+            //
+            // Parameters for the climb actions
+            //
             "climbaction": {
                 "drive_action_power": 0.1,
                 "first_clamp_wait": 0.5,
