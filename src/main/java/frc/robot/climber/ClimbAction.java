@@ -3,14 +3,11 @@ package frc.robot.climber;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
-import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderTrackPositionAction;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
-import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
-import org.xero1425.misc.MissingParameterException;
 
 import frc.robot.climber.ClimberSubsystem.ChangeClampTo;
 import frc.robot.climber.ClimberSubsystem.SetWindmillTo;
@@ -83,8 +80,8 @@ public class ClimbAction extends Action {
         backup_one_delta_ = sub.getSettingsValue("climbaction:backup-one").getDouble() ;
         backup_two_delta_ = sub.getSettingsValue("climbaction:backup-two").getDouble() ;
 
-        backup_one_ = new MotorEncoderTrackPositionAction(sub_.getWindmillMotor(), "backup-one", 0.0) ;
-        backup_two_ = new MotorEncoderTrackPositionAction(sub_.getWindmillMotor(), "backup-one", 0.0) ;
+        backup_one_ = new MotorEncoderTrackPositionAction(sub_.getWindmillMotor(), "backup", 0.0) ;
+        backup_two_ = new MotorEncoderTrackPositionAction(sub_.getWindmillMotor(), "backup", 0.0) ;
     }
 
     public void stopWhenSafe() {
