@@ -4,6 +4,7 @@ import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
+import org.xero1425.base.motorsubsystem.MotorEncoderTrackPositionAction;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.BadParameterTypeException;
@@ -24,8 +25,8 @@ public class ClimbAction extends Action {
     private TankDrivePowerAction left_wheel_ ;
     private TankDrivePowerAction right_wheel_ ;
     private TankDrivePowerAction stop_db_ ;
-    private MotorEncoderGotoAction backup_one_ ;
-    private MotorEncoderGotoAction backup_two_ ;
+    private MotorEncoderTrackPositionAction backup_one_ ;
+    private MotorEncoderTrackPositionAction backup_two_ ;
 
     private double drive_action_power_ ;
     private double backup_one_delta_ ;
@@ -63,7 +64,7 @@ public class ClimbAction extends Action {
     private ClimbingStates state_ = ClimbingStates.IDLE ;
 
     // todo: also take the gamepad/OI as a param so climber can disable it after it starts climbing
-    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, ZekeOISubsystem oi) throws BadParameterTypeException, MissingParameterException {
+    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, ZekeOISubsystem oi) throws Exception {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
         db_ = db ;
@@ -81,6 +82,9 @@ public class ClimbAction extends Action {
 
         backup_one_delta_ = sub.getSettingsValue("climbaction:backup-one").getDouble() ;
         backup_two_delta_ = sub.getSettingsValue("climbaction:backup-two").getDouble() ;
+
+        backup_one_ = new MotorEncoderTrackPositionAction(sub_.getWindmillMotor(), "backup-one", 0.0) ;
+        backup_two_ = new MotorEncoderTrackPositionAction(sub_.getWindmillMotor(), "backup-one", 0.0) ;
     }
 
     public void stopWhenSafe() {
@@ -293,7 +297,8 @@ public class ClimbAction extends Action {
         // wait for 2nd "clamp time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_clamp_wait_) {
             double target = sub_.getWindmillMotor().getPosition() + backup_one_delta_ ;
-            backup_one_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), target, false) ;
+            backup_one_.setTarget(target);
+            sub_.getWindmillMotor().setAction(backup_one_) ;
             state_ = ClimbingStates.BACKUP_ONE ;
         }
     }
@@ -367,7 +372,8 @@ public class ClimbAction extends Action {
         //wait for 2nd "unclamping time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_unclamp_wait_) {
             double target = sub_.getWindmillMotor().getPosition() + backup_two_delta_ ;
-            backup_two_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), target, false) ;
+            backup_two_.setTarget(target);
+            sub_.getWindmillMotor().setAction(backup_two_) ;
             state_ = ClimbingStates.BACKUP_TWO ;
         }
     }
