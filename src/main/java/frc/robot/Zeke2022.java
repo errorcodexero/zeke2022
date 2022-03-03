@@ -50,7 +50,7 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "testmode";
+    return "intake-center";
   }
 
   protected void addRobotSimulationModels() {

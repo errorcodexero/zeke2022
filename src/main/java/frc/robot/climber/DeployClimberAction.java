@@ -19,7 +19,7 @@ public class DeployClimberAction extends Action {
         sub_ = sub ;
 
         if (st == DeployState.Deployed) {
-            deploy_position_ = sub_.getSettingsValue("deploy-action:deplyed").getInteger() ;        
+            deploy_position_ = sub_.getSettingsValue("deploy-action:deployed").getInteger() ;        
         }
         else {
             deploy_position_ = sub_.getSettingsValue("deploy-action:stowed").getInteger() ;    
