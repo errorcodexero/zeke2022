@@ -63,6 +63,10 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
         error_ = Math.abs(target_ - sub.getPosition()) ;
     }
 
+    public double getTarget() {
+        return target_ ;
+    }
+
     /// \brief Called once per robot loop to adjust the motor power to follow the motion plan
     // given by the TrapezoidalProfile class.
     public void run() throws Exception {

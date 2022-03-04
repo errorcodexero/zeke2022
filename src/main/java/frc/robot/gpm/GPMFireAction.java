@@ -74,7 +74,7 @@ public class GPMFireAction extends Action {
         conveyor_shoot_action_ = new ConveyorShootAction(sub_.getConveyor()) ; 
         
         // These are initial values for shooing params.  These just get the shooter spinning up
-        shoot_params_ = new ShootParams(1000, 1000, 7.0) ;
+        shoot_params_ = new ShootParams(5000, 5000, 7.0) ;
         shoot_params_valid_ = false ;
 
         shooter_action_ = new SetShooterAction(sub_.getShooter(), shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
@@ -95,65 +95,76 @@ public class GPMFireAction extends Action {
 
         boolean shooterReady, dbready ;
 
-        if (is_conveyor_on_ && (sub_.getAction() == null || sub_.getAction().isDone())) {
-            sub_.getShooter().setAction(null) ;
-        }
-
-        if (target_tracker_.hasVisionTarget()) {
+        if (is_conveyor_on_) { 
             //
-            // We have a target, so compute a new set of parameters for the shooter and assign
-            // to the shooter.
+            // We are shooting, shoot til all balls done
             //
-            computeShooterParams(target_tracker_.getDistance()) ;
-            shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
-            shoot_params_valid_ = true ;
+            if (sub_.getConveyor() == null || sub_.getConveyor().getAction().isDone()) {
+                shooter_action_.stopPlot();
+                sub_.getShooter().setAction(null) ;
+                is_conveyor_on_ = false ;
+                setDone() ;
+            }
         }
         else {
             //
-            // We reset these here to be sure that since we lost the target, we want to force a new
-            // set of shooting parametesr to be computed before we are ready to shoot.
-            //
-            shoot_params_valid_ = false ;
-        }
+            // We are waiting to be ready to shoot
+            //           
+            if (target_tracker_.hasVisionTarget()) {
+                //
+                // We have a target, so compute a new set of parameters for the shooter and assign
+                // to the shooter.
+                //
+                computeShooterParams(target_tracker_.getDistance()) ;
+                shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
+                shoot_params_valid_ = true ;
 
-        shooterReady = isShooterReady() ;
-        dbready = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
+                shooterReady = isShooterReady() ;
+                dbready = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
 
-        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
-        logger.startMessage(MessageType.Debug, logger_id_) ;
-        logger.add("FireAction: adjusting shooter") ;
-        logger.add("w1", shoot_params_.v1_).add("w2", shoot_params_.v2_).add("hood", shoot_params_.hood_) ;
-        logger.endMessage();
-        
-        logger.startMessage(MessageType.Debug, logger_id_) ;
-        logger.add("FireAction: ready") ;
-        logger.add("shooter", shooterReady).add("turret", turret_.isReadyToFire()).add("db", dbready).add("tracker", target_tracker_.hasVisionTarget()) ;
-        logger.endMessage();        
+                MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+                logger.startMessage(MessageType.Debug, logger_id_) ;
+                logger.add("FireAction: adjusting shooter") ;
+                logger.add("w1", shoot_params_.v1_).add("w2", shoot_params_.v2_).add("hood", shoot_params_.hood_) ;
+                logger.endMessage();
+                
+                logger.startMessage(MessageType.Debug, logger_id_) ;
+                logger.add("FireAction: ready") ;
+                logger.add("shooter", shooterReady).add("turret", turret_.isReadyToFire()).add("db", dbready).add("tracker", target_tracker_.hasVisionTarget()) ;
+                logger.endMessage();        
 
-        sub_.putDashboard("shootrdy", DisplayType.Always, shooterReady);
-        sub_.putDashboard("dbready", DisplayType.Always, dbready);
-        sub_.putDashboard("trtready", DisplayType.Always, turret_.isReadyToFire());
-        sub_.putDashboard("llready", DisplayType.Always, target_tracker_.hasVisionTarget());
-
-        
-        // if the
-        //  * shooter is up to speed
-        //  * db is stopped
-        //  * target tracker sees the target
-        //  * turret is aimed & ready to fire
-        // then, let the conveyor push cargo into the shooter
-        if (shooterReady && dbready && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) 
-        {
-            if (sub_.getConveyor().getAction() != conveyor_shoot_action_) {
-                sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;
-                is_conveyor_on_ = true ;
-            } 
+                sub_.putDashboard("shootrdy", DisplayType.Always, shooterReady);
+                sub_.putDashboard("dbready", DisplayType.Always, dbready);
+                sub_.putDashboard("trtready", DisplayType.Always, turret_.isReadyToFire());
+                sub_.putDashboard("llready", DisplayType.Always, target_tracker_.hasVisionTarget());
+                
+                // if the
+                //  * shooter is up to speed
+                //  * db is stopped
+                //  * target tracker sees the target
+                //  * turret is aimed & ready to fire
+                // then, let the conveyor push cargo into the shooter
+                if (shooterReady && dbready && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) 
+                {
+                    shooter_action_.startPlot();
+                    sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;
+                    is_conveyor_on_ = true ;
+                }
+            }
+            else {
+                //
+                // We have no vision target, therefore our shooting parameters are invalid
+                //
+                shoot_params_valid_ = false ;
+            }
         }
     }
 
     @Override
     public void cancel() {
         super.cancel();
+
+        shooter_action_.stopPlot();
 
         conveyor_shoot_action_.cancel();
         shooter_action_.cancel();
