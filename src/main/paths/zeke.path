@@ -81,21 +81,21 @@
                     ],
                     "markers": [
                     ],
-                    "maxacceleration": 180,
+                    "maxacceleration": 60,
                     "maxcentripetal": 10000,
                     "maxjerk": 1800,
-                    "maxvelocity": 180,
+                    "maxvelocity": 60,
                     "name": "ball_1",
                     "points": [
                         {
-                            "heading": -36.86989764584401,
-                            "x": 389.1413255649509,
-                            "y": 137.7045615253355
+                            "heading": -40.60129464500457,
+                            "x": 399.4993701337979,
+                            "y": 118.23679639505653
                         },
                         {
                             "heading": -39.28940686250024,
-                            "x": 456.9303936554446,
-                            "y": 81.08951564756046
+                            "x": 436.59996559321183,
+                            "y": 86.01785823293395
                         }
                     ],
                     "startangle": 0,
@@ -119,14 +119,14 @@
                     "name": "ball_2",
                     "points": [
                         {
-                            "heading": -39.2894,
-                            "x": 456.93,
-                            "y": 81.0895
+                            "heading": 140.7106,
+                            "x": 444.411,
+                            "y": 85.0415
                         },
                         {
-                            "heading": -39.2894,
-                            "x": 456.93,
-                            "y": 81.0895
+                            "heading": 144.4623222080257,
+                            "x": 390.7123869986736,
+                            "y": 128.0001109896391
                         }
                     ],
                     "startangle": 0,
@@ -148,21 +148,21 @@
                     ],
                     "markers": [
                     ],
-                    "maxacceleration": 180,
+                    "maxacceleration": 60,
                     "maxcentripetal": 10000,
                     "maxjerk": 1800,
-                    "maxvelocity": 180,
+                    "maxvelocity": 60,
                     "name": "ball_1",
                     "points": [
                         {
-                            "heading": 0,
-                            "x": 351.8945848558883,
-                            "y": 239.01569625398548
+                            "heading": 24.77514056883193,
+                            "x": 376.06741510679973,
+                            "y": 221.72793109763202
                         },
                         {
-                            "heading": 0,
-                            "x": 448.73611069945093,
-                            "y": 250.18971846670422
+                            "heading": 13.002114031497742,
+                            "x": 432.765645377004,
+                            "y": 252.08888050300504
                         }
                     ],
                     "startangle": 0,
@@ -179,21 +179,21 @@
                     ],
                     "markers": [
                     ],
-                    "maxacceleration": 180,
-                    "maxcentripetal": 10000,
-                    "maxjerk": 1800,
-                    "maxvelocity": 180,
+                    "maxacceleration": 120,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1600,
+                    "maxvelocity": 120,
                     "name": "ball_2",
                     "points": [
                         {
-                            "heading": 0,
-                            "x": 448.736,
-                            "y": 250.19
+                            "heading": 13.0021,
+                            "x": 432.766,
+                            "y": 252.089
                         },
                         {
-                            "heading": 0,
-                            "x": 448.736,
-                            "y": 250.19
+                            "heading": 8.746162262555252,
+                            "x": 587.9313418092421,
+                            "y": 273.47349844891977
                         }
                     ],
                     "startangle": 0,
@@ -210,31 +210,57 @@
                     ],
                     "markers": [
                     ],
-                    "maxacceleration": 180,
-                    "maxcentripetal": 10000,
-                    "maxjerk": 1800,
-                    "maxvelocity": 180,
+                    "maxacceleration": 120,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1600,
+                    "maxvelocity": 120,
                     "name": "ball_3",
                     "points": [
                         {
+                            "heading": -171.25384000000003,
+                            "x": 587.931,
+                            "y": 273.473
+                        },
+                        {
+                            "heading": -148.6713071321959,
+                            "x": 396.5703757554232,
+                            "y": 236.37290298950592
+                        }
+                    ],
+                    "startangle": 0,
+                    "startangledelay": 0,
+                    "startvelocity": 0
+                }
+            ]
+        },
+        {
+            "name": "test",
+            "paths": [
+                {
+                    "constraints": [
+                    ],
+                    "endangle": 0,
+                    "endangledelay": 0,
+                    "endvelocity": 0,
+                    "flags": [
+                    ],
+                    "markers": [
+                    ],
+                    "maxacceleration": 60,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1600,
+                    "maxvelocity": 60,
+                    "name": "straight",
+                    "points": [
+                        {
                             "heading": 0,
-                            "x": 448.736,
-                            "y": 250.19
+                            "x": 50,
+                            "y": 150
                         },
                         {
-                            "heading": -23.744776460999624,
-                            "x": 564.2010068975446,
-                            "y": 290.41619843249174
-                        },
-                        {
-                            "heading": -43.72696997994349,
-                            "x": 592.5085298364321,
-                            "y": 272.53776289214176
-                        },
-                        {
-                            "heading": -138.1221304621157,
-                            "x": 456.1854588412634,
-                            "y": 243.48530513907298
+                            "heading": 0,
+                            "x": 170,
+                            "y": 150
                         }
                     ],
                     "startangle": 0,
@@ -251,21 +277,21 @@
                     ],
                     "markers": [
                     ],
-                    "maxacceleration": 180,
-                    "maxcentripetal": 10000,
-                    "maxjerk": 1800,
-                    "maxvelocity": 180,
-                    "name": "ball_4",
+                    "maxacceleration": 60,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1600,
+                    "maxvelocity": 60,
+                    "name": "curve",
                     "points": [
                         {
-                            "heading": -138.122,
-                            "x": 456.185,
-                            "y": 243.485
+                            "heading": 0,
+                            "x": 50,
+                            "y": 50
                         },
                         {
-                            "heading": -138.122,
-                            "x": 456.185,
-                            "y": 243.485
+                            "heading": 90,
+                            "x": 170,
+                            "y": 170
                         }
                     ],
                     "startangle": 0,
@@ -275,5 +301,5 @@
             ]
         }
     ],
-    "outdir": "D:/cygwin64/home/bwg/robottools/zeke2022/src/main/deploy/paths"
+    "outdir": "C:/cygwin64/home/bwg/robottools/zeke2022/src/main/deploy/paths"
 }

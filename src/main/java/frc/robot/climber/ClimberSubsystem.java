@@ -89,6 +89,13 @@ public class ClimberSubsystem extends Subsystem {
         left_right_b_ = new DigitalInput(index) ;
     }
 
+    @Override
+    public void computeMyState() throws Exception {
+        super.computeMyState();
+
+        putDashboard("climber", DisplayType.Always, windmill_.getPosition());
+    }
+
     public MotorEncoderSubsystem getWindmillMotor() {
         return windmill_ ;
     }
@@ -118,7 +125,9 @@ public class ClimberSubsystem extends Subsystem {
         MessageLogger logger = getRobot().getMessageLogger() ;
         logger.startMessage(MessageType.Debug, getLoggerID()) ;
         logger.add("Climber: set clamp: ") ;
-        // logger.add(changeClamp.toString()) ;
+        logger.add(clamp_name.toString()) ;
+        logger.add(" to ") ;
+        logger.add(clamp_setting.toString()) ;
         logger.endMessage();
         
         if (clamp_name == WhichClamp.CLAMP_A) {

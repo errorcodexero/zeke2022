@@ -100,7 +100,7 @@
             // "current_limit" : 10.0,
             "width": 30,
             "scrub": 1.0,
-            "inches_per_tick": 0.000796548,      // 0.006
+            "inches_per_tick": 0.000814006,
             "speedometer": {
                 "linearsamples": 2,
                 "angluarsamples": 2
@@ -108,7 +108,7 @@
             "follower": {
                 "left": {
                     "ka": 0.0003,
-                    "kv": 0.005740528                    ,
+                    "kv": 0.005740528,
                     "kp": 0.035,
                     "kd": 0.0
                 },
@@ -363,8 +363,8 @@
                     "left_right_b": 9
                 },
                 "windmill": {
-                    "windmill_power_forwards": 0.1,
-                    "windmill_power_backwards": -0.1,
+                    "windmill_power_forwards": 0.3,
+                    "windmill_power_backwards": -0.2,
                     "windmill_power_off": 0.0
                 }
             },
@@ -396,15 +396,16 @@
             // Used by the MotorEncoderGotoAction to follow the trapezoidal speed profile
             //
             "follower": {
+
                 "up": {
-                    "kp": 0.0,
+                    "kp": 0.01,
                     "ka": 0.0,
                     "ki": 0.0,
                     "kd": 0.0,
                     "kv": 0.006339144
                 },
                 "down": {
-                    "kp": 0.001,
+                    "kp": 0.01,
                     "ka": 0.0,
                     "ki": 0.0,
                     "kd": 0.0,
@@ -429,21 +430,17 @@
             // Parameters for the climb actions
             //
             "climbaction": {
-                "drive_action_power": 0.1,
-                "first_clamp_wait": 0.5,
-                "second_clamp_wait": 0.5,
-                "first_align_wait": 0.5,
-                "second_align_wait": 0.5,
-                "first_swing_wait": 0.5,
-                "second_swing_wait": 0.5,
-                "first_unclamp_wait": 0.2,
-                "second_unclamp_wait": 0.2,
-                "backup-power" : -0.1,
-                "backup-duration" : 2.0
+                "drive_action_power": 0.2,
+                "first_clamp_wait": 2.0,
+                "second_clamp_wait": 2.0,
+                "first_unclamp_wait": 2.0,
+                "second_unclamp_wait": 2.0,
+                "backup-power" : -0.6,
+                "backup-duration" : 0.3
             },
             "deploy-action" : {
                 "deployed" : 90,
-                "stowed" : 10,
+                "stowed" : -15
             },
             "change-clamp-action" : {
                 "wait_time" : 1.0
@@ -564,10 +561,10 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 52,
+        "which": 3,
         "power": 0.4,
         "duration": 2.0,
         "distance": 22,
-        "name": "Test_Straight"
+        "name": "far_tarmac_4_ball_1"
     }
 }

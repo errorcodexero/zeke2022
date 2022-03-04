@@ -63,8 +63,15 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break ;
 
             case 2:
-                addSubActionPair(db, new TankDrivePathFollowerAction(db, getNameParam(), false), true) ;
+                addSubActionPair(db, new TankDrivePathFollowerAction(db, "far_tarmac_4_ball_1", false), true) ;
+                addAction(new DelayAction(ctrl.getRobot(), 2.0));
+                addSubActionPair(db, new TankDrivePathFollowerAction(db, "far_tarmac_4_ball_2", false), true) ;
+                addAction(new DelayAction(ctrl.getRobot(), 2.0));
+                addSubActionPair(db, new TankDrivePathFollowerAction(db, "far_tarmac_4_ball_3", true), true) ;                
                 break ;  
+        case 3:
+                addSubActionPair(db, new TankDrivePathFollowerAction(db, "near_tarmac_2_ball_1", false), true) ;
+                break ;
                         
             //
             //////////////////////////////////////////////////////////////////////////////////
@@ -217,109 +224,18 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 // Exercise the clamps on the A end of the climber windmill
                 if (has_climber_) {
                     addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
+                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
                     addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
                     addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
                     addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
+                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
                     addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
+                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;     
                     addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
+                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
                     addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
-                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
+                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;  
+
                 }
                 break ;
 

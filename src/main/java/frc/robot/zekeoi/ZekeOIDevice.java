@@ -7,6 +7,8 @@ import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.oi.Gamepad;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 import org.xero1425.base.oi.OIPanelButton;
 
@@ -193,9 +195,7 @@ public class ZekeOIDevice extends OIPanel {
                 gpm.getConveyor().setAction(eject_action_) ;
         }
         else if (getValue(collect_v_shoot_gadget_) == 1) {
-
             if (gpm.getAction() == fire_action_) {
-
                 gpm.cancelAction();
             }
 
@@ -284,7 +284,7 @@ public class ZekeOIDevice extends OIPanel {
         if (getValue(climb_lock_gadget_) == 1) {
             generateCargoActions();
         } else if (zeke.getClimber() != null) {
-                generateClimbActions() ;
+            generateClimbActions() ;
         }
     }
 

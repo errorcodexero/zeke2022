@@ -4,7 +4,6 @@ import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.motorsubsystem.MotorEncoderPowerAction;
-import org.xero1425.base.motorsubsystem.MotorEncoderTrackPositionAction;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.MessageLogger;
@@ -48,6 +47,7 @@ public class ClimbAction extends Action {
         CLAMP_ONE,
         WINDMILL_ONE,
         BACKUP_ONE,
+        UNCLAMP_ONE_HALF,
         UNCLAMP_ONE,
         CLAMP_TWO,
         WINDMILL_TWO,
@@ -76,16 +76,19 @@ public class ClimbAction extends Action {
         second_unclamp_wait_ = sub.getSettingsValue("climbaction:second_unclamp_wait").getDouble() ;
 
         backup_ = new MotorEncoderPowerAction(sub_.getWindmillMotor(), "climbaction:backup-power", "climbaction:backup-duration") ;
+
+        stop_when_safe_ = false ;
     }
 
     public void stopWhenSafe() {
-        stop_when_safe_ = true ;
+        // stop_when_safe_ = true ;
     }
 
     @Override
     public void start() throws Exception {
         super.start() ;
 
+        sub_.getWindmillMotor().setDefaultAction(null);
         state_ = ClimbingStates.IDLE ;
     }
 
@@ -110,6 +113,9 @@ public class ClimbAction extends Action {
                 break ;
             case CLAMP_ONE:
                 doClampOne() ;
+                break ;
+            case UNCLAMP_ONE_HALF:
+                doUnclampOneHalf() ;
                 break ;
             case WINDMILL_ONE:
                 doWindmillOne() ;
@@ -227,11 +233,6 @@ public class ClimbAction extends Action {
     //
     private void doSquaring() {
         // both sensors are touching
-        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
-        logger.startMessage(MessageType.Debug) ;
-        logger.add("lefta" , sub_.isLeftATouched() ? "true" : "false") ;
-        logger.add("leftb" , sub_.isLeftBTouched() ? "true" : "false") ;
-        logger.endMessage();
         if (sub_.isLeftATouched() && sub_.isRightATouched()) { 
             // - turn off the db
             db_.setAction(stop_db_) ;
@@ -260,8 +261,16 @@ public class ClimbAction extends Action {
     private void doClampOne() throws BadMotorRequestException, MotorRequestFailedException {
         // clamping clamp A; wait for the 1st clamping time to pass
         if (sub_.getRobot().getTime() - state_start_time_ > first_clamp_wait_) {
-            sub_.setWindmill(SetWindmillTo.FORWARDS) ;
 
+            state_start_time_ = sub_.getRobot().getTime() ;       
+            sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.OPEN);     
+            state_ = ClimbingStates.UNCLAMP_ONE_HALF ;
+        }
+    }
+
+    private void doUnclampOneHalf() throws BadMotorRequestException, MotorRequestFailedException {
+        if (sub_.getRobot().getTime() - state_start_time_ > first_unclamp_wait_) {
+            sub_.setWindmill(SetWindmillTo.FORWARDS) ;
             state_ = ClimbingStates.WINDMILL_ONE ;
         }
     }
@@ -279,7 +288,7 @@ public class ClimbAction extends Action {
     private void doWindmillOne() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
         if (sub_.isLeftBTouched() && sub_.isRightBTouched()) {
-            sub_.setWindmill(SetWindmillTo.OFF) ;
+            sub_.getWindmillMotor().setPower(0.15) ;
             sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.CLOSED);
             
             state_start_time_ = sub_.getRobot().getTime() ;
