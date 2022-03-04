@@ -182,6 +182,11 @@
                 "db_vel_threshold" : 6.0,
                 "shooter_vel_threshold" : 20.0
 
+            },
+            "manual-fire-action" : {
+                "w1" : 5200,
+                "w2" : 5200,
+                "hood" : 8
             }
         },
         "intake": {

@@ -18,6 +18,7 @@ import frc.robot.climber.DeployClimberAction;
 import frc.robot.climber.DeployClimberAction.DeployState;
 import frc.robot.conveyor.ConveyorEjectAction;
 import frc.robot.gpm.GPMFireAction;
+import frc.robot.gpm.GPMManualFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
@@ -30,6 +31,7 @@ public class ZekeOIDevice extends OIPanel {
     private GPMStartCollectAction start_collect_action_;
     private GPMStopCollectAction stop_collect_action_;
     private GPMFireAction fire_action_;
+    private GPMManualFireAction manual_fire_action_ ;
 
     private ConveyorEjectAction eject_action_ ;
     private ClimbAction climb_;
@@ -47,6 +49,7 @@ public class ZekeOIDevice extends OIPanel {
     private int climb_lock_gadget_;
     private int eject_gadget_ ;
     private int deploy_climb_gadget_ ;
+    private int shoot_manual_mode_gadget_ ;
 
     private int ball1_output_ ;
     private int ball2_output_ ;
@@ -100,6 +103,7 @@ public class ZekeOIDevice extends OIPanel {
         start_collect_action_ = new GPMStartCollectAction(gpm);
         stop_collect_action_ = new GPMStopCollectAction(gpm);
         fire_action_ = new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()) ;
+        manual_fire_action_ = new GPMManualFireAction(gpm) ;
         eject_action_ = new ConveyorEjectAction(gpm.getConveyor()) ;
         zero_turret_ = new MotorEncoderGotoAction(zeke.getTurret(), 0, true) ;
         deploy_intake_ = new ZekeIntakeArmAction(zeke.getGPMSubsystem().getIntake(), ZekeIntakeArmAction.ArmPos.DEPLOY) ;
@@ -191,10 +195,16 @@ public class ZekeOIDevice extends OIPanel {
         }
 
         if (getValue(eject_gadget_) == 1) {
+            //
+            // Eject is the highest priority
+            //
             if (gpm.getConveyor().getAction() != eject_action_)
                 gpm.getConveyor().setAction(eject_action_) ;
         }
         else if (getValue(collect_v_shoot_gadget_) == 1) {
+            //
+            // We are collecting
+            //
             if (gpm.getAction() == fire_action_) {
                 gpm.cancelAction();
             }
@@ -207,11 +217,27 @@ public class ZekeOIDevice extends OIPanel {
                     gpm.setAction(stop_collect_action_) ;
             }
         } else {
+            //
+            // We are shooting
+            //
+
             if (gpm.getConveyor().getBallCount() == 0) {
                 gpm.cancelAction();
             }
-            else if (gpm.getAction() != fire_action_) {
-                gpm.setAction(fire_action_);
+            else {
+                if (getValue(shoot_manual_mode_gadget_) == 1) {
+                    //
+                    // Automatic shooting
+                    //
+                    if (gpm.getAction() != fire_action_) {
+                        gpm.setAction(fire_action_);
+                    }
+                }
+                else {
+                    if (gpm.getAction() != manual_fire_action_) {
+                        gpm.setAction(manual_fire_action_);
+                    }
+                }
             }
         }
     }
@@ -306,6 +332,9 @@ public class ZekeOIDevice extends OIPanel {
 
         num = getSubsystem().getSettingsValue("oi:gadgets:shoot_collect_mode").getInteger();
         collect_v_shoot_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
+
+        num = getSubsystem().getSettingsValue("oi:gadgets:shoot_manual_mode").getInteger() ;
+        shoot_manual_mode_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level) ;
 
         num = getSubsystem().getSettingsValue("oi:gadgets:collect_onoff").getInteger();
         start_collect_gadget_ = mapButton(num, OIPanelButton.ButtonType.Level);
