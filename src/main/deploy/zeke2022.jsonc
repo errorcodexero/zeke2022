@@ -31,14 +31,14 @@
             "intake": false,
             "conveyor": false,
             "shooter": false,
-            "fire-action" : true,
+            "fire-action" : false,
             "shooter-w1" : false,
             "shooter-w2" : false,
             "shooter-h" : false,
             "turret" : false,
 
             // Climber related
-            "climber": true,
+            "climber": false,
             "climber-model": false,
 
             // OI
@@ -180,12 +180,12 @@
             "fire-action" : {
                 "hood_pos_threshold" : 10.0,
                 "db_vel_threshold" : 6.0,
-                "shooter_vel_threshold" : 20.0
-
+                "shooter_vel_threshold" : 80.0,
+                "shutdown-delay" : 1.0
             },
             "manual-fire-action" : {
-                "w1" : 5200,
-                "w2" : 5200,
+                "w1" : 2000,
+                "w2" : 2000,
                 "hood" : 8
             }
         },
@@ -252,7 +252,7 @@
                 "duration" : 1.5
             },
             "shoot-action" : {
-                "second-ball-delay" : 0.2
+                "second-ball-delay" : 1.0
             }
         },
         "turret": {
@@ -470,7 +470,7 @@
                 }
             },
             "w1": {
-                "kp": 0.00001,
+                "kp": 0.00017,
                 "ki": 0.0,
                 "kd": 0.0,
                 "kf": 1.0039152695512498745105913060938e-4,
@@ -493,7 +493,7 @@
                 }
             },
             "w2": {
-                "kp": 0.00001,
+                "kp": 0.00017,
                 "ki": 0.0,
                 "kd": 0.0,
                 "kf": 1.0188487009679062659195109526235e-4,
@@ -566,7 +566,7 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 3,
+        "which": 101,
         "power": 0.4,
         "duration": 2.0,
         "distance": 22,

@@ -7,8 +7,6 @@ import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.oi.Gamepad;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
-import org.xero1425.misc.MessageLogger;
-import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 import org.xero1425.base.oi.OIPanelButton;
 
@@ -220,23 +218,17 @@ public class ZekeOIDevice extends OIPanel {
             //
             // We are shooting
             //
-
-            if (gpm.getConveyor().getBallCount() == 0) {
-                gpm.cancelAction();
+            if (getValue(shoot_manual_mode_gadget_) == 0) {
+                //
+                // Automatic shooting
+                //
+                if (gpm.getAction() != fire_action_ && gpm.getConveyor().getBallCount() > 0) {
+                    gpm.setAction(fire_action_);
+                }
             }
             else {
-                if (getValue(shoot_manual_mode_gadget_) == 1) {
-                    //
-                    // Automatic shooting
-                    //
-                    if (gpm.getAction() != fire_action_) {
-                        gpm.setAction(fire_action_);
-                    }
-                }
-                else {
-                    if (gpm.getAction() != manual_fire_action_) {
-                        gpm.setAction(manual_fire_action_);
-                    }
+                if (gpm.getAction() != manual_fire_action_) {
+                    gpm.setAction(manual_fire_action_);
                 }
             }
         }

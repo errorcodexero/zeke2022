@@ -8,8 +8,6 @@ import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
-import frc.robot.Zeke2022;
-
 public class ZekeOISubsystem extends OISubsystem {
     
     private ZekeOIDevice oi_;

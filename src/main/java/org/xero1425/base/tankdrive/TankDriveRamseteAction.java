@@ -1,6 +1,5 @@
 package org.xero1425.base.tankdrive;
 
-import org.xero1425.base.Subsystem.DisplayType;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 import org.xero1425.misc.PIDCtrl;

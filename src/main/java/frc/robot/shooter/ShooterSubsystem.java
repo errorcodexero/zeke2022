@@ -11,10 +11,10 @@ public class ShooterSubsystem extends Subsystem {
 
     public ShooterSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
-        wheelMotor1_ = new MotorEncoderSubsystem(this, SubsystemName + "-w1", false);
+        wheelMotor1_ = new MotorEncoderSubsystem(this, SubsystemName + "-w1", false, 8);
         addChild(wheelMotor1_) ;
 
-        wheelMotor2_ = new MotorEncoderSubsystem(this, SubsystemName + "-w2", false);
+        wheelMotor2_ = new MotorEncoderSubsystem(this, SubsystemName + "-w2", false, 8);
         addChild(wheelMotor2_);
         
         hoodMotor_ = new HoodMotorSubsystem(this) ;

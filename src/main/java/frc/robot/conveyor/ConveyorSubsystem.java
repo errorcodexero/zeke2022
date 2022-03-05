@@ -115,7 +115,7 @@ public class ConveyorSubsystem extends Subsystem {
     private boolean[] sensor_states_;               // The states of ball detect sensors
     private boolean[] sensor_states_prev_;          // The states of ball detect sensors
 
-    private boolean start_intake_motor_during_shoot_ ;
+    private boolean run_intake_motor_shoot_ ;
     private double start_intake_motor_start_ ;
     private double start_intake_motor_duration_ ;
     
@@ -126,7 +126,7 @@ public class ConveyorSubsystem extends Subsystem {
         color_sensor_ = color;
 
         bypass_ = false ;
-        start_intake_motor_during_shoot_ = false ;
+        run_intake_motor_shoot_ = false ;
         prev_sensors_state_ = "" ;
 
         sensors_ = new DigitalInput[SENSOR_COUNT];
@@ -190,10 +190,9 @@ public class ConveyorSubsystem extends Subsystem {
             }
         }
 
-        if (start_intake_motor_during_shoot_ && mode_ == Mode.SHOOT) {
+        if (mode_ == Mode.SHOOT) {
             if (getRobot().getTime() - start_intake_motor_start_ > start_intake_motor_duration_) {
-                setIntakeMotor(intake_motor_on_);
-                start_intake_motor_during_shoot_ = false ;
+                run_intake_motor_shoot_ = true ;
             }
         }
 
@@ -381,7 +380,7 @@ public class ConveyorSubsystem extends Subsystem {
     protected void setShootMode() throws BadMotorRequestException, MotorRequestFailedException {
         mode_ = Mode.SHOOT ;
         stop_requested_ = false;
-        start_intake_motor_during_shoot_ = true ;
+        run_intake_motor_shoot_ = false ;
         start_intake_motor_start_ = getRobot().getTime() ;
         setMotorsPower(0.0, shooter_motor_on_) ;
     }  
@@ -428,7 +427,7 @@ public class ConveyorSubsystem extends Subsystem {
 
     private void setMotorState() throws BadMotorRequestException, MotorRequestFailedException {
         if (mode_ == Mode.SHOOT) {
-            if (getBallCount() > 0)
+            if (getBallCount() > 0) 
                 setShooterMotor(shooter_motor_on_);
             else
                 setShooterMotor(0.0);
@@ -466,7 +465,7 @@ public class ConveyorSubsystem extends Subsystem {
         // when it is time.
         //
         if (mode_ == Mode.SHOOT) {
-            if (getBallCount() > 0) {
+            if (getBallCount() > 0 && run_intake_motor_shoot_) {
                 setIntakeMotor(intake_motor_on_);
             }
             else {
