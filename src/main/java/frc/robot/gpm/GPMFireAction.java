@@ -1,6 +1,5 @@
 package frc.robot.gpm;
 
-import org.xero1425.base.Subsystem.DisplayType;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.MessageLogger;
@@ -27,8 +26,6 @@ public class GPMFireAction extends Action {
         }
     }
 
-    private final String LoggerName = "fire-action" ;
-
     private GPMSubsystem sub_;
     private TargetTrackerSubsystem target_tracker_ ;
     private TankDriveSubsystem db_ ;
@@ -44,9 +41,11 @@ public class GPMFireAction extends Action {
     private final double shooter_velocity_threshold_ ;
     private final double hood_position_threshold_ ;
 
-    private int logger_id_ ;
-    private boolean is_conveyor_on_ ;
+    private int ready_logger_id_ ;
+    private int shoot_params_logger_id_ ;
+    private int shoot_perf_logger_id_ ;
 
+    private boolean is_conveyor_on_ ;
     private boolean in_shutdown_mode_ ;
     private double shutdown_start_time_ ;
     private double shutdown_duration_ ;
@@ -63,7 +62,9 @@ public class GPMFireAction extends Action {
         is_conveyor_on_ = false ;
         shutdown_duration_ = sub_.getSettingsValue("fire-action:shutdown-delay").getDouble() ;
 
-        logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem(LoggerName) ;
+        ready_logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action-ready") ;
+        shoot_params_logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action-shoot-params") ;
+        shoot_perf_logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action-shoot-performance") ;
 
         double value ;
         value = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
@@ -105,17 +106,8 @@ public class GPMFireAction extends Action {
 
         MessageLogger logger = sub_.getRobot().getMessageLogger();
 
-        logger.startMessage(MessageType.Debug) ;
-        logger.add("fireshutdown:") ;
-        logger.add("shutdown start", shutdown_start_time_) ;
-        logger.add("shutdown_duration", shutdown_duration_) ;
-        logger.add("elapsed", sub_.getRobot().getTime() - shutdown_start_time_) ;
-        logger.add("inConveyorOn", is_conveyor_on_) ;
-
         if (in_shutdown_mode_) {
-            logger.add(" INSHUTDOWN ") ;
             if (sub_.getRobot().getTime() - shutdown_start_time_ > shutdown_duration_) {
-                logger.add(" COUNTDOWN ") ;
                 shooter_action_.stopPlot();
                 sub_.getShooter().setAction(null, true) ;
                 setDone() ;
@@ -123,14 +115,11 @@ public class GPMFireAction extends Action {
             }
         }
 
-        logger.endMessage();
-
         if (is_conveyor_on_) { 
             //
             // We are shooting, shoot til all balls done
             //
             if (sub_.getConveyor() == null || sub_.getConveyor().getAction().isDone()) {
-                logger.startMessage(MessageType.Debug).add("CONVEYOR DONE").endMessage();
                 shutdown_start_time_ = sub_.getRobot().getTime() ;
                 in_shutdown_mode_ = true ;
                 is_conveyor_on_ = false ;
@@ -152,20 +141,21 @@ public class GPMFireAction extends Action {
                 shooterReady = isShooterReady() ;
                 dbready = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
 
-                logger.startMessage(MessageType.Debug, logger_id_) ;
-                logger.add("FireAction: adjusting shooter") ;
+                logger.startMessage(MessageType.Debug, shoot_params_logger_id_) ;
+                logger.add("Shooter Params Targets:") ;
+                logger.add("dist", target_tracker_.getDistance()) ;
                 logger.add("w1", shoot_params_.v1_).add("w2", shoot_params_.v2_).add("hood", shoot_params_.hood_) ;
                 logger.endMessage();
                 
-                logger.startMessage(MessageType.Debug, logger_id_) ;
-                logger.add("FireAction: ready") ;
+                logger.startMessage(MessageType.Debug, ready_logger_id_) ;
+                logger.add("FireAction Ready:") ;
                 logger.add("shooter", shooterReady).add("turret", turret_.isReadyToFire()).add("db", dbready).add("tracker", target_tracker_.hasVisionTarget()) ;
                 logger.endMessage();        
 
-                sub_.putDashboard("shootrdy", DisplayType.Always, shooterReady);
-                sub_.putDashboard("dbready", DisplayType.Always, dbready);
-                sub_.putDashboard("trtready", DisplayType.Always, turret_.isReadyToFire());
-                sub_.putDashboard("llready", DisplayType.Always, target_tracker_.hasVisionTarget());
+                // sub_.putDashboard("shootrdy", DisplayType.Always, shooterReady);
+                // sub_.putDashboard("dbready", DisplayType.Always, dbready);
+                // sub_.putDashboard("trtready", DisplayType.Always, turret_.isReadyToFire());
+                // sub_.putDashboard("llready", DisplayType.Always, target_tracker_.hasVisionTarget());
                 
                 // if the
                 //  * shooter is up to speed
@@ -206,9 +196,10 @@ public class GPMFireAction extends Action {
 
     boolean isShooterReady() {
         MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+
         if (!shoot_params_valid_)
         {
-            logger.startMessage(MessageType.Debug).add("shooterready: no valid params").endMessage();
+            logger.startMessage(MessageType.Debug, shoot_perf_logger_id_).add("shooterready: no valid params").endMessage();
             //
             // We have nothing to compare to, so we cannot be ready
             //
@@ -216,7 +207,7 @@ public class GPMFireAction extends Action {
         }
 
         if (shoot_params_ == null) {
-            logger.startMessage(MessageType.Debug).add("shooterready: shoot params null").endMessage();            
+            logger.startMessage(MessageType.Debug, shoot_perf_logger_id_).add("shooterready: shoot params null").endMessage();            
             return  false ;
         }
 
@@ -230,8 +221,8 @@ public class GPMFireAction extends Action {
         double dw2 = Math.abs(w2 - shoot_params_.v2_) ;
         double dhood = Math.abs(hood - shoot_params_.hood_) ;
 
-        logger.startMessage(MessageType.Debug) ;
-        logger.add("shooterready:") ;
+        logger.startMessage(MessageType.Debug, shoot_perf_logger_id_) ;
+        logger.add("Shooter Performance:") ;
         logger.add("w1act", w1) ;
         logger.add("w2act", w2) ;
         logger.add("hoodact", hood) ;
@@ -246,17 +237,10 @@ public class GPMFireAction extends Action {
     }
 
     public void computeShooterParams(double dist) {
-        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
-
         double v1 = 6000 ;
         double v2 = 6000 ;
-        // double hood = 0.1354 * dist + 3.2578 ;
         double hood = 0.1354 * dist + 4.7 ;
 
         shoot_params_ = new ShootParams(v1, v2, hood) ;
-
-        logger.startMessage(MessageType.Debug, logger_id_) ;
-        logger.add("FireAction: compute") ;
-        logger.add("dist", dist).add("vel", v1).add("hood", hood).endMessage();
     }
 }

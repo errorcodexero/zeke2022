@@ -30,11 +30,15 @@
             "zeke-color-sensor": false,
             "intake": false,
             "conveyor": false,
+
+            // Shoot related
             "shooter": false,
-            "fire-action" : false,
+            "fire-action-ready" : false,
+            "fire-action-shoot-params" : false,
+            "fire-action-shoot-performance": false,
             "shooter-w1" : false,
             "shooter-w2" : false,
-            "shooter-h" : false,
+            "shooter-h" : true,
             "turret" : false,
 
             // Climber related

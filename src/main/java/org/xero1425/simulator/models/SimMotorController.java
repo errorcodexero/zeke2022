@@ -16,10 +16,15 @@ public class SimMotorController {
     int handle_ ;
     private SimulationModel model_ ;
     private int count_ ;
+    private int index_ ;
     
     public SimMotorController(SimulationModel model, String name) {
         model_ = model;
         name_ = name ;
+    }
+
+    public int getIndex() {
+        return index_ ;
     }
 
     public int getCount() {
@@ -68,7 +73,6 @@ public class SimMotorController {
     }
 
     private boolean createSingleMotor(String name) {
-        int index = 0 ;
 
         if (!model_.hasProperty(name + ":index") || !model_.hasProperty(name + ":type"))
             return false;
@@ -83,7 +87,7 @@ public class SimMotorController {
             return false;
 
         try {
-            index = indexval.getInteger();
+            index_ = indexval.getInteger();
         } catch (BadParameterTypeException e) {
         }
 
@@ -96,16 +100,16 @@ public class SimMotorController {
         if (t.equals("talonfx") || t.equals("talonsrx")) {
             if (handle_ == -1)
             {
-                handle_ = SimDeviceDataJNI.getSimDeviceHandle(CTREMotorController.SimDeviceName + "[" + index + "]") ;
+                handle_ = SimDeviceDataJNI.getSimDeviceHandle(CTREMotorController.SimDeviceName + "[" + index_ + "]") ;
             }
         }
         else if (t.equals("sparkmax-brushed")) {
             if (handle_ == -1)
-                handle_ = SimDeviceDataJNI.getSimDeviceHandle(SparkMaxMotorController.SimDeviceNameBrushed + "[" + index + "]") ;
+                handle_ = SimDeviceDataJNI.getSimDeviceHandle(SparkMaxMotorController.SimDeviceNameBrushed + "[" + index_ + "]") ;
         }
         else if (t.equals("sparkmax-brushless")) {
             if (handle_ == -1)
-                handle_ = SimDeviceDataJNI.getSimDeviceHandle(SparkMaxMotorController.SimDeviceNameBrushless + "[" + index + "]") ;            
+                handle_ = SimDeviceDataJNI.getSimDeviceHandle(SparkMaxMotorController.SimDeviceNameBrushless + "[" + index_ + "]") ;            
         }        
         else {
             return false ;
@@ -116,5 +120,4 @@ public class SimMotorController {
         
         return true ;        
     }
-
 } ;

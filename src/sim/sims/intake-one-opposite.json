@@ -25,7 +25,7 @@
                     "values" :
                     {
                         "comment" : "Collect/shoot mode switch set to collect",                        
-                        "button6" : false,
+                        "button6" : true,
                         
                         // The climb lock button is in the locked state
                         "button4" : true                        
@@ -73,9 +73,9 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "color-0" : "1.0, 0.0, 0.0",
-                        "proximity-0" : 25,
-                        "ir-0" : 26
+                        "color-1" : "1.0, 0.0, 0.0",
+                        "proximity-1" : 25,
+                        "ir-1" : 26
                     }
                 }
             ]
@@ -105,9 +105,9 @@
                     "instance" : "1",
                     "values" : 
                     {
-                        "color-0" : "0.33, 0.33, 0.33",
-                        "proximity-0" : 25,
-                        "ir-0" : 26
+                        "color-1" : "0.33, 0.33, 0.33",
+                        "proximity-1" : 25,
+                        "ir-1" : 26
                     }
                 }
             ]

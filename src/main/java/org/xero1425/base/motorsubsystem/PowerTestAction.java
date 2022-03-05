@@ -28,7 +28,6 @@ public class PowerTestAction extends MotorAction {
         if (Math.abs(newpower - current_) > 0.01) {
             current_ = newpower ;
             getSubsystem().setPower(current_);
-            System.out.println("Setting power to " + current_) ;
         }
     }
 

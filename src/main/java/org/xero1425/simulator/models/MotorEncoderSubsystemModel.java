@@ -37,10 +37,15 @@ public class MotorEncoderSubsystemModel extends SimulationModel {
 
     @Override
     public void run(double dt) {
+        
         double power = motor_.getPower() ;
         double rps = rps_per_volt_per_time_ * power * dt ;
 
         revs_ += rps ;
+
+        if (motor_.getIndex() == 12 && power > 0.1) {
+            System.out.println("Power " + power + ", revs total " + revs_) ;
+        }
 
         if (motor_.usesTicks()) {
             motor_.setEncoder(revs_ * ticks_per_rev_);

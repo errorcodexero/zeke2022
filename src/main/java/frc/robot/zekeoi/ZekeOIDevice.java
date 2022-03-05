@@ -192,21 +192,13 @@ public class ZekeOIDevice extends OIPanel {
             is_windmill_holding_ = true ;
         }
 
-        if (getValue(eject_gadget_) == 1) {
-            //
-            // Eject is the highest priority
-            //
-            if (gpm.getConveyor().getAction() != eject_action_)
-                gpm.getConveyor().setAction(eject_action_) ;
-        }
-        else if (getValue(collect_v_shoot_gadget_) == 1) {
+        if (getValue(collect_v_shoot_gadget_) == 1) {
             //
             // We are collecting
             //
             if (gpm.getAction() == fire_action_) {
                 gpm.cancelAction();
             }
-
             if (isCollectButtonPressed()) {
                 if (gpm.getAction() != start_collect_action_)
                     gpm.setAction(start_collect_action_);
@@ -296,10 +288,15 @@ public class ZekeOIDevice extends OIPanel {
     @Override
     public void generateActions(SequenceAction seq) throws InvalidActionRequest {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
+        GPMSubsystem gpm = zeke.getGPMSubsystem() ;
 
         setLEDs() ;
 
-        if (getValue(climb_lock_gadget_) == 1) {
+        if (getValue(eject_gadget_) == 1) {
+            if (gpm.getConveyor().getAction() != eject_action_)
+                gpm.getConveyor().setAction(eject_action_) ;
+        }
+        else if (getValue(climb_lock_gadget_) == 1) {
             generateCargoActions();
         } else if (zeke.getClimber() != null) {
             generateClimbActions() ;

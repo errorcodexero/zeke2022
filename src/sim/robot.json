@@ -139,10 +139,10 @@
             "model" : "conveyor",
             "instance" : "1",
             "props" : {
-                "intake-sensor" : 11,
-                "chimney-sensor" : 13,
-                "shooter-sensor" : 12,
-                "exit-sensor" : 10
+                "intake-sensor" : 3,
+                "chimney-sensor" : 2,
+                "shooter-sensor" : 0,
+                "exit-sensor" : 1
             }
         },
         {
@@ -162,8 +162,8 @@
             "model" : "motor-encoder",
             "instance" : "w1",
             "props" : {
-                "rps-per-volt-per-time" : 75.68,
-                "ticks-per-rev" : 24.0,
+                "rps-per-volt-per-time" : 1.975,
+                "ticks-per-rev" : 42.0,
                 "w1:motor:type": "sparkmax-brushless",
                 "w1:motor:index": 9,
                 "w1:motor:use_motor_encoders": true
@@ -173,8 +173,8 @@
             "model" : "motor-encoder",
             "instance" : "w2",
             "props" : {
-                "rps-per-volt-per-time" : 75.68,
-                "ticks-per-rev" : 24.0,
+                "rps-per-volt-per-time" : 1.975,
+                "ticks-per-rev" : 42.0,
                 "w2:motor:type": "sparkmax-brushless",
                 "w2:motor:index": 10,
                 "w2:motor:use_motor_encoders": true                
@@ -185,7 +185,7 @@
             "instance" : "hood",
             "props" : {
                 "rps-per-volt-per-time" : 75.68,
-                "ticks-per-rev" : 24.0,
+                "ticks-per-rev" : 42.0,
                 "hood:motor:type": "sparkmax-brushless",
                 "hood:motor:index": 12,
                 "hood:motor:use_motor_encoders": true                
