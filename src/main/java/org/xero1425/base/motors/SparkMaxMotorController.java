@@ -118,7 +118,7 @@ public class SparkMaxMotorController extends MotorController
         if (RobotBase.isSimulation())
             return false ;
             
-        return true ;
+        return false ;
     }
 
     /// \brief Set the target if running a PID loop on the motor controller

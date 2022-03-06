@@ -139,6 +139,7 @@ public class MotorEncoderSubsystem extends MotorSubsystem
         logger.add("pos", pos) ;
         logger.add("velocity", speedometer_.getVelocity());
         logger.add("accel", speedometer_.getAcceleration()) ;
+        logger.add("ticks", getEncoderRawCount()) ;
         logger.endMessage();
     }
 }

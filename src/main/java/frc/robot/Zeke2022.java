@@ -59,6 +59,7 @@ public class Zeke2022 extends XeroRobot {
     factory.registerModel("color-sensor-model", "frc.models.ColorSensorModel");
     factory.registerModel("zeke-limelight", "frc.models.ZekeLimeLightModel");
     factory.registerModel("turret", "frc.models.TurretModel");
+    factory.registerModel("hood", "frc.models.HoodModel");
     factory.registerModel("conveyor", "frc.models.ConveyorModel");
     factory.registerModel("zekeoi", "frc.models.ZekeOIModel");
   }

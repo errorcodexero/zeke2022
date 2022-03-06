@@ -181,15 +181,20 @@
             }
         },
         {
-            "model" : "motor-encoder",
-            "instance" : "hood",
+            "model" : "hood",
+            "instance" : "1",
             "props" : {
-                "rps-per-volt-per-time" : 75.68,
-                "ticks-per-rev" : 42.0,
                 "hood:motor:type": "sparkmax-brushless",
                 "hood:motor:index": 12,
-                "hood:motor:use_motor_encoders": true                
+                "degrees_per_second_per_volt" : 45,
+                "encoder" : 0,
+                "rmax" : 26,
+                "rmin" : 1,
+                "emax" : 4.082,
+                "emin" : 1,
+                "ec" : 1.184,
+                "rc" : 1                
             }
-        }        
+        }     
     ]
 }

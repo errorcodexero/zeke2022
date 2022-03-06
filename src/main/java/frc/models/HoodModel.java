@@ -11,15 +11,23 @@ import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 import org.xero1425.misc.SettingsValue;
 
-public class TurretModel extends SimulationModel {
-    public TurretModel(SimulationEngine engine, String model, String inst) {
+public class HoodModel extends SimulationModel {
+        
+    private SimMotorController motor_ ;
+    private double degrees_per_second_per_volt_ ;
+    private double angle_  ;
+    private int encoder_input_ ;
+    private EncoderMapper mapper_ ;
+    private double voltage_ ;
+
+    public HoodModel(SimulationEngine engine, String model, String inst) {
         super(engine, model, inst);
         
         mapper_ = null ;
     }
 
     public boolean create() {
-        motor_ = new SimMotorController(this, "turret") ;
+        motor_ = new SimMotorController(this, "hood") ;
         if (!motor_.createMotor())
             return false ;
 
@@ -141,16 +149,11 @@ public class TurretModel extends SimulationModel {
         angle_ += degrees_per_second_per_volt_ * dt * power ;
         voltage_ = mapper_.toEncoder(angle_) ;
         AnalogInDataJNI.setVoltage(encoder_input_, voltage_) ;
+
+        System.out.println("Encoder Voltage " + voltage_ + ", encoder " + encoder_input_ + ", power " + power + ", angle " + angle_ + ", dps " + degrees_per_second_per_volt_) ;
     }
 
     public Rotation2d getAngle() {
         return Rotation2d.fromDegrees(angle_) ;
     }
-    
-    private SimMotorController motor_ ;
-    private double degrees_per_second_per_volt_ ;
-    private double angle_  ;
-    private int encoder_input_ ;
-    private EncoderMapper mapper_ ;
-    private double voltage_ ;
 }

@@ -100,7 +100,7 @@ public class TalonFXMotorController extends MotorController
     /// \brief Returns true if the motor controller supports PID loops on the controller
     /// \returns true if the motor controller supports PID loops on the controller
     public boolean hasPID() throws BadMotorRequestException {
-        return true ;
+        return false ;
     }
 
     /// \brief Set the target if running a PID loop on the motor controller

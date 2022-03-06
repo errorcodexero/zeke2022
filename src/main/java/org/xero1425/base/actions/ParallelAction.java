@@ -107,9 +107,6 @@ public class ParallelAction extends ActionGroup
                     if (!act.isDone())
                         done = false ;
                 }
-                else {
-                    done = false ;
-                }
             }
         }
         else

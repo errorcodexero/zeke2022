@@ -33,12 +33,12 @@
 
             // Shoot related
             "shooter": false,
-            "fire-action-ready" : false,
+            "fire-action-ready" : true,
             "fire-action-shoot-params" : false,
             "fire-action-shoot-performance": false,
             "shooter-w1" : false,
             "shooter-w2" : false,
-            "shooter-h" : true,
+            "shooter-h" : false,
             "turret" : false,
 
             // Climber related
