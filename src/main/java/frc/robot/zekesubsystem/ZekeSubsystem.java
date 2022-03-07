@@ -1,8 +1,12 @@
 package frc.robot.zekesubsystem;
 
+import com.ctre.phoenix.Logger;
+
 import org.xero1425.base.RobotSubsystem;
 import org.xero1425.base.XeroRobot;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 
 import edu.wpi.first.wpilibj.I2C;
 import frc.robot.Zeke2022;
@@ -34,6 +38,7 @@ public class ZekeSubsystem extends RobotSubsystem {
 
         db_ = new TankDriveSubsystem(this, TankdriveSubsystemName, "tankdrive") ;
         addChild(db_) ;
+        db_.setOpenLoopRampRates(0.5, 0);
 
         oi_ = new ZekeOISubsystem(this, db_) ;
         addChild(oi_) ;

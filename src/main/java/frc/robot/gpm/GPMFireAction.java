@@ -104,7 +104,8 @@ public class GPMFireAction extends Action {
 
         boolean shooterReady, dbready ;
 
-        MessageLogger logger = sub_.getRobot().getMessageLogger();
+
+
 
         if (in_shutdown_mode_) {
             if (sub_.getRobot().getTime() - shutdown_start_time_ > shutdown_duration_) {
@@ -237,10 +238,13 @@ public class GPMFireAction extends Action {
     }
 
     public void computeShooterParams(double dist) {
-        double v1 = 6000 ;
-        double v2 = 6000 ;
-        double hood = 0.1354 * dist + 4.7 ;
+        double vel = 0.4992 * dist * dist - 38.828 * dist + 4060.5 ;
+        double hood = 0.156 * dist + 0.5801 ;
 
-        shoot_params_ = new ShootParams(v1, v2, hood) ;
+        if (hood < 1.0 || hood > 22.0) {
+            shoot_params_valid_ = false ;
+        }
+
+        shoot_params_ = new ShootParams(vel, vel, hood) ;
     }
 }

@@ -41,7 +41,6 @@ public class GPMStopCollectAction extends Action {
     public void cancel() {
         super.cancel();
 
-        conveyor_stop_action_.cancel() ;
         intake_stop_action_.cancel();
     }
 

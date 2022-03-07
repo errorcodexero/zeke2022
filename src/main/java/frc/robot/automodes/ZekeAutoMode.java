@@ -2,19 +2,20 @@ package frc.robot.automodes;
 
 import org.xero1425.base.actions.DelayAction;
 import org.xero1425.base.actions.InvalidActionRequest;
-import org.xero1425.base.actions.LambdaAction;
 import org.xero1425.base.actions.ParallelAction;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.controllers.AutoMode;
 import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
+import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MissingParameterException;
 
-import frc.robot.conveyor.ConveyorSubsystem;
 import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
+import frc.robot.turret.FollowTargetAction;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeAutoMode extends AutoMode {
@@ -25,16 +26,13 @@ public class ZekeAutoMode extends AutoMode {
     protected ZekeSubsystem getZekeRobotSubsystem() {
         return (ZekeSubsystem) getAutoController().getRobot().getRobotSubsystem();
     }
-    
-    //
-    // Add the actions to set the initial ball count
-    //
-    protected void setInitialBallCount(int count) throws InvalidActionRequest {
-        ConveyorSubsystem conveyor = getZekeRobotSubsystem().getGPMSubsystem().getConveyor() ;
-        LambdaAction a = new LambdaAction(getAutoController().getRobot().getMessageLogger(), "set-ball-count",  () -> { conveyor.setPreloadedBall(); }) ;
-        addAction(a);
-    }
 
+    protected void startTracking() throws BadParameterTypeException, MissingParameterException, InvalidActionRequest {
+        ZekeSubsystem zeke = getZekeRobotSubsystem() ;
+        FollowTargetAction act = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker()) ;
+        addSubActionPair(zeke.getTurret(), act, false);
+    }
+    
     //
     // Add a sequence that drives a path and fires the balls in the robot once the path is
     // complete.
@@ -66,7 +64,7 @@ public class ZekeAutoMode extends AutoMode {
         GPMSubsystem gpm = getZekeRobotSubsystem().getGPMSubsystem();
         TankDriveSubsystem db = getZekeRobotSubsystem().getTankDrive();
         ParallelAction parallel;
-        SequenceAction series, series2;
+        SequenceAction series2;
 
         parallel = new ParallelAction(getAutoController().getRobot().getMessageLogger(), ParallelAction.DonePolicy.All);
         series2 = new SequenceAction(getAutoController().getRobot().getMessageLogger());
@@ -81,17 +79,11 @@ public class ZekeAutoMode extends AutoMode {
         parallel.addAction(series2);
 
         GPMStartCollectAction collect = new GPMStartCollectAction(gpm) ;
-        series = new SequenceAction(getAutoController().getRobot().getMessageLogger()); 
-
-        //
-        // Note this collect sequence is a non-blocking dispatch.  The dispatch action will
-        // complete right away and so we really wait for the path action to complete.
-        //
-        series.addSubActionPair(gpm, collect, false);
-        parallel.addAction(series);
+        parallel.addSubActionPair(gpm, collect, false) ;
         addAction(parallel);
 
-        addSubActionPair(gpm, new GPMStopCollectAction(gpm), true);
+        GPMStopCollectAction stop = new GPMStopCollectAction(gpm) ;
+        addSubActionPair(gpm, stop, false);
     }
 
     //

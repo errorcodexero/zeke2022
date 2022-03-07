@@ -16,7 +16,6 @@ public class GPMShooterTestAction extends Action {
     private SimpleWidget hoodwidget_ ;
     private SetShooterAction shoot_action_ ;
     private double w1current_ ;
-    private double w2current_ ;
     private double hoodcurrent_ ;
 
     public GPMShooterTestAction(GPMSubsystem sub) throws Exception {
@@ -25,13 +24,11 @@ public class GPMShooterTestAction extends Action {
         sub_ = sub ;
         shoot_action_ = new SetShooterAction(sub.getShooter(), 0.0, 0.0, 0.0) ;
 
-        w1widget_ = makeWidget("wheel1") ;
-        w2widget_ = makeWidget("wheel2") ;
+        w1widget_ = makeWidget("velocity") ;
         hoodwidget_ = makeWidget("hood") ;
 
         w1current_ = 0.0 ;
-        w2current_ = 0.0 ;
-        hoodcurrent_ = 0.0 ;
+        hoodcurrent_ = 12.0 ;
     }    
 
     @Override
@@ -44,10 +41,14 @@ public class GPMShooterTestAction extends Action {
     @Override
     public void run() throws BadMotorRequestException, MotorRequestFailedException {
         double w1 = w1widget_.getEntry().getDouble(w1current_) ;
-        double w2 = w2widget_.getEntry().getDouble(w2current_) ;
         double hood = hoodwidget_.getEntry().getDouble(hoodcurrent_) ;
 
-        shoot_action_.update(w1, w2, hood) ;
+        if (hood < 1)
+            hood = 1 ;
+        else if (hood > 21.0)
+            hood = 21.0 ;
+
+        shoot_action_.update(w1, w1, hood) ;
     }
 
     @Override

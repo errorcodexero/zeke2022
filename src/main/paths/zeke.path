@@ -88,14 +88,14 @@
                     "name": "ball_1",
                     "points": [
                         {
-                            "heading": -40.60129464500457,
-                            "x": 399.4993701337979,
-                            "y": 118.23679639505653
+                            "heading": -46.548157698977974,
+                            "x": 387.78339262029886,
+                            "y": 102.61549304372437
                         },
                         {
-                            "heading": -39.28940686250024,
-                            "x": 436.59996559321183,
-                            "y": 86.01785823293395
+                            "heading": -23.749494492866877,
+                            "x": 427.81298245808745,
+                            "y": 72.34921780051832
                         }
                     ],
                     "startangle": 0,
@@ -156,13 +156,13 @@
                     "points": [
                         {
                             "heading": 24.77514056883193,
-                            "x": 376.06741510679973,
-                            "y": 221.72793109763202
+                            "x": 385.8307297013823,
+                            "y": 222.7042625570903
                         },
                         {
                             "heading": 13.002114031497742,
-                            "x": 432.765645377004,
-                            "y": 252.08888050300504
+                            "x": 433.67097121483704,
+                            "y": 248.08888050300504
                         }
                     ],
                     "startangle": 0,
@@ -187,13 +187,13 @@
                     "points": [
                         {
                             "heading": 13.0021,
-                            "x": 432.766,
-                            "y": 252.089
+                            "x": 433.671,
+                            "y": 248.089
                         },
                         {
                             "heading": 8.746162262555252,
-                            "x": 587.9313418092421,
-                            "y": 273.47349844891977
+                            "x": 583.9313418092421,
+                            "y": 272.47349844891977
                         }
                     ],
                     "startangle": 0,
@@ -218,8 +218,8 @@
                     "points": [
                         {
                             "heading": -171.25384000000003,
-                            "x": 587.931,
-                            "y": 273.473
+                            "x": 583.931,
+                            "y": 272.473
                         },
                         {
                             "heading": -148.6713071321959,
@@ -292,6 +292,140 @@
                             "heading": 90,
                             "x": 170,
                             "y": 170
+                        }
+                    ],
+                    "startangle": 0,
+                    "startangledelay": 0,
+                    "startvelocity": 0
+                }
+            ]
+        },
+        {
+            "name": "near_tarmac_4",
+            "paths": [
+                {
+                    "constraints": [
+                    ],
+                    "endangle": 0,
+                    "endangledelay": 0,
+                    "endvelocity": 0,
+                    "flags": [
+                    ],
+                    "markers": [
+                    ],
+                    "maxacceleration": 60,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1800,
+                    "maxvelocity": 120,
+                    "name": "p1",
+                    "points": [
+                        {
+                            "heading": 92.20259816176583,
+                            "x": 347.7538027825102,
+                            "y": 248.08888050300504
+                        },
+                        {
+                            "heading": 86.6335393365702,
+                            "x": 348.73013424196847,
+                            "y": 283.3551557462111
+                        }
+                    ],
+                    "startangle": 0,
+                    "startangledelay": 0,
+                    "startvelocity": 0
+                },
+                {
+                    "constraints": [
+                    ],
+                    "endangle": 0,
+                    "endangledelay": 0,
+                    "endvelocity": 0,
+                    "flags": [
+                    ],
+                    "markers": [
+                    ],
+                    "maxacceleration": 60,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1800,
+                    "maxvelocity": 120,
+                    "name": "p2",
+                    "points": [
+                        {
+                            "heading": -93.36650000000002,
+                            "x": 348.73,
+                            "y": 283.355
+                        },
+                        {
+                            "heading": -142.59464336859136,
+                            "x": 332.132499431178,
+                            "y": 241.25456028679721
+                        }
+                    ],
+                    "startangle": 0,
+                    "startangledelay": 0,
+                    "startvelocity": 0
+                },
+                {
+                    "constraints": [
+                    ],
+                    "endangle": 0,
+                    "endangledelay": 0,
+                    "endvelocity": 0,
+                    "flags": [
+                    ],
+                    "markers": [
+                    ],
+                    "maxacceleration": 100,
+                    "maxcentripetal": 6000,
+                    "maxjerk": 1800,
+                    "maxvelocity": 120,
+                    "name": "p3",
+                    "points": [
+                        {
+                            "heading": 37.405,
+                            "x": 333.109,
+                            "y": 242.231
+                        },
+                        {
+                            "heading": -11.310487269477267,
+                            "x": 453.19760040400223,
+                            "y": 241.25456028679721
+                        },
+                        {
+                            "heading": 33.11134196037203,
+                            "x": 579.0970215930342,
+                            "y": 261.8285265570459
+                        }
+                    ],
+                    "startangle": 0,
+                    "startangledelay": 0,
+                    "startvelocity": 0
+                },
+                {
+                    "constraints": [
+                    ],
+                    "endangle": 0,
+                    "endangledelay": 0,
+                    "endvelocity": 0,
+                    "flags": [
+                    ],
+                    "markers": [
+                    ],
+                    "maxacceleration": 100,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1800,
+                    "maxvelocity": 100,
+                    "name": "p4",
+                    "points": [
+                        {
+                            "heading": -146.8887,
+                            "x": 585.979,
+                            "y": 270.545
+                        },
+                        {
+                            "heading": -167.73522627210755,
+                            "x": 430.74197683646224,
+                            "y": 229.53858277329812
                         }
                     ],
                     "startangle": 0,

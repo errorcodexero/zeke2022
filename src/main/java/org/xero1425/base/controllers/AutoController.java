@@ -78,7 +78,7 @@ public abstract class AutoController extends BaseController {
                 catch(Exception ex) {
                     MessageLogger logger = getRobot().getMessageLogger();
                     logger.startMessage(MessageType.Error) ;
-                    logger.add("expection thrown in start() method of automode - ").add(ex.getMessage()) ;
+                    logger.add("exception thrown in start() method of automode - ").add(ex.getMessage()) ;
                     logger.endMessage();
                 }
             }
@@ -87,9 +87,10 @@ public abstract class AutoController extends BaseController {
                     current_automode_.run() ;
             }
             catch(Exception ex) {
+                ex.printStackTrace();
                 MessageLogger logger = getRobot().getMessageLogger();
                 logger.startMessage(MessageType.Error) ;
-                logger.add("expection thrown in run() method of automode - ").add(ex.getMessage()) ;
+                logger.add("exception thrown in run() method of automode - ").add(ex.getStackTrace().toString()) ;
                 logger.endMessage();            
             }
         }

@@ -166,6 +166,7 @@ public class TargetTrackerSubsystem extends Subsystem {
                 logger.add("targettracker: lost target ").add(" lost count", lost_count_) ;
                 logger.add(" has_target", has_vision_target_).endMessage();
             }
+
         }
         else
         {
@@ -176,5 +177,10 @@ public class TargetTrackerSubsystem extends Subsystem {
             distance_ = 0.0 ;
             desired_turret_angle_ = 0.0 ;
         }
+
+        if (desired_turret_angle_ > 45.0)
+            desired_turret_angle_ = 45.0 ;
+        else if (desired_turret_angle_ < -45.0)
+            desired_turret_angle_ = -45.0 ;
     }
 }

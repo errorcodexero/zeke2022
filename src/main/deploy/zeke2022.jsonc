@@ -33,7 +33,7 @@
 
             // Shoot related
             "shooter": false,
-            "fire-action-ready" : true,
+            "fire-action-ready" : false,
             "fire-action-shoot-params" : false,
             "fire-action-shoot-performance": false,
             "shooter-w1" : false,
@@ -135,7 +135,7 @@
         },
         "zekeoi": {
             "xero1425_gamepad": {
-                "index_not_yes": 0,
+                "index_not": 0,
                 "power": {
                     "max": 1.0,
                     "default": 0.6,
@@ -185,7 +185,7 @@
                 "hood_pos_threshold" : 10.0,
                 "db_vel_threshold" : 6.0,
                 "shooter_vel_threshold" : 80.0,
-                "shutdown-delay" : 1.0
+                "shutdown-delay" : 0.5
             },
             "manual-fire-action" : {
                 "w1" : 2000,
@@ -205,7 +205,7 @@
             },
             "hw": {
                 "solenoids": {
-                    "deploy": 8
+                    "deploy": 3
                 },
                 "collector": {
                     "motor-left": {
@@ -238,7 +238,7 @@
                     }
                 },
                 "solenoids": {
-                    "exit": 3
+                    "exit": 8
                 },
                 "sensors": {
                     "intake": 3,
@@ -256,7 +256,7 @@
                 "duration" : 1.5
             },
             "shoot-action" : {
-                "second-ball-delay" : 1.0
+                "second-ball-delay" : 0.5
             }
         },
         "turret": {
@@ -273,7 +273,7 @@
                     "emin": 0.0,
                     "emax": 5.0,
                     "ec": {
-                        "COMPETITION": 2.46,
+                        "COMPETITION": 1.844,
                         "PRACTICE": 0.62133
                     },
                     "rc": 0.0
@@ -507,7 +507,6 @@
             }
         },
         "shooter-h": {
-            // Valid raw analog range 1.03 - 4.0
             "hw": {
                 "motors": {
                     "type": "sparkmax_brushless",
@@ -516,15 +515,15 @@
                 "encoder": {
                     "type": "analog",
                     "ainput": 0,
-                    "rmin": 1,
-                    "rmax": 26,
-                    "emin": 1.184,
-                    "emax": 4.082,
+                    "rmin": 0,
+                    "rmax": 23,
+                    "emin": 0.9,
+                    "emax": 3.59,
                     "ec": {
-                        "COMPETITION": 1.184,
+                        "COMPETITION": 0.9,
                         "PRACTICE": 0.62133
                     },
-                    "rc": 1
+                    "rc": 0
                 }
             },
             "hood": {
@@ -536,8 +535,8 @@
                 "min": -0.4,
                 "imax": 0.0
             },
-            "maxpos" : 22.0,
-            "minpos" : 1.0
+            "maxpos" : 21.5,                       // 21.5
+            "minpos" : 1.5                      // 1.5
         },
         "zeke-color-sensor": {
             "hw": {
@@ -569,11 +568,11 @@
         }
     },
     "testmode": {
-        "enabled": true,
+        "enabled": false,
         "which": 101,
-        "power": 0.4,
-        "duration": 2.0,
-        "distance": 22,
+        "power": 0.1,
+        "duration": 1.0,
+        "distance": 3.0,
         "name": "far_tarmac_4_ball_1"
     }
 }

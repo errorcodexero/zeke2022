@@ -288,7 +288,7 @@ public class ClimbAction extends Action {
     private void doWindmillOne() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
         if (sub_.isLeftBTouched() && sub_.isRightBTouched()) {
-            sub_.getWindmillMotor().setPower(0.15) ;
+            sub_.getWindmillMotor().setPower(0.10) ;
             sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.CLOSED);
             
             state_start_time_ = sub_.getRobot().getTime() ;

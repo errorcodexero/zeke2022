@@ -2,6 +2,8 @@ package frc.robot.shooter;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 
 public class HoodMotorSubsystem extends MotorEncoderSubsystem {
     private double max_pos_ ;
@@ -15,12 +17,14 @@ public class HoodMotorSubsystem extends MotorEncoderSubsystem {
     }
 
     @Override
-    protected double limitPower(double p) {
-        if (getPosition() <= min_pos_ && p < 0.0)
-            p = 0.0 ;
-        else if (getPosition() >= max_pos_ && p > 0.0)
-            p = 0.0 ;
+    public void computeMyState() throws Exception {
+        super.computeMyState();
 
-        return p ;
+        putDashboard("hood", DisplayType.Verbose, getPosition());
+    }
+
+    @Override
+    public void run() throws Exception {
+        super.run() ;
     }
 }

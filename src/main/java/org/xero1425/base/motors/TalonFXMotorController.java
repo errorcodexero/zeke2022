@@ -37,7 +37,7 @@ public class TalonFXMotorController extends MotorController
     /// \brief the name of the device when simulating
     public final static String SimDeviceName = "CTREMotorController" ;
 
-    private final int ControllerTimeout = 5000 ;
+    private final int ControllerTimeout = 250 ;
 
     /// \brief Create a new TalonFX Motor Controller.
     /// \param name the name of this motor
@@ -61,7 +61,7 @@ public class TalonFXMotorController extends MotorController
             sim_.createBoolean(MotorController.SimEncoderStoresTicksParamName, SimDevice.Direction.kBidir, true) ;
         }
         else {
-            ErrorCode code ;
+
 
             sim_ = null ;
             sim_power_ = null ;
@@ -69,19 +69,26 @@ public class TalonFXMotorController extends MotorController
 
             controller_ = new TalonFX(index) ;
 
-            code = controller_.configFactoryDefault() ;
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE configFactoryDefault() call failed during initialization", code) ;            
-               
-            code = controller_.configVoltageCompSaturation(12.0, ControllerTimeout) ;
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE configVoltageCompSaturation() call failed during initialization", code) ;
+            // ErrorCode code = ErrorCode.OK ;
+            // boolean done = false ;
+            // for(int i = 0 ; i < 10 ; i++) {
+            //     code = controller_.configVoltageCompSaturation(12.0, ControllerTimeout) ;
+            //     if (code == ErrorCode.OK) {
+            //         done = true ;
+            //         break ;
+            //     }
+            // }
 
-            controller_.enableVoltageCompensation(true);
+            // if (!done) {
+            //     System.out.println("CTRE voltage comp failed") ;
+            //     throw new MotorRequestFailedException(this, "CTRE configVoltageCompSaturation() call failed during initialization", code) ;
+            // }
 
-            code = controller_.configNeutralDeadband(0.001, ControllerTimeout);
-            if (code != ErrorCode.OK)
-                throw new MotorRequestFailedException(this, "CTRE configNeutralDeadband() call failed during initialization", code) ;
+            // controller_.enableVoltageCompensation(true);
+
+            // code = controller_.configNeutralDeadband(0.001, ControllerTimeout);
+            // if (code != ErrorCode.OK)
+            //     throw new MotorRequestFailedException(this, "CTRE configNeutralDeadband() call failed during initialization", code) ;
         }
     }
 
@@ -100,7 +107,7 @@ public class TalonFXMotorController extends MotorController
     /// \brief Returns true if the motor controller supports PID loops on the controller
     /// \returns true if the motor controller supports PID loops on the controller
     public boolean hasPID() throws BadMotorRequestException {
-        return false ;
+        return true ;
     }
 
     /// \brief Set the target if running a PID loop on the motor controller

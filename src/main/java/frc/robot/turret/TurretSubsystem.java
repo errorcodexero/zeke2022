@@ -49,6 +49,8 @@ public class TurretSubsystem extends MotorEncoderSubsystem {
     @Override
     public void computeMyState() throws Exception {
         super.computeMyState();
+
+        putDashboard("turret", DisplayType.Verbose, getPosition());
     }
 
     @Override
@@ -60,6 +62,5 @@ public class TurretSubsystem extends MotorEncoderSubsystem {
 
         super.setPower(p) ;
     }
-
 }
 

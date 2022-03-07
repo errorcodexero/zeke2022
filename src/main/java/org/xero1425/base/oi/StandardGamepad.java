@@ -76,11 +76,15 @@ public class StandardGamepad extends Gamepad {
     @Override
     public void generateActions(SequenceAction seq) {
 
+      TankDriveSubsystem sub = getSubsystem().getRobot().getRobotSubsystem().getDB() ;
+
         if (db_ == null || isEnabled() == false)
           return ;
 
         double xSpeed = -DriverStation.getStickAxis(getIndex(), AxisNumber.LEFTY.value) ;
         double zRotation = DriverStation.getStickAxis(getIndex(), AxisNumber.RIGHTX.value) ;
+
+
 
         xSpeed = MathUtil.applyDeadband(xSpeed, deadband_) ;
         xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0) ;
@@ -120,13 +124,9 @@ public class StandardGamepad extends Gamepad {
         }
 
         if (Math.abs(leftSpeed - left_) > epslion_ || Math.abs(rightSpeed - right_) > epslion_) {
-          TankDrivePowerAction act = new TankDrivePowerAction(db_, leftSpeed, rightSpeed) ;
-          try {
-              seq.addSubActionPair(db_, act, false);
-              left_ = leftSpeed ;
-              right_ = rightSpeed ;
-          } catch (InvalidActionRequest e) {
-          }
+          db_.setPower(leftSpeed, rightSpeed) ;
+          left_ = leftSpeed ;
+          right_ = rightSpeed ;
         }
     }
 }

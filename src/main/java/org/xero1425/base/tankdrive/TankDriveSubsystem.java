@@ -284,8 +284,8 @@ public class TankDriveSubsystem extends Subsystem {
             case Teleop:
                 left_motors_.setNeutralMode(teleop_neutral_);
                 right_motors_.setNeutralMode(teleop_neutral_);
-                left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
-                right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
+                left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
+                right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
                 left_motors_.setOpenLoopRampRate(teleop_ramp_rate_) ;
                 right_motors_.setOpenLoopRampRate(teleop_ramp_rate_) ;
                 break;
@@ -406,7 +406,9 @@ public class TankDriveSubsystem extends Subsystem {
     /// \brief set the power for the tank drive
     /// \param left the power for the left side of the drivebase
     /// \param right the power for the right side of the drivebase
-    protected void setPower(double left, double right) {
+    public void setPower(double left, double right) {
+        MessageLogger logger = getRobot().getMessageLogger() ;
+
         left_power_ = left ;
         right_power_ = right ;
 
@@ -415,7 +417,6 @@ public class TankDriveSubsystem extends Subsystem {
             right_motors_.set(right_power_) ;
         }
         catch(BadMotorRequestException|MotorRequestFailedException ex) {
-            MessageLogger logger = getRobot().getMessageLogger() ;
             logger.startMessage(MessageType.Error) ;
             logger.add("subsystem ").addQuoted(getName()).add(": cannot set power -").add(ex.getMessage()).endMessage();
         }

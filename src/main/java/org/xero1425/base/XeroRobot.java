@@ -348,7 +348,7 @@ public abstract class XeroRobot extends TimedRobot {
             }
         } catch (Exception ex) {
             logger_.startMessage(MessageType.Error);
-            logger_.add("exception thrown in hardwareInit() - ").add(ex.toString()) ;
+            logger_.add("exception thrown in hardwareInit() - ").add(ex.getStackTrace().toString()) ;
             logger_.endMessage();
 
             robot_subsystem_ = null;
@@ -517,6 +517,8 @@ public abstract class XeroRobot extends TimedRobot {
     }
 
     /// \brief Called from the base class each robot loop while in the disabled state    
+    static int mycount = 0 ;
+    static double mytime = 0.0 ;
     @Override
     public void disabledPeriodic() {
         if (robot_subsystem_ == null)
@@ -527,6 +529,7 @@ public abstract class XeroRobot extends TimedRobot {
 
         updateAutoMode();
         
+        double start = getTime() ;
         try {
             robot_subsystem_.computeState();
         } catch (Exception ex) {
@@ -535,6 +538,8 @@ public abstract class XeroRobot extends TimedRobot {
             logger_.add(ex.getMessage());
             logger_.endMessage();
         }
+        mytime += (getTime() - start) ;
+        mycount++ ;
 
         if (isSimulation()) {
             SimulationEngine engine = SimulationEngine.getInstance() ;
