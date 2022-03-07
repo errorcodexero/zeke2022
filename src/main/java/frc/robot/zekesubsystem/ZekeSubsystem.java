@@ -1,12 +1,8 @@
 package frc.robot.zekesubsystem;
 
-import com.ctre.phoenix.Logger;
-
 import org.xero1425.base.RobotSubsystem;
 import org.xero1425.base.XeroRobot;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
-import org.xero1425.misc.MessageLogger;
-import org.xero1425.misc.MessageType;
 
 import edu.wpi.first.wpilibj.I2C;
 import frc.robot.Zeke2022;

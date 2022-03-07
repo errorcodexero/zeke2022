@@ -131,6 +131,8 @@ public class GPMFireAction extends Action {
             // We are waiting to be ready to shoot
             //           
             if (target_tracker_.hasVisionTarget() && sub_.getConveyor().getBallCount() > 0) {
+                MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+                
                 //
                 // We have a target, so compute a new set of parameters for the shooter and assign
                 // to the shooter.

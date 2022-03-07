@@ -12,7 +12,6 @@ import frc.robot.shooter.SetShooterAction;
 public class GPMShooterTestAction extends Action {
     private GPMSubsystem sub_ ;
     private SimpleWidget w1widget_ ;
-    private SimpleWidget w2widget_ ;
     private SimpleWidget hoodwidget_ ;
     private SetShooterAction shoot_action_ ;
     private double w1current_ ;

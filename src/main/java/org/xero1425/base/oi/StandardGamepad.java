@@ -1,9 +1,7 @@
 package org.xero1425.base.oi;
 
 import org.xero1425.base.LoopType;
-import org.xero1425.base.actions.InvalidActionRequest;
 import org.xero1425.base.actions.SequenceAction;
-import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
@@ -76,16 +74,12 @@ public class StandardGamepad extends Gamepad {
     @Override
     public void generateActions(SequenceAction seq) {
 
-      TankDriveSubsystem sub = getSubsystem().getRobot().getRobotSubsystem().getDB() ;
-
         if (db_ == null || isEnabled() == false)
           return ;
 
         double xSpeed = -DriverStation.getStickAxis(getIndex(), AxisNumber.LEFTY.value) ;
         double zRotation = DriverStation.getStickAxis(getIndex(), AxisNumber.RIGHTX.value) ;
-
-
-
+        
         xSpeed = MathUtil.applyDeadband(xSpeed, deadband_) ;
         xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0) ;
         xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed) ;
