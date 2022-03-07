@@ -38,7 +38,7 @@
             "fire-action-shoot-performance": false,
             "shooter-w1" : false,
             "shooter-w2" : false,
-            "shooter-h" : false,
+            "shooter-h" : true,
             "turret" : false,
 
             // Climber related
@@ -568,11 +568,11 @@
         }
     },
     "testmode": {
-        "enabled": false,
-        "which": 101,
+        "enabled": true,
+        "which": 35,
         "power": 0.1,
         "duration": 1.0,
-        "distance": 3.0,
+        "distance": 28.0,
         "name": "far_tarmac_4_ball_1"
     }
 }

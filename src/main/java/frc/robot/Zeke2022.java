@@ -50,7 +50,7 @@ public class Zeke2022 extends XeroRobot {
     if (ret != null)
       return ret;
 
-    return "auto-fire-one";
+    return "testmode";
   }
 
   protected void addRobotSimulationModels() {

@@ -149,8 +149,6 @@ public class HoodModel extends SimulationModel {
         angle_ += degrees_per_second_per_volt_ * dt * power ;
         voltage_ = mapper_.toEncoder(angle_) ;
         AnalogInDataJNI.setVoltage(encoder_input_, voltage_) ;
-
-        System.out.println("Encoder Voltage " + voltage_ + ", encoder " + encoder_input_ + ", power " + power + ", angle " + angle_ + ", dps " + degrees_per_second_per_volt_) ;
     }
 
     public Rotation2d getAngle() {
