@@ -199,6 +199,7 @@ public class ClimbAction extends Action {
 
             // - get a time stamp to use in next method; this is to give time for clamp A to be closed
             state_start_time_ = sub_.getRobot().getTime() ;
+
             // - go to CLAMP_ONE state (we skip SQUARING)
             state_ = ClimbingStates.CLAMP_ONE ;
         }
@@ -207,6 +208,8 @@ public class ClimbAction extends Action {
             // robot loop.
             // Do: 
             //   - disable driving from gamepad
+            
+            oi_.getGamePad().disable();
 
             //   - turn on motor on side of drivebase that has not hit the sensor
             if (sub_.isLeftATouched()) {
@@ -242,6 +245,7 @@ public class ClimbAction extends Action {
             
             // - get a time stamp to use in next method; this is to give time for clamp A to be closed
             state_start_time_ = sub_.getRobot().getTime() ;
+
             // - go to CLAMP_ONE state
             state_ = ClimbingStates.CLAMP_ONE ;
         }
