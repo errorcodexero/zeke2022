@@ -79,9 +79,9 @@ public class FollowTargetAction extends MotorAction {
             // the desired positon of the turret.
             //
             double out = pid_.getOutput(desired_, sub_.getPosition(), sub_.getRobot().getDeltaTime()) ;
-            if (sub_.getPosition() > 45.0 && out > 0)
+            if (sub_.getPosition() > 60.0 && out > 0)
                 out = 0 ;
-            else if (sub_.getPosition() < -45.0 && out < 0.0)
+            else if (sub_.getPosition() < -60.0 && out < 0.0)
                 out = 0 ;
             sub_.setPower(out) ;
 

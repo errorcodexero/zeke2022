@@ -178,9 +178,9 @@ public class TargetTrackerSubsystem extends Subsystem {
             desired_turret_angle_ = 0.0 ;
         }
 
-        if (desired_turret_angle_ > 45.0)
-            desired_turret_angle_ = 45.0 ;
-        else if (desired_turret_angle_ < -45.0)
-            desired_turret_angle_ = -45.0 ;
+        if (desired_turret_angle_ > 60.0)
+            desired_turret_angle_ = 60.0 ;
+        else if (desired_turret_angle_ < -60.0)
+            desired_turret_angle_ = -60.0 ;
     }
 }
