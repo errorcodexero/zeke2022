@@ -186,6 +186,12 @@ public abstract class XeroRobot extends TimedRobot {
         automode_ = -1;
     }
 
+    /// \brief return the period for the robot loop
+    /// \returns the period for the robot loop
+    public double getPeriod() {
+        return period_ ;
+    }
+
     /// \brief returns true if pneumatics are enabled
     /// \return true if pneumatics are enabled
     public boolean arePneumaticsEnabled() {

@@ -40,6 +40,18 @@ public class StandardGamepad extends Gamepad {
     // The delta between the desired power and actual power before we update the drivebase
     private double epslion_ ;
 
+    // The maximum increase in power to the motors in any one robot loop
+    private double max_increase_ ;
+
+    // If true, use the max increase value above
+    private boolean use_max_increase_ ;
+
+    // The maximum increase in power to the motors in any one robot loop
+    private double max_decrease_ ;
+
+    // If true, use the max increase value above
+    private boolean use_max_decrease_ ;
+
     /// \brief Create a new TankDrive gamepad device
     /// \param oi the subsystems that owns this device
     /// \param index the index to use when access this device in the WPILib library
@@ -48,16 +60,13 @@ public class StandardGamepad extends Gamepad {
         super(oi, "standard_gamepad", index);
 
         db_ = drive;
+        use_max_increase_ = false ;
     }
 
     /// \brief initialize the gamepad per robot mode, does nothing
     @Override
     public void init(LoopType ltype) {
     }
-
-    // public double getSum() {
-        // return left_ + right_ ;
-    // }
 
     public TankDriveSubsystem getDB() {
         return db_ ;
@@ -68,6 +77,18 @@ public class StandardGamepad extends Gamepad {
     public void createStaticActions() throws BadParameterTypeException, MissingParameterException {
         deadband_ = getSubsystem().getSettingsValue(getName() + ":deadband").getDouble();
         epslion_ = getSubsystem().getSettingsValue(getName() + ":epsilon").getDouble() ;
+        max_increase_ = getSubsystem().getSettingsValue(getName() + ":max-increase").getDouble() ;
+        max_decrease_ = getSubsystem().getSettingsValue(getName() + ":max-decrease").getDouble() ;
+
+        if (max_increase_ > 0.01) {
+          use_max_increase_ = true ;
+          max_increase_ = 1.0 / (max_increase_ / db_.getRobot().getPeriod()) ;
+        }
+
+        if (max_decrease_ > 0.01) {
+          use_max_decrease_ = true ;
+          max_decrease_ = 1.0 / (max_decrease_ / db_.getRobot().getPeriod()) ;
+        }
     }
 
     /// \brief generate the actions for the drivebase for the current robot loop
@@ -118,6 +139,27 @@ public class StandardGamepad extends Gamepad {
         }
 
         if (Math.abs(leftSpeed - left_) > epslion_ || Math.abs(rightSpeed - right_) > epslion_) {
+
+          if (use_max_increase_) {
+            if (leftSpeed - left_ > max_increase_) {
+              leftSpeed = left_ + max_increase_ ;
+            }
+
+            if (rightSpeed - right_ > max_increase_) {
+              rightSpeed = right_ + max_increase_ ;
+            }
+          }
+
+          if (use_max_decrease_) {
+            if (left_- leftSpeed > max_decrease_) {
+              leftSpeed = left_ - max_decrease_ ;
+            }
+
+            if (right_ - rightSpeed > max_decrease_) {
+              rightSpeed = right_ - max_decrease_ ;
+            }            
+          }
+
           db_.setPower(leftSpeed, rightSpeed) ;
           left_ = leftSpeed ;
           right_ = rightSpeed ;
