@@ -5,6 +5,7 @@ import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.conveyor.ConveyorShootAction;
 import frc.robot.shooter.SetShooterAction;
 import frc.robot.targettracker.TargetTrackerSubsystem;
@@ -105,8 +106,6 @@ public class GPMFireAction extends Action {
         boolean shooterReady, dbready ;
 
 
-
-
         if (in_shutdown_mode_) {
             if (sub_.getRobot().getTime() - shutdown_start_time_ > shutdown_duration_) {
                 shooter_action_.stopPlot();
@@ -155,10 +154,8 @@ public class GPMFireAction extends Action {
                 logger.add("shooter", shooterReady).add("turret", turret_.isReadyToFire()).add("db", dbready).add("tracker", target_tracker_.hasVisionTarget()) ;
                 logger.endMessage();        
 
-                // sub_.putDashboard("shootrdy", DisplayType.Always, shooterReady);
-                // sub_.putDashboard("dbready", DisplayType.Always, dbready);
-                // sub_.putDashboard("trtready", DisplayType.Always, turret_.isReadyToFire());
-                // sub_.putDashboard("llready", DisplayType.Always, target_tracker_.hasVisionTarget());
+                
+                boolean shootButton = DriverStation.getStickButton(2, 3) ;
                 
                 // if the
                 //  * shooter is up to speed
@@ -166,7 +163,7 @@ public class GPMFireAction extends Action {
                 //  * target tracker sees the target
                 //  * turret is aimed & ready to fire
                 // then, let the conveyor push cargo into the shooter
-                if (shooterReady && dbready && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) 
+                if ((shooterReady && dbready && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) || shootButton)
                 {
                     shooter_action_.startPlot();
                     sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;

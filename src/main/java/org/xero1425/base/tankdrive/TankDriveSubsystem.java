@@ -300,8 +300,8 @@ public class TankDriveSubsystem extends Subsystem {
             case Disabled:
                 left_motors_.setNeutralMode(disabled_neutral_);
                 right_motors_.setNeutralMode(disabled_neutral_);      
-                left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);
-                right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Infrequent);                      
+                left_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);
+                right_motors_.setEncoderUpdateFrequncy(EncoderUpdateFrequency.Frequent);                      
                 break ;
             }
         } catch (Exception ex) {

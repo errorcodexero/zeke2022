@@ -568,8 +568,8 @@
         }
     },
     "testmode": {
-        "enabled": true,
-        "which": 35,
+        "enabled": false,
+        "which": 51,
         "power": 0.1,
         "duration": 1.0,
         "distance": 28.0,

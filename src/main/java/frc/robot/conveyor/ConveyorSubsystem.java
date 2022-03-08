@@ -472,7 +472,7 @@ public class ConveyorSubsystem extends Subsystem {
                 setIntakeMotor(0.0);
             }
         }
-        else if (parked_ != null && balls_info_.size() > 0 && balls_info_.get(0).type_ == CargoType.Same && balls_info_.get(0).state_ == State.CHIMNEY) {
+        else if (parked_ != null && balls_info_.size() > 0 && balls_info_.get(0).type_ == CargoType.Same) {
             //
             // We have a ball in the chimney laready, and we have a ball in the horizontal conveyor, and the
             // ball in the horizontal conveyor is the same color as the robot, and it has triggered the chimney sensor, 

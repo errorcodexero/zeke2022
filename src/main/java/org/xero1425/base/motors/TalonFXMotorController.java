@@ -69,26 +69,8 @@ public class TalonFXMotorController extends MotorController
 
             controller_ = new TalonFX(index) ;
 
-            // ErrorCode code = ErrorCode.OK ;
-            // boolean done = false ;
-            // for(int i = 0 ; i < 10 ; i++) {
-            //     code = controller_.configVoltageCompSaturation(12.0, ControllerTimeout) ;
-            //     if (code == ErrorCode.OK) {
-            //         done = true ;
-            //         break ;
-            //     }
-            // }
-
-            // if (!done) {
-            //     System.out.println("CTRE voltage comp failed") ;
-            //     throw new MotorRequestFailedException(this, "CTRE configVoltageCompSaturation() call failed during initialization", code) ;
-            // }
-
-            // controller_.enableVoltageCompensation(true);
-
-            // code = controller_.configNeutralDeadband(0.001, ControllerTimeout);
-            // if (code != ErrorCode.OK)
-            //     throw new MotorRequestFailedException(this, "CTRE configNeutralDeadband() call failed during initialization", code) ;
+            controller_.configVoltageCompSaturation(12.0, ControllerTimeout) ;
+            controller_.enableVoltageCompensation(true);
         }
     }
 

@@ -26,15 +26,15 @@ public class ZekeAutoController extends AutoController {
         try {
             test_mode_ = new ZekeTestModeAuto(this);
             modes_[0] = new NearTarmac2BallAuto(this, "NearTarmac2BallAuto");
-            modes_[1] = new FarTarmac2BallAuto(this, "FarTarmac2BallAuto");
+            modes_[1] = new FarTarmac4BallAuto(this, "FarTarmac2BallAuto");
             modes_[2] = new FarTarmac4BallAuto(this, "FarTarmac4BallAuto");                                 
-            modes_[3] = new NearTarmac4BallAuto(this, "NearTarmac4BallAuto") ;
-            modes_[4] = new NoOpAuto(this, "Nop-4") ;
-            modes_[5] = new NoOpAuto(this, "Nop-5") ;
-            modes_[6] = new NoOpAuto(this, "Nop-6") ;
-            modes_[7] = new NoOpAuto(this, "Nop-7") ;
-            modes_[8] = new NoOpAuto(this, "Nop-8") ;
-            modes_[9] = new NoOpAuto(this, "Nop-9") ;                                                                                   
+            modes_[3] = new FarTarmac4BallAuto(this, "NearTarmac4BallAuto") ;
+            modes_[4] = new FarTarmac4BallAuto(this, "NearTarmac4BallAuto") ;
+            modes_[5] = new FarTarmac4BallAuto(this, "NearTarmac4BallAuto") ;
+            modes_[6] = new FarTarmac4BallAuto(this, "NearTarmac4BallAuto") ;
+            modes_[7] = new FarTarmac4BallAuto(this, "NearTarmac4BallAuto") ;
+            modes_[8] = new FarTarmac4BallAuto(this, "NearTarmac4BallAuto") ;
+            modes_[9] = new FarTarmac4BallAuto(this, "NearTarmac4BallAuto") ;                                                                                 
         }
         catch(Exception e) {
             logger.startMessage(MessageType.Error) ;
