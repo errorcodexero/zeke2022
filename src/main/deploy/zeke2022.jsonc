@@ -186,7 +186,7 @@
             "fire-action" : {
                 "hood_pos_threshold" : 10.0,
                 "db_vel_threshold" : 6.0,
-                "shooter_vel_threshold" : 80.0,
+                "shooter_vel_threshold" : 40.0,
                 "shutdown-delay" : 0.5
             },
             "manual-fire-action" : {

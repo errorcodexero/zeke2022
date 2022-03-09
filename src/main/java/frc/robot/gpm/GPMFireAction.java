@@ -13,6 +13,31 @@ import frc.robot.turret.TurretSubsystem;
 
 public class GPMFireAction extends Action {
 
+    
+    private enum State {
+        //
+        // Idle, action not running yet
+        IDLE,
+
+        //
+        // Waiting on all conditions to be ready.  This means we see the target with the target
+        // tracker.  The drive base is stopped, the turret is aligned to the target, the shooter hood
+        // is at the right angle, and the shooter wheels are runing at the right speed.
+        //
+        WAITING,
+
+        //
+        // We have deployed the action to the conveyor to push all balls to the shooter sheets
+        //
+        SHOOTING,
+
+        //
+        // The conveyor is done deliver balls, we are finishing the fire action by leaving the
+        // shooter sheels running as we go
+        //
+        FINISHING
+    }
+
     // shoot params class
     // used so I can return 3 values thru one var in the "calculate" class  :)
     private class ShootParams {
@@ -36,20 +61,24 @@ public class GPMFireAction extends Action {
 
     private ConveyorShootAction conveyor_shoot_action_ ;
     private SetShooterAction shooter_action_ ;
-    private boolean shoot_params_valid_ ;
+
 
     private final double db_velocity_threshold_ ;
     private final double shooter_velocity_threshold_ ;
     private final double hood_position_threshold_ ;
 
-    private int ready_logger_id_ ;
-    private int shoot_params_logger_id_ ;
-    private int shoot_perf_logger_id_ ;
+    private final boolean keep_adjusting_while_shooting_ = true ;
 
-    private boolean is_conveyor_on_ ;
-    private boolean in_shutdown_mode_ ;
+    private int fire_action_id_ ;
+
+    // private boolean is_conveyor_on_ ;
+    // private boolean in_shutdown_mode_ ;
+    private boolean shoot_params_valid_ ;
+
     private double shutdown_start_time_ ;
     private double shutdown_duration_ ;
+
+    private State state_ ;
     
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
             TankDriveSubsystem db, TurretSubsystem turret) 
@@ -60,12 +89,10 @@ public class GPMFireAction extends Action {
         target_tracker_ = target_tracker ;
         db_ = db ;
         turret_ = turret ;
-        is_conveyor_on_ = false ;
+ 
         shutdown_duration_ = sub_.getSettingsValue("fire-action:shutdown-delay").getDouble() ;
 
-        ready_logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action-ready") ;
-        shoot_params_logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action-shoot-params") ;
-        shoot_perf_logger_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action-shoot-performance") ;
+        fire_action_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action") ;
 
         double value ;
         value = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
@@ -82,17 +109,33 @@ public class GPMFireAction extends Action {
         
         // These are initial values for shooing params.  These just get the shooter spinning up
         shoot_params_ = new ShootParams(5000, 5000, 7.0) ;
-        shoot_params_valid_ = false ;
+
 
         shooter_action_ = new SetShooterAction(sub_.getShooter(), shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
+
+        state_ = State.IDLE ;
+
+        // is_conveyor_on_ = false ;
+        // is_shutdown_mode_ = false ;
+        shoot_params_valid_ = false ;
     }
 
     @Override
     public void start() throws Exception {
         super.start();
 
+        //
+        // We have started and are waiting to be ready to shoot
+        //
+        state_ = State.WAITING ;
+
+        //
+        // We have no valid shooting parameters
+        //
         shoot_params_valid_ = false ;
-        is_conveyor_on_ = false ;
+
+        // shoot_params_valid_ = false ;
+        // is_conveyor_on_ = false ;
 
         // set shooter to start, well, shooting...
         // This gets the shooter motors running
@@ -103,80 +146,156 @@ public class GPMFireAction extends Action {
     public void run() throws Exception {
         super.run();
 
-        boolean shooterReady, dbready ;
+        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+        boolean has_target  = false;
+        boolean shooter_ready = false ;
+        boolean turret_ready = false ;
+        boolean db_ready = false;
 
+        switch(state_) {
+            case IDLE:
+                // Do nothing
+                break ;
 
-        if (in_shutdown_mode_) {
-            if (sub_.getRobot().getTime() - shutdown_start_time_ > shutdown_duration_) {
-                shooter_action_.stopPlot();
-                sub_.getShooter().setAction(null, true) ;
-                setDone() ;
-                in_shutdown_mode_ = false ;
-            }
-        }
+            case WAITING:  
+            
+                has_target = target_tracker_.hasVisionTarget() ;
 
-        if (is_conveyor_on_) { 
-            //
-            // We are shooting, shoot til all balls done
-            //
-            if (sub_.getConveyor() == null || sub_.getConveyor().getAction().isDone()) {
-                shutdown_start_time_ = sub_.getRobot().getTime() ;
-                in_shutdown_mode_ = true ;
-                is_conveyor_on_ = false ;
-            }
-        }
-        else {
-            //
-            // We are waiting to be ready to shoot
-            //           
-            if (target_tracker_.hasVisionTarget() && sub_.getConveyor().getBallCount() > 0) {
-                MessageLogger logger = sub_.getRobot().getMessageLogger() ;
-                
-                //
-                // We have a target, so compute a new set of parameters for the shooter and assign
-                // to the shooter.
-                //
-                computeShooterParams(target_tracker_.getDistance()) ;
-                shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
-                shoot_params_valid_ = true ;
-
-                shooterReady = isShooterReady() ;
-                dbready = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
-
-                logger.startMessage(MessageType.Debug, shoot_params_logger_id_) ;
-                logger.add("Shooter Params Targets:") ;
-                logger.add("dist", target_tracker_.getDistance()) ;
-                logger.add("w1", shoot_params_.v1_).add("w2", shoot_params_.v2_).add("hood", shoot_params_.hood_) ;
-                logger.endMessage();
-                
-                logger.startMessage(MessageType.Debug, ready_logger_id_) ;
-                logger.add("FireAction Ready:") ;
-                logger.add("shooter", shooterReady).add("turret", turret_.isReadyToFire()).add("db", dbready).add("tracker", target_tracker_.hasVisionTarget()) ;
-                logger.endMessage();        
-
-                
-                boolean shootButton = DriverStation.getStickButton(2, 3) ;
-                
-                // if the
-                //  * shooter is up to speed
-                //  * db is stopped
-                //  * target tracker sees the target
-                //  * turret is aimed & ready to fire
-                // then, let the conveyor push cargo into the shooter
-                if ((shooterReady && dbready && target_tracker_.hasVisionTarget() && turret_.isReadyToFire()) || shootButton)
-                {
-                    shooter_action_.startPlot();
-                    sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;
-                    is_conveyor_on_ = true ;
+                if (sub_.getConveyor().getBallCount() == 0) {
+                    //
+                    // This should never happen
+                    //
+                    shutdown_start_time_ = sub_.getRobot().getTime() ;
+                    state_ = State.FINISHING ;
                 }
+                else if (has_target) {
+                    //
+                    // We have a target, 
+                    //
+               
+                    //
+                    // Compute a set of shooter parameters
+                    //
+                    shoot_params_valid_ = computeShooterParams(target_tracker_.getDistance()) ;
+
+                    if (shoot_params_valid_) {
+                        //
+                        // Update the shooter with the current shooting parameters
+                        //
+                        shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
+
+                        //
+                        // See if the shooter is ready
+                        //
+                        shooter_ready = isShooterReady() ;
+
+                        //
+                        // See if the drive base is ready
+                        //
+                        db_ready = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
+
+                        //
+                        // See if the turret is ready
+                        //
+                        turret_ready = turret_.isReadyToFire() ;
+
+                        //
+                        // check the collect button, which is a shoot button now
+                        //
+                        boolean shootButton = DriverStation.getStickButton(2, 3) ;
+                    
+                        // if the
+                        //  * shooter is up to speed
+                        //  * db is stopped
+                        //  * target tracker sees the target
+                        //  * turret is aimed & ready to fire
+                        // then, let the conveyor push cargo into the shooter
+                        if ((shooter_ready && db_ready && target_tracker_.hasVisionTarget() && turret_ready) || shootButton)
+                        {
+                            shooter_action_.startPlot();
+                            sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;
+                            state_ = State.SHOOTING ;
+                        }
+                    }
+
+                }
+                else {
+                    //
+                    // We have no vision target, therefore our shooting parameters are invalid
+                    //
+                    shoot_params_valid_ = false ;
+                }            
+                break ;
+
+            case SHOOTING:
+                //
+                // We are shooting, shoot til all balls done
+                //
+
+                //
+                // Note, keep_adjusting_while_shooting is a constant defined above that can
+                // change the behavior of the shooting action
+                //
+
+                if (has_target && keep_adjusting_while_shooting_) {
+                    //
+                    // If we have the target, we adjust the shooter hood and wheels as we shoot
+                    // to get the best shot.  Otherwise we keep with the last targets we had.
+                    //
+                    shoot_params_valid_ = computeShooterParams(target_tracker_.getDistance()) ;
+                    
+                    if (shoot_params_valid_) {
+                        shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;                        
+                    }
+                }
+
+                if (sub_.getConveyor() == null || sub_.getConveyor().getAction().isDone()) {
+                    //
+                    // The conveyor has delivered all balls, go to finishing state which
+                    // keeps the wheels running while the last ball leaves the robot
+                    //
+                    shutdown_start_time_ = sub_.getRobot().getTime() ;
+                    state_ = State.FINISHING ;
+                }
+                break ;            
+
+            case FINISHING:
+                if (sub_.getRobot().getTime() - shutdown_start_time_ > shutdown_duration_) {
+                    shooter_action_.stopPlot();
+                    sub_.getShooter().setAction(null, true) ;
+                    state_ = State.IDLE ;                    setDone() ;
+
+                }
+                break ;
+        }
+
+        //
+        // Log the current fire action state
+        //
+
+        logger.startMessage(MessageType.Debug, fire_action_id_) ;
+        logger.add("state", state_.toString()) ;
+
+        if (state_ == State.WAITING) {
+            if (has_target) {
+                logger.add("spvalid", shoot_params_valid_) ;
+                if (shoot_params_valid_) {
+                    logger.add("thood", shoot_params_.hood_) ;
+                    logger.add("tvelocity", shoot_params_.v1_) ;
+                    logger.add("ahood", sub_.getShooter().getHoodMotor().getPosition()) ;
+                    logger.add("am1", sub_.getShooter().getWheelMotor1().getVelocity()) ;
+                    logger.add("am2", sub_.getShooter().getWheelMotor2().getVelocity()) ;
+                }
+                logger.add("shooterready", shooter_ready) ;
             }
             else {
-                //
-                // We have no vision target, therefore our shooting parameters are invalid
-                //
-                shoot_params_valid_ = false ;
+                logger.add(", no target") ;
             }
+
+            logger.add("dbready", db_ready) ;
+            logger.add("turretready", turret_ready) ;
         }
+        logger.endMessage();
     }
 
     @Override
@@ -195,57 +314,42 @@ public class GPMFireAction extends Action {
     }
 
     boolean isShooterReady() {
-        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+        boolean ret = false ;
 
-        if (!shoot_params_valid_)
-        {
-            logger.startMessage(MessageType.Debug, shoot_perf_logger_id_).add("shooterready: no valid params").endMessage();
-            //
-            // We have nothing to compare to, so we cannot be ready
-            //
-            return false ;
+        if (shoot_params_valid_ && shoot_params_ != null) {
+
+            // find actual velocities/positions
+            double w1 = sub_.getShooter().getWheelMotor1().getVelocity() ;
+            double w2 = sub_.getShooter().getWheelMotor2().getVelocity() ;
+            double hood = sub_.getShooter().getHoodMotor().getPosition() ;
+
+            // find "deltas" between the actual (w whatever) and the target (shoot_params_.v whatever) 
+            double dw1 = Math.abs(w1 - shoot_params_.v1_) ;
+            double dw2 = Math.abs(w2 - shoot_params_.v2_) ;
+            double dhood = Math.abs(hood - shoot_params_.hood_) ;
+
+            // return whether or not all the deltas are under the thresholds
+            ret = dw1 < shooter_velocity_threshold_ && dw2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
         }
-
-        if (shoot_params_ == null) {
-            logger.startMessage(MessageType.Debug, shoot_perf_logger_id_).add("shooterready: shoot params null").endMessage();            
-            return  false ;
-        }
-
-        // find actual velocities/positions
-        double w1 = sub_.getShooter().getWheelMotor1().getVelocity() ;
-        double w2 = sub_.getShooter().getWheelMotor2().getVelocity() ;
-        double hood = sub_.getShooter().getHoodMotor().getPosition() ;
-
-        // find "deltas" between the actual (w whatever) and the target (shoot_params_.v whatever) 
-        double dw1 = Math.abs(w1 - shoot_params_.v1_) ;
-        double dw2 = Math.abs(w2 - shoot_params_.v2_) ;
-        double dhood = Math.abs(hood - shoot_params_.hood_) ;
-
-        logger.startMessage(MessageType.Debug, shoot_perf_logger_id_) ;
-        logger.add("Shooter Performance:") ;
-        logger.add("w1act", w1) ;
-        logger.add("w2act", w2) ;
-        logger.add("hoodact", hood) ;
-        logger.add("w1delta", dw1) ;
-        logger.add("w2delta", dw2) ;
-        logger.add("hooddelta", dhood) ;
-        logger.endMessage();
-
-        // return whether or not all the deltas are under the thresholds
-        boolean amIReallyReady = dw1 < shooter_velocity_threshold_ && dw2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
-        return  amIReallyReady ;
+        return  ret ;
     }
 
-    public void computeShooterParams(double dist) {
+    public boolean computeShooterParams(double dist) {
+        boolean ret = true ;
+
         // double vel = 0.4992 * dist * dist - 38.828 * dist + 4060.5 ;
         double vel = 0.4992 * dist * dist - 38.828 * dist + 6400.5 ;
+        
         //double hood = 0.156 * dist + 0.5801 ;
         double hood = 0.156 * dist + 1.3 ;
 
         if (hood < 1.0 || hood > 22.0) {
-            shoot_params_valid_ = false ;
+            ret = false ;
+        }
+        else {
+            shoot_params_ = new ShootParams(vel, vel, hood) ;
         }
 
-        shoot_params_ = new ShootParams(vel, vel, hood) ;
+        return ret ;
     }
 }
