@@ -226,19 +226,18 @@ public class ZekeTestModeAuto extends TestAutoMode {
             case 50:
                 // Exercise the clamps on the A end of the climber windmill
                 if (has_climber_) {
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.OPEN), false);
+                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
                     addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.CLOSED), false);
+                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
                     addAction(new DelayAction(ctrl.getRobot(), 2.0)) ; 
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.OPEN), false);
+                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
                     addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.CLOSED), false);
+                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
                     addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;     
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.OPEN), false);
+                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
                     addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
-                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.CLOSED), false);
+                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
                     addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;  
-
                 }
                 break ;
 
@@ -268,6 +267,20 @@ public class ZekeTestModeAuto extends TestAutoMode {
                     addSubActionPair(climber.getWindmillMotor(), new MotorEncoderPowerAction(climber.getWindmillMotor(), getPower(), getDuration()), true);
                 }
                 break ;
+
+            case 53:
+                if (has_climber_) {
+                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
+                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
+                }         
+                break ;   
+
+            case 54:
+                if (has_climber_) {
+                    addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.OPEN), false);
+                    addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
+                }         
+                break ;   
 
             //
             //////////////////////////////////////////////////////////////////////////////////

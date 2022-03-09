@@ -30,10 +30,13 @@ public class ClimbAction extends Action {
     // timer to judge following delays off of
     private double state_start_time_ ;
 
+    private double hold_voltage_ ;
+
     // delay times between clamping/unclamping sections
     // first/second = whether it's between mid-high or high-traversal
     // clamp = for the clamping to finish before windmill starts going around
     // unclamp = for the previous clamp to let go of the bar
+    private double zero_unclamp_wait_ ;
     private double first_clamp_wait_ ;
     private double first_unclamp_wait_ ;
     private double second_clamp_wait_ ;
@@ -70,10 +73,13 @@ public class ClimbAction extends Action {
         right_wheel_ = new TankDrivePowerAction(db_, 0.0, drive_action_power_) ;
         stop_db_ = new TankDrivePowerAction(db_, 0.0, 0.0) ;
 
+        zero_unclamp_wait_ = sub.getSettingsValue("climbaction:zero_unclamp_wait").getDouble() ;
         first_clamp_wait_ = sub.getSettingsValue("climbaction:first_clamp_wait").getDouble() ;
         first_unclamp_wait_ = sub.getSettingsValue("climbaction:first_unclamp_wait").getDouble() ;
         second_clamp_wait_ = sub.getSettingsValue("climbaction:second_clamp_wait").getDouble() ;
         second_unclamp_wait_ = sub.getSettingsValue("climbaction:second_unclamp_wait").getDouble() ;
+
+        hold_voltage_ = sub.getSettingsValue("climbaction:hold_power").getDouble() ;
 
         backup_ = new MotorEncoderPowerAction(sub_.getWindmillMotor(), "climbaction:backup-power", "climbaction:backup-duration") ;
 
@@ -273,7 +279,7 @@ public class ClimbAction extends Action {
     }
 
     private void doUnclampOneHalf() throws BadMotorRequestException, MotorRequestFailedException {
-        if (sub_.getRobot().getTime() - state_start_time_ > first_unclamp_wait_) {
+        if (sub_.getRobot().getTime() - state_start_time_ > zero_unclamp_wait_) {
             sub_.setWindmill(SetWindmillTo.FORWARDS) ;
             state_ = ClimbingStates.WINDMILL_ONE ;
         }
@@ -292,7 +298,7 @@ public class ClimbAction extends Action {
     private void doWindmillOne() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
         if (sub_.isLeftBTouched() && sub_.isRightBTouched()) {
-            sub_.getWindmillMotor().setPower(0.10) ;
+            sub_.getWindmillMotor().setPower(hold_voltage_) ;
             sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.CLOSED);
             
             state_start_time_ = sub_.getRobot().getTime() ;
@@ -362,7 +368,8 @@ public class ClimbAction extends Action {
         // - waits for high sensor to hit
         if (sub_.isLeftATouched() && sub_.isRightATouched()) {
             // turns off windmill
-            sub_.setWindmill(SetWindmillTo.OFF) ;
+            sub_.getWindmillMotor().setPower(hold_voltage_) ;
+
             // sets clamp A to be closed
             sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.CLOSED);
 

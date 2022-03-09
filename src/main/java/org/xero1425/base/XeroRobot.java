@@ -357,6 +357,8 @@ public abstract class XeroRobot extends TimedRobot {
             logger_.add("exception thrown in hardwareInit() - ").add(ex.getStackTrace().toString()) ;
             logger_.endMessage();
 
+            ex.printStackTrace();
+
             robot_subsystem_ = null;
         }
 

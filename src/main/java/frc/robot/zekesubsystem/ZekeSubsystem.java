@@ -33,6 +33,7 @@ public class ZekeSubsystem extends RobotSubsystem {
         Zeke2022 zrobot = (Zeke2022)robot ;
 
         db_ = new TankDriveSubsystem(this, TankdriveSubsystemName, "tankdrive") ;
+        db_.setOpenLoopRampRates(0.4, 0.0);
         addChild(db_) ;
 
         oi_ = new ZekeOISubsystem(this, db_) ;

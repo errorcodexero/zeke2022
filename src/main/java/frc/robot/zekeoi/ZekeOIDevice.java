@@ -15,6 +15,7 @@ import frc.robot.climber.ClimberSubsystem;
 import frc.robot.climber.DeployClimberAction;
 import frc.robot.climber.DeployClimberAction.DeployState;
 import frc.robot.conveyor.ConveyorEjectAction;
+import frc.robot.gpm.GPMEjectAction;
 import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMManualFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
@@ -31,7 +32,7 @@ public class ZekeOIDevice extends OIPanel {
     private GPMFireAction fire_action_;
     private GPMManualFireAction manual_fire_action_ ;
 
-    private ConveyorEjectAction eject_action_ ;
+    private GPMEjectAction eject_action_ ;
     private ClimbAction climb_;
     private DeployClimberAction deploy_climber_ ;
     private DeployClimberAction stow_climber_ ;
@@ -103,7 +104,7 @@ public class ZekeOIDevice extends OIPanel {
         stop_collect_action_ = new GPMStopCollectAction(gpm);
         fire_action_ = new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()) ;
         manual_fire_action_ = new GPMManualFireAction(gpm) ;
-        eject_action_ = new ConveyorEjectAction(gpm.getConveyor()) ;
+        eject_action_ = new GPMEjectAction(gpm) ;
         zero_turret_ = new MotorEncoderGotoAction(zeke.getTurret(), 0, true) ;
         deploy_intake_ = new ZekeIntakeArmAction(zeke.getGPMSubsystem().getIntake(), ZekeIntakeArmAction.ArmPos.DEPLOY) ;
         stow_intake_ = new ZekeIntakeArmAction(zeke.getGPMSubsystem().getIntake(), ZekeIntakeArmAction.ArmPos.RETRACT) ;
@@ -241,7 +242,6 @@ public class ZekeOIDevice extends OIPanel {
             
         if (climber_state_ == ClimberState.Stowed) {
             if (getValue(deploy_climb_gadget_) == 1) {
-                zeke.getGPMSubsystem().getIntake().setAction(deploy_intake_) ;
                 zeke.getClimber().setAction(deploy_climber_) ;
                 climber_state_ = ClimberState.Deploying ;
             }
@@ -251,7 +251,7 @@ public class ZekeOIDevice extends OIPanel {
                 zeke.getGPMSubsystem().getIntake().setAction(deploy_intake_) ;
                 zeke.getClimber().setAction(deploy_climber_) ;
                 climber_state_ = ClimberState.Deploying ;
-            } else if (deploy_intake_.isDone() && deploy_climber_.isDone()) {
+            } else if (deploy_climber_.isDone()) {                
                 climber_state_ = ClimberState.Stowed ;
             }
         }
@@ -260,7 +260,7 @@ public class ZekeOIDevice extends OIPanel {
                 zeke.getGPMSubsystem().getIntake().setAction(stow_intake_) ;
                 zeke.getClimber().setAction(stow_climber_) ;
             }
-            else if (deploy_climber_.isDone() && deploy_intake_.isDone()) {
+            else if (deploy_climber_.isDone()) {
                 climber_state_ = ClimberState.Deployed ;
             }
         }

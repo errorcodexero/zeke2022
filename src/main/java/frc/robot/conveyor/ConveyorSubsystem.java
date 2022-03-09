@@ -182,9 +182,13 @@ public class ConveyorSubsystem extends Subsystem {
                 bstate += "[" + b.toString() + "]" ;
             }
 
+            if (parked_ != null)
+                bstate += ", PARKED" ;
+
             if (!bstate.equals(prev_balls_state_)) {
                 logger.startMessage(MessageType.Debug, getLoggerID()) ;
                 logger.add("Balls:").add(bstate) ;
+
                 logger.endMessage();
                 prev_balls_state_ = bstate ;
             }
@@ -217,7 +221,7 @@ public class ConveyorSubsystem extends Subsystem {
                 balls_info_.add(new BallInfo()) ;
             }
 
-            if (fallingEdge(SENSOR_IDX_SHOOTER)) {
+            if (fallingEdge(SENSOR_IDX_SHOOTER) && mode_ == Mode.SHOOT) {
                 if (parked_ != null) {
                     //
                     // The parked ball has left the robot
@@ -239,8 +243,7 @@ public class ConveyorSubsystem extends Subsystem {
                         if (risingEdge(SENSOR_IDX_EXIT) && binfo.type_ == CargoType.Opposite) {
                             binfo.state_ = State.EXIT ;
                         }
-                        else if (risingEdge(SENSOR_IDX_CHIMNEY) && binfo.type_ == CargoType.Same
-                        ) {
+                        else if (risingEdge(SENSOR_IDX_CHIMNEY) && binfo.type_ == CargoType.Same) {
                             binfo.state_ = State.CHIMNEY ;
                         }
                         break ;
