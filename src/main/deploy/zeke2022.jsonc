@@ -258,7 +258,7 @@
                 "duration" : 1.5
             },
             "shoot-action" : {
-                "second-ball-delay" : 1.0
+                "second-ball-delay" : 0.2
             }
         },
         "turret": {
