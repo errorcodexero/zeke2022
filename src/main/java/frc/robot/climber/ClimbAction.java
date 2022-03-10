@@ -9,7 +9,7 @@ import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 
-import frc.robot.climber.ClimberSubsystem.ChangeClampTo;
+import frc.robot.climber.ClimberSubsystem.GrabberState;
 import frc.robot.climber.ClimberSubsystem.SetWindmillTo;
 import frc.robot.climber.ClimberSubsystem.WhichClamp;
 import frc.robot.zekeoi.ZekeOISubsystem;
@@ -173,7 +173,7 @@ public class ClimbAction extends Action {
     }
 
     private void doUnclampZero() {
-        sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.OPEN);
+        sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);
         state_ = ClimbingStates.WAITSWITCH ;
     }
  
@@ -201,7 +201,7 @@ public class ClimbAction extends Action {
             oi_.getGamePad().disable();
 
             // set clamp A => closed
-            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.CLOSED);
+            sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
 
             // - get a time stamp to use in next method; this is to give time for clamp A to be closed
             state_start_time_ = sub_.getRobot().getTime() ;
@@ -247,7 +247,7 @@ public class ClimbAction extends Action {
             db_.setAction(stop_db_) ;
 
             // - clamp A state
-            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.CLOSED);
+            sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
             
             // - get a time stamp to use in next method; this is to give time for clamp A to be closed
             state_start_time_ = sub_.getRobot().getTime() ;
@@ -273,7 +273,7 @@ public class ClimbAction extends Action {
         if (sub_.getRobot().getTime() - state_start_time_ > first_clamp_wait_) {
 
             state_start_time_ = sub_.getRobot().getTime() ;       
-            sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.OPEN);     
+            sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);     
             state_ = ClimbingStates.UNCLAMP_ONE_HALF ;
         }
     }
@@ -299,7 +299,7 @@ public class ClimbAction extends Action {
         // - waits for high sensor to hit
         if (sub_.isLeftBTouched() && sub_.isRightBTouched()) {
             sub_.getWindmillMotor().setPower(hold_voltage_) ;
-            sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.CLOSED);
+            sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.CLOSED);
             
             state_start_time_ = sub_.getRobot().getTime() ;
             state_ = ClimbingStates.CLAMP_TWO ;
@@ -326,7 +326,7 @@ public class ClimbAction extends Action {
 
     private void doBackupOne() {
         if (backup_.isDone()) {
-            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.OPEN);   
+            sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);   
             state_start_time_ = sub_.getRobot().getTime() ;
             if (stop_when_safe_)
                 state_ = ClimbingStates.COMPLETE ;
@@ -371,7 +371,7 @@ public class ClimbAction extends Action {
             sub_.getWindmillMotor().setPower(hold_voltage_) ;
 
             // sets clamp A to be closed
-            sub_.changeClamp(WhichClamp.CLAMP_A, ChangeClampTo.CLOSED);
+            sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
 
             state_start_time_ = sub_.getRobot().getTime() ;
             state_ = ClimbingStates.CLAMP_THREE ;
@@ -400,7 +400,7 @@ public class ClimbAction extends Action {
 
     private void doBackupTwo() {
         if (backup_.isDone()) {
-            sub_.changeClamp(WhichClamp.CLAMP_B, ChangeClampTo.OPEN);
+            sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);
             state_ = ClimbingStates.COMPLETE ;
         }
     }

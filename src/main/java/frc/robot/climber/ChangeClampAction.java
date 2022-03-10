@@ -4,14 +4,14 @@ import org.xero1425.base.actions.Action;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 
-import frc.robot.climber.ClimberSubsystem.ChangeClampTo;
+import frc.robot.climber.ClimberSubsystem.GrabberState;
 import frc.robot.climber.ClimberSubsystem.WhichClamp;
 
 public class ChangeClampAction extends Action {
 
     private ClimberSubsystem sub_ ;
     private WhichClamp which_clamp_ ;
-    private ChangeClampTo clamp_setting_ ;
+    private GrabberState clamp_setting_ ;
 
     private double state_start_time_ ;
     private double wait_time_ ;
@@ -20,7 +20,7 @@ public class ChangeClampAction extends Action {
         // which clamp (create an enum for clamp A or clamp B)
         // what to set it to (use existing subsystem enum for open/closed)
     //set that clamp to that position using methods created in the climber subsystem
-    public ChangeClampAction(ClimberSubsystem sub, WhichClamp which_clamp, ChangeClampTo clamp_setting) 
+    public ChangeClampAction(ClimberSubsystem sub, WhichClamp which_clamp, GrabberState clamp_setting) 
                             throws BadParameterTypeException, MissingParameterException {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;

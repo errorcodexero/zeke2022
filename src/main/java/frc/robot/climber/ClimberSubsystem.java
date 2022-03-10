@@ -157,7 +157,7 @@ public class ClimberSubsystem extends Subsystem {
                 clamp_b_.set(GripperOpenState);
             }
 
-            b_grabbers_ = clamp_settings ;
+            b_grabbers_ = clamp_setting ;
         }
     }
  
