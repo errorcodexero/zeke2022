@@ -42,7 +42,10 @@ public class ClimberSubsystem extends Subsystem {
     private MotorEncoderPowerAction windmill_power_backwards_; 
     private MotorEncoderPowerAction windmill_power_off_; 
 
-    public static enum ChangeClampTo {
+    private GrabberState a_grabbers_ ;
+    private GrabberState b_grabbers_ ;
+
+    public static enum GrabberState {
         OPEN, 
         CLOSED, 
         UNKNOWN
@@ -87,6 +90,9 @@ public class ClimberSubsystem extends Subsystem {
         right_a_ = new DigitalInput(index) ;
         index = getSettingsValue("hw:touchsensors:left_right_b").getInteger() ;
         left_right_b_ = new DigitalInput(index) ;
+
+        a_grabbers_ = GrabberState.UNKNOWN ;
+        b_grabbers_ = GrabberState.UNKNOWN ;
     }
 
     @Override
@@ -118,10 +124,14 @@ public class ClimberSubsystem extends Subsystem {
         }
     }
 
+    public GrabberState getClampState(WhichClamp clamp_name) {
+        return (clamp_name == WhichClamp.CLAMP_A) ? a_grabbers_ : b_grabbers_ ;
+    }
+
     //clamps. 
     // ensure both l and r are clamping/unclamping simultaneously given they're on the same end of the windmill
     // also, set the clamp to neither open nor closed if passed in parameter is "UNKNWOWN" 
-    public void changeClamp(WhichClamp clamp_name, ChangeClampTo clamp_setting) {
+    public void changeClamp(WhichClamp clamp_name, GrabberState clamp_setting) {
         MessageLogger logger = getRobot().getMessageLogger() ;
         logger.startMessage(MessageType.Debug, getLoggerID()) ;
         logger.add("Climber: set clamp: ") ;
@@ -131,19 +141,23 @@ public class ClimberSubsystem extends Subsystem {
         logger.endMessage();
         
         if (clamp_name == WhichClamp.CLAMP_A) {
-            if (clamp_setting == ChangeClampTo.CLOSED) {
+            if (clamp_setting == GrabberState.CLOSED) {
                 clamp_a_.set(GripperCloseState);
             }
-            else if (clamp_setting == ChangeClampTo.OPEN) {
+            else if (clamp_setting == GrabberState.OPEN) {
                 clamp_a_.set(GripperOpenState);
             }
+            a_grabbers_ = clamp_setting ;
+
         } else if (clamp_name == WhichClamp.CLAMP_B) {
-            if (clamp_setting == ChangeClampTo.CLOSED) {
+            if (clamp_setting == GrabberState.CLOSED) {
                 clamp_b_.set(GripperCloseState);
             }
-            else if (clamp_setting == ChangeClampTo.OPEN) {
+            else if (clamp_setting == GrabberState.OPEN) {
                 clamp_b_.set(GripperOpenState);
             }
+
+            b_grabbers_ = clamp_settings ;
         }
     }
  

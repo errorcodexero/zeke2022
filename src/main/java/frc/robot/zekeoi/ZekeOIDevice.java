@@ -13,8 +13,9 @@ import org.xero1425.base.oi.OIPanelButton;
 import frc.robot.climber.ClimbAction;
 import frc.robot.climber.ClimberSubsystem;
 import frc.robot.climber.DeployClimberAction;
+import frc.robot.climber.ClimberSubsystem.GrabberState;
+import frc.robot.climber.ClimberSubsystem.WhichClamp;
 import frc.robot.climber.DeployClimberAction.DeployState;
-import frc.robot.conveyor.ConveyorEjectAction;
 import frc.robot.gpm.GPMEjectAction;
 import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMManualFireAction;
@@ -298,9 +299,23 @@ public class ZekeOIDevice extends OIPanel {
                 gpm.getConveyor().setAction(eject_action_) ;
         }
         else if (getValue(climb_lock_gadget_) == 1) {
+            checkGrabbers() ;
             generateCargoActions();
         } else if (zeke.getClimber() != null) {
             generateClimbActions() ;
+        }
+    }
+
+    private void checkGrabbers() {
+        ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
+        ClimberSubsystem climber = zeke.getClimber() ;
+
+        if (climber.getClampState(WhichClamp.CLAMP_A) != GrabberState.OPEN) {
+            climber.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);
+        }
+
+        if (climber.getClampState(WhichClamp.CLAMP_B) != GrabberState.OPEN) {
+            climber.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);
         }
     }
 
