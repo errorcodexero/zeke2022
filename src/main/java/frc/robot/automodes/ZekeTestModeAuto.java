@@ -192,8 +192,8 @@ public class ZekeTestModeAuto extends TestAutoMode {
             case 35:
                 // Set the hood to a specific position
                 addSubActionPair(shooter, new SetShooterAction(shooter, 0.0, 0.0, getPosition()), false);
-                break ;                                 
-
+                break ;    
+                
             //
             //////////////////////////////////////////////////////////////////////////////////
             // TURRET/TARGET_TRACKER                                                        //
@@ -281,6 +281,33 @@ public class ZekeTestModeAuto extends TestAutoMode {
                     addAction(new DelayAction(ctrl.getRobot(), 2.0)) ;   
                 }         
                 break ;   
+
+            case 55:
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.OPEN), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ; 
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.CLOSED), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;     
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.OPEN), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ; 
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.CLOSED), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;   
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.OPEN), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ; 
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.CLOSED), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;   
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.OPEN), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.CLOSED), false);
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ; 
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, ChangeClampTo.CLOSED), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, ChangeClampTo.OPEN), false);
+                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;   
+                break;                                                            
 
             //
             //////////////////////////////////////////////////////////////////////////////////

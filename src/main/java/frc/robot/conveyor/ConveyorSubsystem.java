@@ -118,7 +118,10 @@ public class ConveyorSubsystem extends Subsystem {
     private boolean run_intake_motor_shoot_ ;
     private double start_intake_motor_start_ ;
     private double start_intake_motor_duration_ ;
-    
+
+    private boolean move_to_chimney_ ;
+    private double move_to_start_ ;
+    private boolean waiting_for_timeout_ ;
 
     public ConveyorSubsystem(Subsystem parent, ZekeColorSensor color) throws Exception {
         super(parent, SubsystemName);
@@ -128,6 +131,8 @@ public class ConveyorSubsystem extends Subsystem {
         bypass_ = false ;
         run_intake_motor_shoot_ = false ;
         prev_sensors_state_ = "" ;
+        move_to_chimney_ = false ;
+        waiting_for_timeout_ = false ;
 
         sensors_ = new DigitalInput[SENSOR_COUNT];
         sensor_states_ = new boolean[SENSOR_COUNT];
@@ -227,6 +232,10 @@ public class ConveyorSubsystem extends Subsystem {
                     // The parked ball has left the robot
                     //
                     parked_ = null ;
+
+                    if (balls_info_.size() > 0) {
+                        move_to_chimney_ = true ;
+                    }
                 }
             }
 
@@ -306,6 +315,9 @@ public class ConveyorSubsystem extends Subsystem {
     public void resetBallCount() {
         parked_ = null ;
         balls_info_.clear();
+
+        waiting_for_timeout_ = false ;
+        move_to_chimney_ = false ;
     }
 
     @Override
@@ -430,10 +442,26 @@ public class ConveyorSubsystem extends Subsystem {
 
     private void setMotorState() throws BadMotorRequestException, MotorRequestFailedException {
         if (mode_ == Mode.SHOOT) {
-            if (getBallCount() > 0) 
-                setShooterMotor(shooter_motor_on_);
-            else
+
+            if (getBallCount() > 0) {
+                if (waiting_for_timeout_ && move_to_chimney_) {
+                    if (getRobot().getTime() - move_to_start_ > 0.5) {
+                        waiting_for_timeout_ =false ;
+                        move_to_chimney_ = false ;
+                        setShooterMotor(0.0);  
+                    }                  
+                }
+                else if (move_to_chimney_ && !waiting_for_timeout_ && parked_ != null) {
+                    setShooterMotor(0.0);
+                    move_to_start_ = getRobot().getTime() ;
+                    waiting_for_timeout_ = true ;
+                }
+                else {
+                    setShooterMotor(shooter_motor_on_);
+                }
+            } else {
                 setShooterMotor(0.0);
+            }
         }
         else {
             if (parked_ != null) {
@@ -583,6 +611,9 @@ public class ConveyorSubsystem extends Subsystem {
         shooter_motor_ = getRobot().getMotorFactory().createMotor("shooter", "subsystems:conveyor:hw:motors:shooter");
         shooter_motor_power_ = 0.0 ;
         shooter_motor_on_ = getSettingsValue("power:shooter").getDouble() ;
+
+        shooter_motor_on_ = 0.5 ;
+        intake_motor_on_ = 1.0 ;
 
         int num;
         String name = null ;

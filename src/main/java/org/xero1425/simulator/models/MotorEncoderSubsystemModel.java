@@ -45,9 +45,6 @@ public class MotorEncoderSubsystemModel extends SimulationModel {
 
         if (motor_.usesTicks()) {
             double ticks = revs_ *  ticks_per_rev_ ;
-            if (motor_.getIndex() == 12 && power > 0.1) {
-                System.out.println("Power " + power + ", revs total " + revs_ + ", ticks " + ticks) ;
-            }
             motor_.setEncoder(ticks);
         }
     }

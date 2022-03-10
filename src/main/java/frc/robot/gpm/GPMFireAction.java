@@ -67,7 +67,7 @@ public class GPMFireAction extends Action {
     private final double shooter_velocity_threshold_ ;
     private final double hood_position_threshold_ ;
 
-    private final boolean keep_adjusting_while_shooting_ = true ;
+    private final boolean keep_adjusting_while_shooting_ = false ;
 
     private int fire_action_id_ ;
 
@@ -237,17 +237,17 @@ public class GPMFireAction extends Action {
                 // change the behavior of the shooting action
                 //
 
-                if (has_target && keep_adjusting_while_shooting_) {
-                    //
-                    // If we have the target, we adjust the shooter hood and wheels as we shoot
-                    // to get the best shot.  Otherwise we keep with the last targets we had.
-                    //
-                    shoot_params_valid_ = computeShooterParams(target_tracker_.getDistance()) ;
+                // if (has_target && keep_adjusting_while_shooting_) {
+                //     //
+                //     // If we have the target, we adjust the shooter hood and wheels as we shoot
+                //     // to get the best shot.  Otherwise we keep with the last targets we had.
+                //     //
+                //     shoot_params_valid_ = computeShooterParams(target_tracker_.getDistance()) ;
                     
-                    if (shoot_params_valid_) {
-                        shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;                        
-                    }
-                }
+                //     if (shoot_params_valid_) {
+                //         shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;                        
+                //     }
+                // }
 
                 if (sub_.getConveyor() == null || sub_.getConveyor().getAction().isDone()) {
                     //
@@ -337,11 +337,10 @@ public class GPMFireAction extends Action {
     public boolean computeShooterParams(double dist) {
         boolean ret = true ;
 
-        // double vel = 0.4992 * dist * dist - 38.828 * dist + 4060.5 ;
-        double vel = 0.4992 * dist * dist - 38.828 * dist + 6400.5 ;
+        double vel = 0.4992 * dist * dist - 38.828 * dist + 5500.5 ;
         
-        //double hood = 0.156 * dist + 0.5801 ;
-        double hood = 0.156 * dist + 1.3 ;
+        // double hood = 0.156 * dist + 0.5801 ;
+        double hood = 0.156 * dist + 3.0 ;
 
         if (hood < 1.0 || hood > 22.0) {
             ret = false ;

@@ -29,11 +29,11 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": true,
+            "conveyor": false,
 
             // Shoot related
             "shooter": false,
-            "fire-action-ready" : false,
+            "fire-action" : true,
             "fire-action-shoot-params" : false,
             "fire-action-shoot-performance": false,
             "shooter-w1" : false,
@@ -184,9 +184,9 @@
         },
         "gpm" : {
             "fire-action" : {
-                "hood_pos_threshold" : 10.0,
+                "hood_pos_threshold" : 0.5,
                 "db_vel_threshold" : 6.0,
-                "shooter_vel_threshold" : 40.0,
+                "shooter_vel_threshold" : 60.0,
                 "shutdown-delay" : 0.5
             },
             "manual-fire-action" : {
@@ -258,7 +258,7 @@
                 "duration" : 1.5
             },
             "shoot-action" : {
-                "second-ball-delay" : 0.5
+                "second-ball-delay" : 1.0
             }
         },
         "turret": {
@@ -521,17 +521,17 @@
                     "ainput": 0,
                     "rmin": 0,
                     "rmax": 23,
-                    "emin": 0.9,
-                    "emax": 3.59,
+                    "emin": 1.065,
+                    "emax": 4.024,
                     "ec": {
-                        "COMPETITION": 0.9,
+                        "COMPETITION": 1.065,
                         "PRACTICE": 0.62133
                     },
                     "rc": 0
                 }
             },
             "hood": {
-                "kp": 0.15,
+                "kp": 0.10,
                 "ki": 0.0,
                 "kd": 0.0,
                 "kf": 0.0,
@@ -572,11 +572,11 @@
         }
     },
     "testmode": {
-        "enabled": true,
-        "which": 50,
+        "enabled": false,
+        "which": 35,
         "power": 0.1,
         "duration": 1.0,
-        "distance": 28.0,
+        "distance": 21.0,
         "name": "far_tarmac_4_ball_1"
     }
 }
