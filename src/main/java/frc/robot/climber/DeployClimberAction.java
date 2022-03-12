@@ -3,10 +3,14 @@ package frc.robot.climber;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 
+import frc.robot.climber.ClimberSubsystem.GrabberState;
+import frc.robot.climber.ClimberSubsystem.WhichClamp;
+
 public class DeployClimberAction extends Action {
     private ClimberSubsystem sub_ ;
     private int deploy_position_ ;
     private MotorEncoderGotoAction goto_ ;
+    private DeployState state_ ;
 
     public enum DeployState {
         Deployed,
@@ -17,6 +21,7 @@ public class DeployClimberAction extends Action {
         super(sub.getRobot().getMessageLogger()) ;
         
         sub_ = sub ;
+        state_ = st ;
 
         if (st == DeployState.Deployed) {
             deploy_position_ = sub_.getSettingsValue("deploy-action:deployed").getInteger() ;        
@@ -31,6 +36,10 @@ public class DeployClimberAction extends Action {
     @Override
     public void start() {
         sub_.getWindmillMotor().setAction(goto_, true) ;
+        if (state_ == DeployState.Stowed) {
+            sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
+            sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.CLOSED);
+        }
     }
 
     @Override 

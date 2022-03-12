@@ -34,23 +34,21 @@
             // Shoot related
             "shooter": false,
             "fire-action" : false,
-            "fire-action-shoot-params" : false,
-            "fire-action-shoot-performance": false,
             "shooter-w1" : false,
             "shooter-w2" : false,
             "shooter-h" : false,
+            
             "turret" : false,
-
             // Climber related
-            "climber": true,
+            "climber": false,
             "climber-model": false,
 
             // OI
             "zekeoi" : false
         },
-        //
         // This section controls, what data shows up on the smart dashboard when the item has a
         // display type of DisplayType.Verbose.
+        //
         //
         "verbose": {
             "tankdrive": false,
@@ -275,7 +273,7 @@
                     "emin": 0.0,
                     "emax": 5.0,
                     "ec": {
-                        "COMPETITION": 3.18,
+                        "COMPETITION": 3.633,
                         "PRACTICE": 0.62133
                     },
                     "rc": 0.0
@@ -448,7 +446,7 @@
                 "first_unclamp_wait": 2.0,
                 "second_unclamp_wait": 2.0,
                 "backup-power" : -0.6,
-                "backup-duration" : 1.1,
+                "backup-duration" : 1.05,
                 "hold_power" : 0.15
             },
             "deploy-action" : {
@@ -521,10 +519,10 @@
                     "ainput": 0,
                     "rmin": 0,
                     "rmax": 23,
-                    "emin": 1.065,
-                    "emax": 4.024,
+                    "emin": 0.6201,
+                    "emax": 3.5791,
                     "ec": {
-                        "COMPETITION": 1.065,
+                        "COMPETITION": 0.6201,
                         "PRACTICE": 0.62133
                     },
                     "rc": 0
@@ -573,7 +571,7 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 52,
+        "which": 55,
         "power": 0.2,
         "duration": 1.0,
         "distance": 21.0,

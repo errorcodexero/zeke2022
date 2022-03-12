@@ -22,9 +22,9 @@ public class FarTarmac4BallAuto extends ZekeAutoMode {
         TankDriveSubsystem db = zeke.getTankDrive() ;
         TurretSubsystem turret = zeke.getTurret() ;
 
-        startTracking() ;
         addSubActionPair(gpm.getConveyor(), new ConveyorSetBall(gpm.getConveyor()), false);
         driveAndCollect("far_tarmac_4_ball_1", 0.5, 0.0);
+        startTracking() ;
         addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret), true);
 
         driveAndCollect("far_tarmac_4_ball_2", 0.0, 0.5);
