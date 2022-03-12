@@ -326,12 +326,19 @@ public class ClimbAction extends Action {
 
     private void doBackupOne() {
         if (backup_.isDone()) {
-            sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);   
-            state_start_time_ = sub_.getRobot().getTime() ;
-            if (stop_when_safe_)
+            if (!sub_.isLeftBTouched() || !sub_.isRightBTouched()) {
                 state_ = ClimbingStates.COMPLETE ;
-            else
-                state_ = ClimbingStates.UNCLAMP_ONE ;
+            }
+            else {
+                sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);   
+                state_start_time_ = sub_.getRobot().getTime() ;
+
+                if (stop_when_safe_)
+                    state_ = ClimbingStates.COMPLETE ;
+                else {
+                    state_ = ClimbingStates.UNCLAMP_ONE ;
+                }
+            }
         }
     }
     
@@ -400,8 +407,13 @@ public class ClimbAction extends Action {
 
     private void doBackupTwo() {
         if (backup_.isDone()) {
-            sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);
-            state_ = ClimbingStates.COMPLETE ;
+            if (!sub_.isLeftATouched() || !sub_.isRightATouched()) {
+                state_ = ClimbingStates.COMPLETE ;
+            }
+            else {
+                sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);
+                state_ = ClimbingStates.COMPLETE ;
+            }
         }
     }
      

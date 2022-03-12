@@ -337,10 +337,10 @@ public class GPMFireAction extends Action {
     public boolean computeShooterParams(double dist) {
         boolean ret = true ;
 
-        double vel = 0.4992 * dist * dist - 38.828 * dist + 5500.5 ;
+        double vel = 0.4992 * dist * dist - 38.828 * dist + 3500.5 ;
         
-        // double hood = 0.156 * dist + 0.5801 ;
-        double hood = 0.156 * dist + 3.0 ;
+        double hood = 0.156 * dist + 0.5801 ;
+        // double hood = 0.156 * dist + 3.0 ;
 
         if (hood < 1.0 || hood > 22.0) {
             ret = false ;

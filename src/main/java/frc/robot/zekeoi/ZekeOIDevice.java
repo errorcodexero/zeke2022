@@ -310,12 +310,12 @@ public class ZekeOIDevice extends OIPanel {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         ClimberSubsystem climber = zeke.getClimber() ;
 
-        if (climber.getClampState(WhichClamp.CLAMP_A) != GrabberState.OPEN) {
-            climber.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);
+        if (climber.getClampState(WhichClamp.CLAMP_A) != GrabberState.CLOSED) {
+            climber.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
         }
 
-        if (climber.getClampState(WhichClamp.CLAMP_B) != GrabberState.OPEN) {
-            climber.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);
+        if (climber.getClampState(WhichClamp.CLAMP_B) != GrabberState.CLOSED) {
+            climber.changeClamp(WhichClamp.CLAMP_B, GrabberState.CLOSED);
         }
     }
 
