@@ -1,0 +1,121 @@
+{
+    "stimulus" :
+    [
+        {
+            "time" : 0.0,
+            "events" :
+            [
+                {
+                    "model" : "fms",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Running simulation in teleop mode, OI is used to start operations",
+                        "start" : 0.1,
+                        "autonomous" : 0.0,
+                        "between" : 0.0,
+                        "teleop" : 10.0,
+                        "fms" : false,
+                        "alliance" : "blue1"                        
+                    }
+                },
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
+                        "comment" : "Collect/shoot mode switch set to collect",                        
+                        "button6" : true,
+                        
+                        // The climb lock button is in the locked state
+                        "button4" : true
+                    }
+                }                
+            ]
+        },
+        {
+            "time" : 3.0,
+            "events" :
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Eject button pressed",
+                        "button2" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.5,
+            "events" :
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" : 
+                    {
+                        "comment" : "Eject button pressed",
+                        "button2" : false
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 4.0,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "setting" : "subsystems:conveyor:eject-action:power"
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "setting" : "subsystems:conveyor:eject-action:power"
+                },
+                {
+                    "subsystem" : "shooter",
+                    "property" : "wheel1-velocity",
+                    "value" : -2000,
+                    "tolerance" : 20.0
+                },
+                {
+                    "subsystem" : "shooter",
+                    "property" : "wheel2-velocity",
+                    "value" : -2000,
+                    "tolerance" : 20
+                }
+            ]
+        },
+        {
+            "time" : 6.0,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "horizontal",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "conveyor",
+                    "property" : "vertical",
+                    "value" : 0.0
+                },
+                {
+                    "subsystem" : "shooter",
+                    "property" : "wheel1-velocity",
+                    "value" : 0
+                },
+                {
+                    "subsystem" : "shooter",
+                    "property" : "wheel2-velocity",
+                    "value" : 0
+                }                
+            ]
+        }
+    ]
+}
