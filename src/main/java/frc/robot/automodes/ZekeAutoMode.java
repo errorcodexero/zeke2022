@@ -64,6 +64,7 @@ public class ZekeAutoMode extends AutoMode {
         parallel.addSubActionPair(zeke.getTankDrive(), new TankDrivePathFollowerAction(zeke.getTankDrive(), path, reverse), true);
         addAction(parallel);
         
+        startLimelightTracking();
         addSubActionPair(gpm, new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()), true) ;
     }
 
