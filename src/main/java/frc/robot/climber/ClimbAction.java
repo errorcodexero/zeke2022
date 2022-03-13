@@ -44,18 +44,18 @@ public class ClimbAction extends Action {
 
     private enum ClimbingStates {
         IDLE,
-        UNCLAMP_ZERO,
-        WAITSWITCH,
+        OPEN_A_FOR_MID,
+        WAIT_LEFT_OR_RIGHT_MID,
         SQUARING,
-        CLAMP_ONE,
-        WINDMILL_ONE,
-        BACKUP_ONE,
-        UNCLAMP_ONE_HALF,
-        UNCLAMP_ONE,
-        CLAMP_TWO,
-        WINDMILL_TWO,
-        BACKUP_TWO,
-        CLAMP_THREE,
+        CLOSE_A_ON_MID,
+        OPEN_B_FOR_HIGH,
+        WINDMILL_TO_HIGH_BAR,
+        CLOSE_B_ON_HIGH,
+        BACKUP_MID_TO_HIGH,
+        OPEN_A_ON_MID,
+        WINDMILL_TO_TRAVERSE_BAR,
+        CLOSE_A_ON_TRAVERSE,
+        BACKUP_HIGH_TO_TRAVERSE,
         COMPLETE
     }
 
@@ -106,43 +106,43 @@ public class ClimbAction extends Action {
 
         switch (state_) {
             case IDLE:
-                state_ = ClimbingStates.UNCLAMP_ZERO ;
+                state_ = ClimbingStates.OPEN_A_FOR_MID ;
                 break ;
-            case UNCLAMP_ZERO:
-                doUnclampZero() ;
+            case OPEN_A_FOR_MID:
+                doOpenAforMid() ;
                 break ;
-            case WAITSWITCH:
-                doWaitSwitch() ;
+            case WAIT_LEFT_OR_RIGHT_MID:
+                doWaitLeftOrRightMid() ;
                 break ;
             case SQUARING:
                 doSquaring() ;
                 break ;
-            case CLAMP_ONE:
-                doClampOne() ;
+            case CLOSE_A_ON_MID:
+                doCloseAOnMid() ;
                 break ;
-            case UNCLAMP_ONE_HALF:
-                doUnclampOneHalf() ;
+            case OPEN_B_FOR_HIGH:
+                doOpenBForHigh() ;
                 break ;
-            case WINDMILL_ONE:
-                doWindmillOne() ;
+            case WINDMILL_TO_HIGH_BAR:
+                doWindmillToHighBar() ;
                 break ;
-            case BACKUP_ONE:
-                doBackupOne() ;
+            case BACKUP_MID_TO_HIGH:
+                doBackupMidToHigh() ;
                 break ;
-            case CLAMP_TWO:
-                doClampTwo() ;
+            case CLOSE_B_ON_HIGH:
+                doCloseBOnHigh() ;
                 break ;
-            case UNCLAMP_ONE:
-                doUnclampOne() ;
+            case OPEN_A_ON_MID:
+                doOpenAOnMid() ;
                 break ;
-            case WINDMILL_TWO:
-                doWindmillTwo() ;
+            case WINDMILL_TO_TRAVERSE_BAR:
+                doWindmillToTraverse() ;
                 break ;
-            case BACKUP_TWO:
-                doBackupTwo() ;
+            case CLOSE_A_ON_TRAVERSE:
+                doCloseAOnTraverse();
                 break ;
-            case CLAMP_THREE:
-                doClampThree();
+            case BACKUP_HIGH_TO_TRAVERSE:
+                doBackupHighToTraverse() ;
                 break ;
             case COMPLETE:
                 doComplete() ;
@@ -172,9 +172,9 @@ public class ClimbAction extends Action {
         return prefix(indent) + "ClimbAction" ;
     }
 
-    private void doUnclampZero() {
+    private void doOpenAforMid() {
         sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);
-        state_ = ClimbingStates.WAITSWITCH ;
+        state_ = ClimbingStates.WAIT_LEFT_OR_RIGHT_MID ;
     }
  
     // notes on climber's states/actions
@@ -192,7 +192,7 @@ public class ClimbAction extends Action {
     //        Turn on the motor on the side of the drivebase that has not hit the sensor
     //        Go to the SQUARING state
     //
-    private void doWaitSwitch() {
+    private void doWaitLeftOrRightMid() {
         if (sub_.isLeftATouched() && sub_.isRightATouched()) {
             // The driver drove up to the bar perfectly and both sensors
             // touched in the same robot loop.  Unlikely, but it could happen.
@@ -207,7 +207,7 @@ public class ClimbAction extends Action {
             state_start_time_ = sub_.getRobot().getTime() ;
 
             // - go to CLAMP_ONE state (we skip SQUARING)
-            state_ = ClimbingStates.CLAMP_ONE ;
+            state_ = ClimbingStates.CLOSE_A_ON_MID ;
         }
         else if (sub_.isLeftATouched() || sub_.isRightATouched()) {
             // The driver drove up to the bar and only one sensor hit in this
@@ -253,7 +253,7 @@ public class ClimbAction extends Action {
             state_start_time_ = sub_.getRobot().getTime() ;
 
             // - go to CLAMP_ONE state
-            state_ = ClimbingStates.CLAMP_ONE ;
+            state_ = ClimbingStates.CLOSE_A_ON_MID ;
         }
         // if one sensor is touching ... 
     }
@@ -268,20 +268,20 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        Go to the WINDMILL_ONE state
     //
-    private void doClampOne() throws BadMotorRequestException, MotorRequestFailedException {
+    private void doCloseAOnMid() throws BadMotorRequestException, MotorRequestFailedException {
         // clamping clamp A; wait for the 1st clamping time to pass
         if (sub_.getRobot().getTime() - state_start_time_ > first_clamp_wait_) {
 
             state_start_time_ = sub_.getRobot().getTime() ;       
             sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);     
-            state_ = ClimbingStates.UNCLAMP_ONE_HALF ;
+            state_ = ClimbingStates.OPEN_B_FOR_HIGH ;
         }
     }
 
-    private void doUnclampOneHalf() throws BadMotorRequestException, MotorRequestFailedException {
+    private void doOpenBForHigh() throws BadMotorRequestException, MotorRequestFailedException {
         if (sub_.getRobot().getTime() - state_start_time_ > zero_unclamp_wait_) {
             sub_.setWindmill(SetWindmillTo.FORWARDS) ;
-            state_ = ClimbingStates.WINDMILL_ONE ;
+            state_ = ClimbingStates.WINDMILL_TO_HIGH_BAR ;
         }
     }
      
@@ -295,14 +295,14 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        Go to the CLAMP_TWO state
     //
-    private void doWindmillOne() throws BadMotorRequestException, MotorRequestFailedException {
+    private void doWindmillToHighBar() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
         if (sub_.isLeftBTouched() && sub_.isRightBTouched()) {
             sub_.getWindmillMotor().setPower(hold_voltage_) ;
             sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.CLOSED);
             
             state_start_time_ = sub_.getRobot().getTime() ;
-            state_ = ClimbingStates.CLAMP_TWO ;
+            state_ = ClimbingStates.CLOSE_B_ON_HIGH ;
         }
     }
 
@@ -316,15 +316,15 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        Go to the UNCLAMP_ONE state
     //
-    private void doClampTwo() throws Exception {
+    private void doCloseBOnHigh() throws Exception {
         // wait for 2nd "clamp time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_clamp_wait_) {
             sub_.getWindmillMotor().setAction(backup_) ;
-            state_ = ClimbingStates.BACKUP_ONE ;
+            state_ = ClimbingStates.BACKUP_MID_TO_HIGH ;
         }
     }
 
-    private void doBackupOne() {
+    private void doBackupMidToHigh() {
         if (backup_.isDone()) {
             if (!sub_.isLeftBTouched() || !sub_.isRightBTouched()) {
                 state_ = ClimbingStates.COMPLETE ;
@@ -336,7 +336,7 @@ public class ClimbAction extends Action {
                 if (stop_when_safe_)
                     state_ = ClimbingStates.COMPLETE ;
                 else {
-                    state_ = ClimbingStates.UNCLAMP_ONE ;
+                    state_ = ClimbingStates.OPEN_A_ON_MID ;
                 }
             }
         }
@@ -353,11 +353,11 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        Go to the WINDMILL_TWO state
     //
-    private void doUnclampOne() throws BadMotorRequestException, MotorRequestFailedException {
+    private void doOpenAOnMid() throws BadMotorRequestException, MotorRequestFailedException {
         // wait for clamp A to completely unclamp
         if (sub_.getRobot().getTime() - state_start_time_ > first_unclamp_wait_) {
             sub_.setWindmill(SetWindmillTo.FORWARDS);
-            state_ = ClimbingStates.WINDMILL_TWO ;
+            state_ = ClimbingStates.WINDMILL_TO_TRAVERSE_BAR ;
         }
     }
 
@@ -371,7 +371,7 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        Go to the CLAMP_THREE state
     //
-    private void doWindmillTwo() throws BadMotorRequestException, MotorRequestFailedException {
+    private void doWindmillToTraverse() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
         if (sub_.isLeftATouched() && sub_.isRightATouched()) {
             // turns off windmill
@@ -381,7 +381,7 @@ public class ClimbAction extends Action {
             sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
 
             state_start_time_ = sub_.getRobot().getTime() ;
-            state_ = ClimbingStates.CLAMP_THREE ;
+            state_ = ClimbingStates.CLOSE_A_ON_TRAVERSE ;
         }
     }
     
@@ -397,15 +397,15 @@ public class ClimbAction extends Action {
     //    Activities when exit conditions are met:
     //        Go to the UNCLAMP_TWO state
     //
-    private void doClampThree() throws Exception {     
+    private void doCloseAOnTraverse() throws Exception {     
         //wait for 2nd "unclamping time"
         if (sub_.getRobot().getTime() - state_start_time_ > second_unclamp_wait_) {
             sub_.getWindmillMotor().setAction(backup_) ;
-            state_ = ClimbingStates.BACKUP_TWO ;
+            state_ = ClimbingStates.BACKUP_HIGH_TO_TRAVERSE ;
         }
     }
 
-    private void doBackupTwo() {
+    private void doBackupHighToTraverse() {
         if (backup_.isDone()) {
             if (!sub_.isLeftATouched() || !sub_.isRightATouched()) {
                 state_ = ClimbingStates.COMPLETE ;
