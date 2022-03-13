@@ -66,12 +66,8 @@ public class GPMFireAction extends Action {
     private final double shooter_velocity_threshold_ ;
     private final double hood_position_threshold_ ;
 
-    private final boolean keep_adjusting_while_shooting_ = false ;
-
     private int fire_action_id_ ;
 
-    // private boolean is_conveyor_on_ ;
-    // private boolean in_shutdown_mode_ ;
     private boolean shoot_params_valid_ ;
 
     private double shutdown_start_time_ ;
@@ -230,23 +226,6 @@ public class GPMFireAction extends Action {
                 //
                 // We are shooting, shoot til all balls done
                 //
-
-                //
-                // Note, keep_adjusting_while_shooting is a constant defined above that can
-                // change the behavior of the shooting action
-                //
-
-                // if (has_target && keep_adjusting_while_shooting_) {
-                //     //
-                //     // If we have the target, we adjust the shooter hood and wheels as we shoot
-                //     // to get the best shot.  Otherwise we keep with the last targets we had.
-                //     //
-                //     shoot_params_valid_ = computeShooterParams(target_tracker_.getDistance()) ;
-                    
-                //     if (shoot_params_valid_) {
-                //         shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;                        
-                //     }
-                // }
 
                 if (sub_.getConveyor() == null || sub_.getConveyor().getAction().isDone()) {
                     //
