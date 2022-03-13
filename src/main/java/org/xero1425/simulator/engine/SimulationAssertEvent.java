@@ -15,7 +15,7 @@ public class SimulationAssertEvent extends SimulationEvent {
     private SettingsValue value_;
     private double tolerance_;
 
-    public SimulationAssertEvent(double t, String subsystem, String name, SettingsValue v) {
+    public SimulationAssertEvent(double t, String subsystem, String name, SettingsValue v, double tol) {
         super(t);
 
         subsystem_ = subsystem;
@@ -23,17 +23,17 @@ public class SimulationAssertEvent extends SimulationEvent {
         value_ = v;
         setting_ = null;
 
-        tolerance_ = 1e-9;
+        tolerance_ = tol ;
     }
 
-    public SimulationAssertEvent(double t, String subsystem, String name, String setting) {
+    public SimulationAssertEvent(double t, String subsystem, String name, String setting, double tol) {
         super(t);
         subsystem_ = subsystem;
         name_ = name;
         value_ = null;
         setting_ = setting;
 
-        tolerance_ = 1e-9;
+        tolerance_ = tol ;
     }
 
     public void run(SimulationEngine engine) {

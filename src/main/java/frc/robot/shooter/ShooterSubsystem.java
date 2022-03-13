@@ -2,6 +2,7 @@ package frc.robot.shooter;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
+import org.xero1425.misc.SettingsValue;
 
 public class ShooterSubsystem extends Subsystem {
     private MotorEncoderSubsystem wheelMotor1_;
@@ -29,5 +30,22 @@ public class ShooterSubsystem extends Subsystem {
     }
     public MotorEncoderSubsystem getHoodMotor(){
         return hoodMotor_;
+    }
+
+    @Override
+    public SettingsValue getProperty(String name) {
+        SettingsValue v = null ;
+
+        if (name.equals("wheel1-velocity")) {
+            v = new SettingsValue(wheelMotor1_.getVelocity()) ;
+        }
+        else if (name.equals("wheel2-velocity")) {
+            v = new SettingsValue(wheelMotor2_.getVelocity()) ;
+        }
+        else if (name.equals("hood-angle")) {
+            v = new SettingsValue(hoodMotor_.getPosition()) ;
+        }
+
+        return v ;
     }
 }

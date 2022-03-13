@@ -35,6 +35,7 @@ public class ConveyorEjectAction extends Action {
         if (sub_.getRobot().getTime() - start_ > duration_) {
             sub_.setMotorsPower(0.0, 0.0);
             sub_.setBypass(false) ;
+            setDone() ;
         }
     }
 

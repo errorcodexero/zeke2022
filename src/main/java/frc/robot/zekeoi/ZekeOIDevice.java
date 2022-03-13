@@ -295,8 +295,8 @@ public class ZekeOIDevice extends OIPanel {
         setLEDs() ;
 
         if (getValue(eject_gadget_) == 1) {
-            if (gpm.getConveyor().getAction() != eject_action_)
-                gpm.getConveyor().setAction(eject_action_) ;
+            if (gpm.getAction() != eject_action_)
+                gpm.setAction(eject_action_) ;
         }
         else if (getValue(climb_lock_gadget_) == 1) {
             checkGrabbers() ;

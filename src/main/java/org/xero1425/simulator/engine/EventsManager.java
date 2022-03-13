@@ -290,10 +290,21 @@ public class EventsManager {
                 continue ;                
             }
 
+            double tolerance = 1e-9 ;
+
+            if (jobj.containsKey("tolerance")) {
+                Object tobj = jobj.get("tolerance") ;
+                if (tobj instanceof Double) {
+                    tolerance = (Double)tobj ;
+                }
+                else if (tobj instanceof Long) {
+                    tolerance = (Long)tobj ;
+                }
+            }
+
             if (jobj.containsKey("value")) {
                 Object vobj = jobj.get("value") ;
                 SettingsValue v = null ;
-                double tolerance = 1e-9 ;
 
                 if (vobj instanceof String) {
                     v = new SettingsValue((String)vobj) ;
@@ -326,7 +337,7 @@ public class EventsManager {
                 }
 
                 if (v != null) {
-                    SimulationAssertEvent ev = new SimulationAssertEvent(t, (String)mobj, (String)iobj, v) ;
+                    SimulationAssertEvent ev = new SimulationAssertEvent(t, (String)mobj, (String)iobj, v, tolerance) ;
                     if (v.isDouble())
                         ev.setTolerance(tolerance) ;
                     insertEvent(ev) ;
@@ -341,7 +352,7 @@ public class EventsManager {
                     continue ;                
                 }
 
-                SimulationAssertEvent ev = new SimulationAssertEvent(t, (String)mobj, (String)iobj, (String)vobj) ;
+                SimulationAssertEvent ev = new SimulationAssertEvent(t, (String)mobj, (String)iobj, (String)vobj, tolerance) ;
                 insertEvent(ev) ;
             }
         }
@@ -367,5 +378,4 @@ public class EventsManager {
                 events_.add(ev) ;
         }
     }
-
 } ;

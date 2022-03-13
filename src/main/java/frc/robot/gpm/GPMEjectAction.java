@@ -20,8 +20,8 @@ public class GPMEjectAction extends Action {
 
     @Override
     public void start() {
-        sub_.getConveyor().setAction(eject_) ;
-        sub_.getShooter().setAction(shooter_) ;
+        sub_.getConveyor().setAction(eject_, true) ;
+        sub_.getShooter().setAction(shooter_, true) ;
     }
 
     @Override
@@ -35,5 +35,10 @@ public class GPMEjectAction extends Action {
     @Override
     public String toString(int indent) {
         return spaces(indent) + "GPMEjectAction" ;
-    }    
+    }
+
+    @Override
+    public void cancel() {
+        super.cancel(); ;
+    }
 }
