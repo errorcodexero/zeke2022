@@ -439,15 +439,75 @@
             // Parameters for the climb actions
             //
             "climbaction": {
-                "drive_action_power": 0.4,
-                "zero_unclamp_wait" : 0.0,
-                "first_clamp_wait": 2.0,
-                "second_clamp_wait": 2.0,
-                "first_unclamp_wait": 2.0,
-                "second_unclamp_wait": 2.0,
-                "backup-power" : -0.6,
-                "backup-duration" : 1.05,
-                "hold_power" : 0.15
+                // The power to use on the drive base when squaring up the robot
+                "drive-action-power": 0.4,
+
+                // The time to wait for a clamp to close on a bar
+                "clamp-wait-time" : 2.0,
+
+                // The time to wait for a clamp to open if it is NOT clamped to a bar
+                "unclamp-unloaded-wait-time": 0.0,
+
+                // The time to wait for a clamp to open if it is clamped to a bar
+                "unclamp-loaded-wait-time" : 2.0,
+
+                // The power we apply to the windmill motor while waiting for a clamp to be closed
+                "hold_power" : 0.2,
+
+                // The position target for the high bar
+                "target-high" : 120,
+
+                // The detlta between actual position and target position in backup that means we hit the backup target
+                "backup-threshold" : 5.0,
+
+                // How far to back up while connected between the mid and high bar
+                "backup-target-mid-high" : 80,
+
+                // The maximum amount of time to spend waiting to backup
+                "backup-time-mid-high" : 2.0,
+
+                // The position target for the traverse bar
+                "target-traverse" : 240,
+
+                // How far to backup while connected between the traverse and high bar.
+                "backup-target-high-traverse" : 200,
+
+                // The maximum amount of time to spend waiting to backup
+                "backup-time-high-traverse" : 2.0,
+
+                // The range used to ramp the windmill motors, in robot loops
+                "start-range" : 10,
+
+                // The maximum power to apply to the windmill motor
+                "max-windmill-power": 0.8,
+
+                // The power to apply while finishing the windmill range
+                "finish_power" : 0.4,
+
+                // The positional range to finish the windmill state
+                "finish-range" : 15.0,
+
+ 
+
+
+                "backup-mid-high" : {
+                    "kp": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kf": 0.0,
+                    "max": 0.0,
+                    "min": -0.6,
+                    "imax": 0.0                    
+                },
+                "backup-high-traverse" : {
+                    "kp": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kf": 0.0,
+                    "max": 0.0,
+                    "min": -0.6,
+                    "imax": 0.0                    
+                }
             },
             "deploy-action" : {
                 "deployed" : 90,
