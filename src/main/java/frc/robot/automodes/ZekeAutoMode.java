@@ -11,11 +11,16 @@ import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
 
+import frc.robot.climber.ChangeClampAction;
+import frc.robot.climber.ClimberSubsystem;
+import frc.robot.climber.ClimberSubsystem.GrabberState;
+import frc.robot.climber.ClimberSubsystem.WhichClamp;
 import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
 import frc.robot.turret.FollowTargetAction;
+import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class ZekeAutoMode extends AutoMode {
@@ -27,7 +32,15 @@ public class ZekeAutoMode extends AutoMode {
         return (ZekeSubsystem) getAutoController().getRobot().getRobotSubsystem();
     }
 
-    protected void startTracking() throws BadParameterTypeException, MissingParameterException, InvalidActionRequest {
+    protected void closeClamps() throws InvalidActionRequest, BadParameterTypeException, MissingParameterException {
+        ZekeSubsystem zeke = getZekeRobotSubsystem() ;
+        ClimberSubsystem climber = zeke.getClimber() ;
+
+        addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.CLOSED), false);
+        addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.CLOSED), false);
+    }
+
+    protected void startLimelightTracking() throws BadParameterTypeException, MissingParameterException, InvalidActionRequest {
         ZekeSubsystem zeke = getZekeRobotSubsystem() ;
         FollowTargetAction act = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker()) ;
         addSubActionPair(zeke.getTurret(), act, false);
@@ -43,15 +56,14 @@ public class ZekeAutoMode extends AutoMode {
         
         ZekeSubsystem zeke = getZekeRobotSubsystem() ;
         GPMSubsystem gpm = zeke.getGPMSubsystem();
+        TurretSubsystem turret = zeke.getTurret() ;
         ParallelAction parallel;
 
         parallel = new ParallelAction(getAutoController().getRobot().getMessageLogger(), ParallelAction.DonePolicy.All);
-        parallel.addAction(setTurretToTrack(angle));
-
-        if (path != null) {
-            parallel.addSubActionPair(zeke.getTankDrive(), new TankDrivePathFollowerAction(zeke.getTankDrive(), path, reverse), true);
-        }
+        parallel.addSubActionPair(turret, new MotorEncoderGotoAction(turret, angle, true), false) ;
+        parallel.addSubActionPair(zeke.getTankDrive(), new TankDrivePathFollowerAction(zeke.getTankDrive(), path, reverse), true);
         addAction(parallel);
+        
         addSubActionPair(gpm, new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()), true) ;
     }
 
@@ -60,40 +72,53 @@ public class ZekeAutoMode extends AutoMode {
     // collection sequence can be executed along the start of the path so that no delay is necessary
     // before following the path to let the collection sequence start.
     //
-    protected void driveAndCollect(String path, double delay1, double delay2) throws Exception {
+    protected void driveAndCollect(String path, double delay1, double delay2, double angle) throws Exception {
         GPMSubsystem gpm = getZekeRobotSubsystem().getGPMSubsystem();
         TankDriveSubsystem db = getZekeRobotSubsystem().getTankDrive();
+        TurretSubsystem turret = getZekeRobotSubsystem().getTurret() ;
         ParallelAction parallel;
-        SequenceAction series2;
+        SequenceAction drive;
 
         parallel = new ParallelAction(getAutoController().getRobot().getMessageLogger(), ParallelAction.DonePolicy.All);
-        series2 = new SequenceAction(getAutoController().getRobot().getMessageLogger());
+
+        //
+        // The drive series that delays, drives, then delays.  This series should controle the life time of the
+        // parallel.
+        //
+
+        drive = new SequenceAction(getAutoController().getRobot().getMessageLogger());
 
         if (Math.abs(delay1) > 0.05) {
-            series2.addAction(new DelayAction(getAutoController().getRobot(), delay1));
+            drive.addAction(new DelayAction(getAutoController().getRobot(), delay1));
         }
-        series2.addSubActionPair(db, new TankDrivePathFollowerAction(db, path, false), true);
+        drive.addSubActionPair(db, new TankDrivePathFollowerAction(db, path, false), true);
         if (Math.abs(delay2) > 0.05) {
-            series2.addAction(new DelayAction(getAutoController().getRobot(), delay2));
+            drive.addAction(new DelayAction(getAutoController().getRobot(), delay2));
         } 
-        parallel.addAction(series2);
+        parallel.addAction(drive);
 
+        //
+        // The turret positioning so we are sure the turret is pointed at the lime
+        // light when we are done.
+        //
+        parallel.addSubActionPair(turret, new MotorEncoderGotoAction(turret, angle, true), true);
+
+        //
+        // The collect sequence
+        //
         GPMStartCollectAction collect = new GPMStartCollectAction(gpm) ;
         parallel.addSubActionPair(gpm, collect, false) ;
+
+        //
+        // Now add the parallel to the action to the automode that does the drive and collect with
+        // turret alignment at the end of the drive
+        //
         addAction(parallel);
 
+        //
+        // When the path and delay is done, stop collecting
+        //
         GPMStopCollectAction stop = new GPMStopCollectAction(gpm) ;
         addSubActionPair(gpm, stop, false);
-    }
-
-    //
-    // Add a sequence to move the turret to a specific angle and then set it up to track the
-    // target.
-    //
-    protected SequenceAction setTurretToTrack(double angle) throws Exception {
-        SequenceAction seq = new SequenceAction(getAutoController().getRobot().getMessageLogger()) ;
-        MotorEncoderGotoAction action = new MotorEncoderGotoAction(getZekeRobotSubsystem().getTurret(), angle, true) ;
-        seq.addSubActionPair(getZekeRobotSubsystem().getTurret(), action, true);
-        return seq ;
     }
 }
