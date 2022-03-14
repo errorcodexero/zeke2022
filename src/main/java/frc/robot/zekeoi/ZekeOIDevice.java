@@ -39,8 +39,6 @@ public class ZekeOIDevice extends OIPanel {
     private DeployClimberAction stow_climber_ ;
     private FollowTargetAction follow_;
     private MotorEncoderGotoAction zero_turret_ ;
-    private ZekeIntakeArmAction deploy_intake_ ;
-    private ZekeIntakeArmAction stow_intake_ ;
 
     private int start_collect_gadget_;
     private int automode_gadget_;
@@ -107,8 +105,6 @@ public class ZekeOIDevice extends OIPanel {
         manual_fire_action_ = new GPMManualFireAction(gpm) ;
         eject_action_ = new GPMEjectAction(gpm) ;
         zero_turret_ = new MotorEncoderGotoAction(zeke.getTurret(), 0, true) ;
-        deploy_intake_ = new ZekeIntakeArmAction(zeke.getGPMSubsystem().getIntake(), ZekeIntakeArmAction.ArmPos.DEPLOY) ;
-        stow_intake_ = new ZekeIntakeArmAction(zeke.getGPMSubsystem().getIntake(), ZekeIntakeArmAction.ArmPos.RETRACT) ;
 
         if (zeke.getClimber() != null) {
             climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
@@ -248,36 +244,31 @@ public class ZekeOIDevice extends OIPanel {
             }
         }
         else if (climber_state_ == ClimberState.Stowing) {
-            if (getValue(deploy_climb_gadget_) == 0) {
-                zeke.getGPMSubsystem().getIntake().setAction(deploy_intake_) ;
+            if (stow_climber_.isDone()) {                
+                climber_state_ = ClimberState.Stowed ;
+            } 
+            else if (getValue(deploy_climb_gadget_) == 1) {
                 zeke.getClimber().setAction(deploy_climber_) ;
                 climber_state_ = ClimberState.Deploying ;
-            } else if (deploy_climber_.isDone()) {                
-                climber_state_ = ClimberState.Stowed ;
             }
         }
         else if (climber_state_ == ClimberState.Deploying) {
-            if (getValue(deploy_climb_gadget_) == 0) {
-                zeke.getGPMSubsystem().getIntake().setAction(stow_intake_) ;
-                zeke.getClimber().setAction(stow_climber_) ;
-            }
-            else if (deploy_climber_.isDone()) {
+            if (deploy_climber_.isDone()) {
                 climber_state_ = ClimberState.Deployed ;
+            }
+            else if (getValue(deploy_climb_gadget_) == 0) {
+                zeke.getClimber().setAction(stow_climber_) ;
+                climber_state_ = ClimberState.Stowing ;
             }
         }
         else if (climber_state_ == ClimberState.Deployed) {
             if (getValue(deploy_climb_gadget_) == 0) {
-                zeke.getGPMSubsystem().getIntake().setAction(deploy_intake_) ;
-                zeke.getClimber().setAction(deploy_climber_) ;
-                climber_state_ = ClimberState.Deploying ;
+                zeke.getClimber().setAction(stow_climber_) ;
+                climber_state_ = ClimberState.Stowing ;
             }
-            else {
-                if (getValue(climb_gadget_) == 1) {
-                    if (climber.getAction() != climb_) {
-                        climber.setAction(climb_);
-                        climber_state_ = ClimberState.Climbing ;
-                    }
-                }
+            else if (getValue(climb_gadget_) == 1 && climber.getAction() != climb_) {
+                climber.setAction(climb_);
+                climber_state_ = ClimberState.Climbing ;
             }
         }
         else if (climber_state_ == ClimberState.Climbing)  {
