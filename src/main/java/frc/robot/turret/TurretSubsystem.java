@@ -54,13 +54,13 @@ public class TurretSubsystem extends MotorEncoderSubsystem {
     }
 
     @Override
-    public void setPower(double p) {
+    protected double limitPower(double p) {
         if (p < 0 && getPosition() < getMinSafeAngle())
             p = 0 ;
         else if (p > 0 && getPosition() > getMaxSafeAngle())
             p = 0 ;
 
-        super.setPower(p) ;
+        return p ;
     }
 }
 

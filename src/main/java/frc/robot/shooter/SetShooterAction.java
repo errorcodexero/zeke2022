@@ -81,5 +81,6 @@ public class SetShooterAction extends Action {
     public void cancel() {
         sub_.getWheelMotor1().cancelAction();
         sub_.getWheelMotor2().cancelAction();
+        sub_.getHoodMotor().cancelAction() ;
     }
 }

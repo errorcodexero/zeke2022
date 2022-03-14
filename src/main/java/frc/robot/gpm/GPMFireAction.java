@@ -212,7 +212,6 @@ public class GPMFireAction extends Action {
                             state_ = State.SHOOTING ;
                         }
                     }
-
                 }
                 else {
                     //
