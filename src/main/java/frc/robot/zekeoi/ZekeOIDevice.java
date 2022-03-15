@@ -69,7 +69,7 @@ public class ZekeOIDevice extends OIPanel {
         Deployed,
         Stowing,
         Climbing,
-        Complete
+        Climbed
     }
 
     public ZekeOIDevice(OISubsystem sub, String name, int index)
@@ -171,7 +171,7 @@ public class ZekeOIDevice extends OIPanel {
                 setOutput(climber_climbing_led_, false) ;
                 setOutput(climber_complete_led_, true) ;
                 break ;     
-            case Complete:
+            case Climbed:
                 setOutput(climber_deploying_led_, false) ;
                 setOutput(climber_deployed_led_, false) ;
                 setOutput(climber_climbing_led_, false) ;
@@ -281,9 +281,34 @@ public class ZekeOIDevice extends OIPanel {
             }
         }
         else if (climber_state_ == ClimberState.Climbing)  {
-            if (getValue(deploy_climb_gadget_) == 0 || getValue(climb_lock_gadget_) == 0) {
+            if (climb_.isDone()) {
+                if (!climb_.pastPointNoReturn()) {
+                    //
+                    // The climb action was done, but it did not get past the 
+                    // point of no return, so it can be restarted
+                    //
+                    climber_state_ = ClimberState.Deployed ;
+                }
+                else {
+                    //
+                    // The climb action is done, and we are on the bars.  We stay 
+                    // right where we are for ever
+                    //
+                    climber_state_ = ClimberState.Climbed ;
+                }
+            }
+            else if (getValue(deploy_climb_gadget_) == 0) {
+                //
+                // If the climb deploy button is switched, we stop the climb as soon as it is
+                // safe to do so.
+                //
                 climb_.stopWhenSafe() ;
             }
+        }
+        else if (climber_state_ == ClimberState.Climbed) {
+            //
+            // Do nothing, we stay here until the match is over
+            //
         }
     }
 
@@ -294,7 +319,14 @@ public class ZekeOIDevice extends OIPanel {
 
         setLEDs() ;
 
-        if (getValue(eject_gadget_) == 1) {
+        if (climber_state_ == ClimberState.Climbed || climber_state_ == ClimberState.Climbing) {
+            //
+            // If we prevously unlocked the climber and got into the climb sequence, we must finish
+            // this sequence.
+            //
+            generateClimbActions();
+        }
+        else if (getValue(eject_gadget_) == 1) {
             if (gpm.getAction() != eject_action_)
                 gpm.setAction(eject_action_) ;
         }

@@ -30,6 +30,8 @@ public class ClimbAction extends Action {
     private PIDCtrl backup_high_to_traverse_pid_ ;
     private double backup_threshold_ ;
 
+    private double squaring_touch_duration_ ;
+
     private double target_high_ ;
     private double target_traverse_ ;
     private ClimbPowerController windmill_mid_to_high_ctrl_ ;
@@ -46,6 +48,8 @@ public class ClimbAction extends Action {
     private double clamp_wait_time_ ;
     private double unclamp_unloaded_wait_time_ ;
     private double unclamp_loaded_wait_time_ ;
+
+    private boolean past_no_return_ ;
 
     private enum ClimbingStates {
         IDLE,
@@ -82,6 +86,8 @@ public class ClimbAction extends Action {
         unclamp_unloaded_wait_time_ = sub.getSettingsValue("climbaction:unclamp-unloaded-wait-time").getDouble() ;
         unclamp_loaded_wait_time_ = sub.getSettingsValue("climbaction:unclamp-loaded-wait-time").getDouble() ;
 
+        squaring_touch_duration_ = sub.getSettingsValue("climbaction:squaring-touch-duration").getDouble() ;
+
         hold_power_ = sub.getSettingsValue("climbaction:hold_power").getDouble() ;
 
         backup_target_mid_high_ = sub.getSettingsValue("climbaction:backup-target-mid-high").getDouble() ;
@@ -98,28 +104,48 @@ public class ClimbAction extends Action {
         double finishpower = sub.getSettingsValue("climbaction:finish-power").getDouble() ;
         double finishrange = sub.getSettingsValue("climbaction:finish-range").getDouble() ;
 
-
         windmill_mid_to_high_ctrl_ = new ClimbPowerController(target_high_, startrange, maxpower, finishpower, finishrange) ;
         windmill_high_to_traverse_ctrl_ = new ClimbPowerController(target_traverse_, startrange, maxpower, finishpower, finishrange) ;
 
         stop_when_safe_ = false ;
+        past_no_return_ = false ;
+        state_ = ClimbingStates.IDLE ;
     }
 
     public void stopWhenSafe() {
         stop_when_safe_ = true ;
     }
 
+    public boolean pastPointNoReturn() {
+        return past_no_return_ ;
+    }
+
     @Override
     public void start() throws Exception {
         super.start() ;
 
-        sub_.getWindmillMotor().setDefaultAction(null);
-        state_ = ClimbingStates.IDLE ;
+        if (past_no_return_) {
+            setDone() ;
+        }
+        else {
+            stop_when_safe_ = false ;
+            sub_.getWindmillMotor().setDefaultAction(null);
+            state_ = ClimbingStates.OPEN_A_FOR_MID ;
+        }
     }
 
     @Override
     public void run() throws Exception {
         super.run() ;
+
+        if (stop_when_safe_ && !past_no_return_) {
+            //
+            // If we have not gone past the point of no return, and a stop is
+            // requested, we then just complete the action
+            //
+            setDone() ;
+            return ;
+        }
         
         ClimbingStates prev = state_ ;
 
@@ -210,38 +236,13 @@ public class ClimbAction extends Action {
     //        Go to the SQUARING state
     //
     private void doWaitLeftOrRightMid() {
-        if (sub_.isLeftATouched() && sub_.isRightATouched()) {
-            // The driver drove up to the bar perfectly and both sensors
-            // touched in the same robot loop.  Unlikely, but it could happen.
-            // Do:
-            // - disable game pad
+        if (sub_.isLeftATouched() || sub_.isRightATouched()) {
+            //
+            // Disable driving from gamepad            
+            //
             oi_.getGamePad().disable();
 
-            // set clamp A => closed
-            sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
-
-            // - get a time stamp to use in next method; this is to give time for clamp A to be closed
-            state_start_time_ = sub_.getRobot().getTime() ;
-
-            // - go to CLAMP_ONE state (we skip SQUARING)
-            state_ = ClimbingStates.CLOSE_A_ON_MID ;
-        }
-        else if (sub_.isLeftATouched() || sub_.isRightATouched()) {
-            // The driver drove up to the bar and only one sensor hit in this
-            // robot loop.
-            // Do: 
-            //   - disable driving from gamepad
-            
-            oi_.getGamePad().disable();
-
-            //   - turn on motor on side of drivebase that has not hit the sensor
-            if (sub_.isLeftATouched()) {
-                db_.setAction(right_wheel_) ;
-            } else { // mid right touched
-                db_.setAction(left_wheel_) ;
-            }
-
-            //   - go to the SQUARING state
+            // Go to the squaring state which will manage the drive base power
             state_ = ClimbingStates.SQUARING ;
         }
     }
@@ -258,7 +259,7 @@ public class ClimbAction extends Action {
     //
     private void doSquaring() {
         // both sensors are touching
-        if (sub_.isLeftATouched() && sub_.isRightATouched()) { 
+        if (sub_.isLeftATouched() && sub_.leftADuration() > squaring_touch_duration_ && sub_.isRightATouched() && sub_.rightADuration() > squaring_touch_duration_) {
             // - turn off the db
             db_.setAction(stop_db_) ;
 
@@ -270,6 +271,22 @@ public class ClimbAction extends Action {
 
             // - go to CLAMP_ONE state
             state_ = ClimbingStates.CLOSE_A_ON_MID ;
+
+            // Beyond this point, this action cannot be stopped
+            past_no_return_ = true ;
+        }
+        else {
+            double left = 0.0 ;
+            double right = 0.0 ;
+
+            if (sub_.isLeftATouched() == false || sub_.leftADuration() <= squaring_touch_duration_)
+                left =  drive_action_power_ ;
+
+            if (sub_.isRightATouched() == false || sub_.rightADuration() <= squaring_touch_duration_)
+                right = drive_action_power_ ;
+
+            TankDrivePowerAction pa = new TankDrivePowerAction(db_, left, right) ;
+            db_.setAction(pa) ;
         }
     }
 

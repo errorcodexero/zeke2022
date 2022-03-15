@@ -442,6 +442,9 @@
                 // The power to use on the drive base when squaring up the robot
                 "drive-action-power": 0.4,
 
+                // The amount of time a left or right switch must be touching the mid bar to register it as at the bar
+                "squaring-touch-duration": 0.1,
+
                 // The time to wait for a clamp to close on a bar
                 "clamp-wait-time" : 2.0,
 

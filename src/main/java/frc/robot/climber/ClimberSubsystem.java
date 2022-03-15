@@ -45,6 +45,16 @@ public class ClimberSubsystem extends Subsystem {
     private GrabberState a_grabbers_ ;
     private GrabberState b_grabbers_ ;
 
+    private boolean left_a_switch_ ;
+    private double left_a_start_ ;
+    private boolean right_a_switch_ ;
+    private double right_a_start_ ;
+    private boolean left_b_switch_ ;
+    private double left_b_start_ ;
+    private boolean right_b_switch_ ;
+    private double right_b_start_ ;
+    private double now_ ;
+
     public static enum GrabberState {
         OPEN, 
         CLOSED, 
@@ -99,6 +109,30 @@ public class ClimberSubsystem extends Subsystem {
     public void computeMyState() throws Exception {
         super.computeMyState();
 
+        now_ = getRobot().getTime() ;
+
+        boolean v ;
+
+        v = left_a_.get() ;
+        if (v && !left_a_switch_)
+            left_a_start_ = now_ ;
+        left_a_switch_ = v ;
+
+        v = right_a_.get() ;
+        if (v && !right_a_switch_)
+            right_a_start_ = now_ ;
+        right_a_switch_ = v ;
+
+        v = left_right_b_.get() ;
+        if (v && !left_b_switch_)
+            left_b_start_ = now_ ;
+        left_b_switch_ = v ;
+
+        v = left_right_b_.get() ;
+        if (v && !right_b_switch_)
+            right_b_start_ = now_ ;
+        right_b_switch_ = v ;
+
         putDashboard("climber", DisplayType.Always, windmill_.getPosition());
     }
 
@@ -107,22 +141,22 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     //windmills
-    public void setWindmill(SetWindmillTo windmill_power_) throws BadMotorRequestException, MotorRequestFailedException {
-        switch (windmill_power_) {
-            case OFF:
-                windmill_.setAction(windmill_power_off_);
-                break ;
-            case FORWARDS:
-                windmill_.setAction(windmill_power_forwards_);
-                break ;
-            case BACKWARDS:
-                windmill_.setAction(windmill_power_backwards_) ;
-                break ;
-            default:
-                windmill_.setAction(windmill_power_off_);
-                break ;
-        }
-    }
+    // public void setWindmill(SetWindmillTo windmill_power_) throws BadMotorRequestException, MotorRequestFailedException {
+    //     switch (windmill_power_) {
+    //         case OFF:
+    //             windmill_.setAction(windmill_power_off_);
+    //             break ;
+    //         case FORWARDS:
+    //             windmill_.setAction(windmill_power_forwards_);
+    //             break ;
+    //         case BACKWARDS:
+    //             windmill_.setAction(windmill_power_backwards_) ;
+    //             break ;
+    //         default:
+    //             windmill_.setAction(windmill_power_off_);
+    //             break ;
+    //     }
+    // }
 
     public GrabberState getClampState(WhichClamp clamp_name) {
         return (clamp_name == WhichClamp.CLAMP_A) ? a_grabbers_ : b_grabbers_ ;
@@ -163,15 +197,31 @@ public class ClimberSubsystem extends Subsystem {
  
     //touch sensors
     public boolean isLeftATouched() {
-        return left_a_.get() ;
+        return left_a_switch_ ;
     }
     public boolean isRightATouched() {    
-        return right_a_.get() ;
+        return right_a_switch_ ;
     }
     public boolean isLeftBTouched() {
-        return left_right_b_.get();
+        return left_b_switch_ ;
     }
     public boolean isRightBTouched() {
-        return left_right_b_.get();
+        return right_b_switch_ ;
+    }
+
+    public double leftADuration() {
+        return now_ - left_a_start_ ;
+    }
+
+    public double rightADuration() {
+        return now_ - right_a_start_ ;
+    }
+
+    public double leftBDuration() {
+        return now_ - left_b_start_ ;
+    }
+
+    public double rightBDuration() {
+        return now_ - right_b_start_ ;
     }
 }
