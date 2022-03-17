@@ -327,8 +327,8 @@ public class ClimberModel extends SimulationModel {
         MessageLogger logger = getEngine().getMessageLogger() ;
         logger.startMessage(MessageType.Info, logger_id_) ;
         logger.add("event: model ").addQuoted(getModelName());
-        logger.add("instance ").addQuoted(getInstanceName());
-        logger.add(":starting the climber model, waiting on delay to first sensor switch") ;
+        logger.add(" instance ").addQuoted(getInstanceName());
+        logger.add(" :starting the climber model, waiting on delay to first sensor switch") ;
         logger.endMessage();
 
         phase_start_time_ = getRobotTime();
