@@ -1,7 +1,6 @@
 package frc.robot.climber;
 
 import org.xero1425.base.Subsystem;
-import org.xero1425.base.motorsubsystem.MotorEncoderPowerAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
 import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 import org.xero1425.misc.MessageLogger;
@@ -70,7 +69,7 @@ public class ClimberSubsystem extends Subsystem {
     public ClimberSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
 
-        windmill_ = new MotorEncoderSubsystem(parent, SubsystemName, true) ;
+        windmill_ = new MotorEncoderSubsystem(parent, "windmill", true) ;
         addChild(windmill_) ;
 
         // Reset encoders so that the startup position is the zero position
@@ -78,14 +77,6 @@ public class ClimberSubsystem extends Subsystem {
 
         clamp_a_ = new XeroDoubleSolenoid(this, "clamp_a") ;
         clamp_b_ = new XeroDoubleSolenoid(this, "clamp_b") ;
-
-        double doublyindex ;
-        doublyindex = getSettingsValue("hw:windmill:windmill_power_forwards").getDouble() ;
-        windmill_power_forwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
-        doublyindex = getSettingsValue("hw:windmill:windmill_power_backwards").getDouble() ;
-        windmill_power_backwards_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
-        doublyindex = getSettingsValue("hw:windmill:windmill_power_off").getDouble() ;
-        windmill_power_off_ = new MotorEncoderPowerAction(windmill_, doublyindex) ;
 
         int index ;
         index = getSettingsValue("hw:touchsensors:left_a").getInteger() ;
@@ -145,24 +136,6 @@ public class ClimberSubsystem extends Subsystem {
         return windmill_ ;
     }
 
-    //windmills
-    // public void setWindmill(SetWindmillTo windmill_power_) throws BadMotorRequestException, MotorRequestFailedException {
-    //     switch (windmill_power_) {
-    //         case OFF:
-    //             windmill_.setAction(windmill_power_off_);
-    //             break ;
-    //         case FORWARDS:
-    //             windmill_.setAction(windmill_power_forwards_);
-    //             break ;
-    //         case BACKWARDS:
-    //             windmill_.setAction(windmill_power_backwards_) ;
-    //             break ;
-    //         default:
-    //             windmill_.setAction(windmill_power_off_);
-    //             break ;
-    //     }
-    // }
-
     public GrabberState getClampState(WhichClamp clamp_name) {
         return (clamp_name == WhichClamp.CLAMP_A) ? a_grabbers_ : b_grabbers_ ;
     }
@@ -204,12 +177,15 @@ public class ClimberSubsystem extends Subsystem {
     public boolean isLeftATouched() {
         return left_a_switch_ ;
     }
+    
     public boolean isRightATouched() {    
         return right_a_switch_ ;
     }
+
     public boolean isLeftBTouched() {
         return left_b_switch_ ;
     }
+
     public boolean isRightBTouched() {
         return right_b_switch_ ;
     }

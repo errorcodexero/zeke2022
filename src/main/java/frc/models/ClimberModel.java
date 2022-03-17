@@ -124,6 +124,9 @@ public class ClimberModel extends SimulationModel {
     private double wait_for_traverse_grabber_close_time_ ;
     private double wait_for_high_grabber_open_time_ ;
 
+    private double angle_ ;
+    private double degrees_per_second_per_volt_ ;
+
     private int logger_id_ ;
 
     public ClimberModel(SimulationEngine engine, String model, String inst) {
@@ -135,16 +138,35 @@ public class ClimberModel extends SimulationModel {
         messages_ = new ArrayList<Integer>() ;
     }
 
-    @Override
-    public boolean create() {
-
-        solenoid_model_ = SolenoidModel.getInstance(getEngine().getMessageLogger()) ;
-
-        logger_id_ = getEngine().getRobot().getMessageLogger().registerSubsystem(LoggerName) ;
-               
+    private boolean createMotor() throws Exception {
+                       
         motor_ = new SimMotorController(this, "windmill");
         if (!motor_.createMotor())
             return false;
+
+        degrees_per_second_per_volt_ = getDoubleProperty("degrees_per_second_per_volt") ;
+
+        return true ;
+    }
+
+    @Override
+    public boolean create() {
+
+        try {
+            if (!createMotor())
+                return false ;
+        }
+        catch(Exception ex) {
+            MessageLogger logger = getEngine().getMessageLogger() ;
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" - creation failed - ").add(ex.getMessage()) ;
+            logger.endMessage();  
+        }
+
+        solenoid_model_ = SolenoidModel.getInstance(getEngine().getMessageLogger()) ;
+        logger_id_ = getEngine().getRobot().getMessageLogger().registerSubsystem(LoggerName) ;
 
         String dbmodel ;
         String dbinst ;
@@ -186,6 +208,12 @@ public class ClimberModel extends SimulationModel {
 
         }
         catch(Exception ex) {
+            MessageLogger logger = getEngine().getMessageLogger() ;
+            logger.startMessage(MessageType.Error);
+            logger.add("event: model ").addQuoted(getModelName());
+            logger.add(" instance ").addQuoted(getInstanceName());
+            logger.add(" - creation failed - ").add(ex.getMessage()) ;
+            logger.endMessage();    
             return false ;
         }
         
@@ -201,12 +229,20 @@ public class ClimberModel extends SimulationModel {
             return false ;
         }
 
+
+
         setCreated();
         setSensors();
         return true;
     }
 
     public void run(double dt) {
+
+        double power = motor_.getPower() ;
+        angle_ += degrees_per_second_per_volt_ * dt * power ;
+        double v = angle_ / 360.0 * 7150.488871 ;
+        motor_.setEncoder(v);
+
         switch (state_) {
             case Idle:
                 break;

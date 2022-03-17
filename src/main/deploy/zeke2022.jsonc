@@ -336,18 +336,8 @@
             "lost_count": 10,
             "track_method": "vf"
         },
-        "climber": {
-            "hw": {
-                "solenoids": {
-                    "clamp_a": {
-                        "forward": 1,
-                        "reverse": 0
-                    },
-                    "clamp_b": {
-                        "forward": 14,
-                        "reverse": 15
-                    }
-                },
+        "windmill" : {
+            "hw" : {
                 "motors": {
                     "1": {
                         "type": "sparkmax_brushless",
@@ -365,6 +355,60 @@
                     "type": "motor",
                     "m": 0.050346208,
                     "b": 0.0
+                }
+            },
+            //
+            // Used by the MotorEncoderGotoAction to compute the trapezoidal speed profile
+            //
+            "goto": {
+                "threshold": 2.5,
+                "maxa": 45,
+                "maxd": -45,
+                "maxv": 45
+            },          
+            //
+            // Used by the MotorEncoderGotoAction to follow the trapezoidal speed profile
+            //
+            "follower": {
+                "up": {
+                    "kp": 0.01,
+                    "ka": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kv": 0.006339144
+                },
+                "down": {
+                    "kp": 0.01,
+                    "ka": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kv": 0.006339144
+                }
+            },
+            //
+            // Used by the MotorEncoderHoldAction to hold the climber in place
+            //
+            "hold": {
+                "kp": 0.001,
+                "ki": 0,
+                "kd": 0,
+                "kf": 0.0,
+                "min": -0.3,
+                "max": 0.3,
+                "imax": 0.0
+            }            
+        },
+        "climber": {
+            "hw": {
+                "solenoids": {
+                    "clamp_a": {
+                        "forward": 1,
+                        "reverse": 0
+                    },
+                    "clamp_b": {
+                        "forward": 14,
+                        "reverse": 15
+                    }
                 },
                 "touchsensors": {
                     "left_a": 6,
@@ -391,49 +435,6 @@
                 "imax": 0.0
             },
 
-            //
-            // Used by the MotorEncoderGotoAction to compute the trapezoidal speed profile
-            //
-            "goto": {
-                "threshold": 2.5,
-                "maxa": 45,
-                "maxd": -45,
-                "maxv": 45
-            },
-
-            //
-            // Used by the MotorEncoderGotoAction to follow the trapezoidal speed profile
-            //
-            "follower": {
-
-                "up": {
-                    "kp": 0.01,
-                    "ka": 0.0,
-                    "ki": 0.0,
-                    "kd": 0.0,
-                    "kv": 0.006339144
-                },
-                "down": {
-                    "kp": 0.01,
-                    "ka": 0.0,
-                    "ki": 0.0,
-                    "kd": 0.0,
-                    "kv": 0.006339144
-                }
-            },
-
-            //
-            // Used by the MotorEncoderHoldAction to hold the climber in place
-            //
-            "hold": {
-                "kp": 0.001,
-                "ki": 0,
-                "kd": 0,
-                "kf": 0.0,
-                "min": -0.3,
-                "max": 0.3,
-                "imax": 0.0
-            },
 
             //
             // Parameters for the climb actions
