@@ -94,11 +94,11 @@ public class ClimbAction extends Action {
         backup_target_high_traverse_ = sub.getSettingsValue("climbaction:backup-target-high-traverse").getDouble() ;
         backup_threshold_ = sub.getSettingsValue("climbaction:backup-threshold").getDouble() ;
 
-        backup_mid_to_high_pid_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystem:climber:climbaction:backup-mid-high", false) ;
-        backup_high_to_traverse_pid_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystem:climber:climbaction:backup-high-traverse", false) ;
+        backup_mid_to_high_pid_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:climber:climbaction:backup-mid-high", false) ;
+        backup_high_to_traverse_pid_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:climber:climbaction:backup-high-traverse", false) ;
 
-        target_high_ = sub.getSettingsValue("climbaction:target_high").getDouble() ;
-        target_traverse_ = sub.getSettingsValue("climbaction:target_traverse").getDouble() ;
+        target_high_ = sub.getSettingsValue("climbaction:target-high").getDouble() ;
+        target_traverse_ = sub.getSettingsValue("climbaction:target-traverse").getDouble() ;
         double startrange = sub.getSettingsValue("climbaction:start-range").getDouble() ;
         double maxpower = sub.getSettingsValue("climbaction:max-windmill-power").getDouble() ;
         double finishpower = sub.getSettingsValue("climbaction:finish-power").getDouble() ;

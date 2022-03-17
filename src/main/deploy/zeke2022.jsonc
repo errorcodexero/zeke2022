@@ -36,12 +36,12 @@
             "fire-action" : false,
             "shooter-w1" : false,
             "shooter-w2" : false,
-            "shooter-h" : false,
-            
+            "shooter-h" : false,            
             "turret" : false,
+
             // Climber related
-            "climber": false,
-            "climber-model": false,
+            "climber": true,
+            "climber-model": true,
 
             // OI
             "zekeoi" : false
@@ -458,22 +458,22 @@
                 "hold_power" : 0.2,
 
                 // The position target for the high bar
-                "target-high" : 120,
+                "target-high" : 210,
 
                 // The detlta between actual position and target position in backup that means we hit the backup target
                 "backup-threshold" : 5.0,
 
                 // How far to back up while connected between the mid and high bar
-                "backup-target-mid-high" : 80,
+                "backup-target-mid-high" : 180,
 
                 // The maximum amount of time to spend waiting to backup
                 "backup-time-mid-high" : 2.0,
 
                 // The position target for the traverse bar
-                "target-traverse" : 240,
+                "target-traverse" : 300,
 
                 // How far to backup while connected between the traverse and high bar.
-                "backup-target-high-traverse" : 200,
+                "backup-target-high-traverse" : 270,
 
                 // The maximum amount of time to spend waiting to backup
                 "backup-time-high-traverse" : 2.0,
@@ -485,14 +485,12 @@
                 "max-windmill-power": 0.8,
 
                 // The power to apply while finishing the windmill range
-                "finish_power" : 0.4,
+                "finish-power" : 0.4,
 
                 // The positional range to finish the windmill state
                 "finish-range" : 15.0,
 
- 
-
-
+                // Pid controller parameters backing up between the mid bar and high bar
                 "backup-mid-high" : {
                     "kp": 0.0,
                     "ki": 0.0,
@@ -502,6 +500,8 @@
                     "min": -0.6,
                     "imax": 0.0                    
                 },
+
+                // Pid controller parameters backing up between the mid bar and high bar
                 "backup-high-traverse" : {
                     "kp": 0.0,
                     "ki": 0.0,

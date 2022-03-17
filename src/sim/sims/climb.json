@@ -13,7 +13,7 @@
                         "start" : 0.2,
                         "autonomous" : 0.0,
                         "between" : 0.0,
-                        "teleop" : 10.0,
+                        "teleop" : 30.0,
                         "fms" : false
                     }
                 },
@@ -37,6 +37,32 @@
                     "instance" : "1",
                     "values" :
                     {
+                        "comment" : "Deploy the climber",                        
+                        "button7" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 2.8,
+            "asserts" : 
+            [
+                {
+                    "subsystem" : "climber",
+                    "property" : "angle",
+                    "value" : 90.0
+                }
+            ]
+        },
+        {
+            "time" : 3.0,
+            "events" : 
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
                         "comment" : "Pushed the climb button",                        
                         "button9" : true
                     }
@@ -44,7 +70,7 @@
             ]
         },
         {
-            "time" : 2.1,
+            "time" : 3.1,
             "events" : 
             [
                 {
@@ -53,6 +79,21 @@
                     "values" : {
                         "comment" : "start the climber model sequencing",
                         "start" : true
+                    }
+                }
+            ]
+        },
+        {
+            "time" : 3.0,
+            "events" : 
+            [
+                {
+                    "model" : "zekeoi",
+                    "instance" : "1",
+                    "values" :
+                    {
+                        "comment" : "Released the climb button",                        
+                        "button9" : false
                     }
                 }
             ]

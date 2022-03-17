@@ -1,13 +1,12 @@
 package frc.robot.climber;
 
 import org.xero1425.base.Subsystem;
-import org.xero1425.base.motors.BadMotorRequestException;
-import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.motorsubsystem.MotorEncoderPowerAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
 import org.xero1425.base.pneumatics.XeroDoubleSolenoid;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
+import org.xero1425.misc.SettingsValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -37,11 +36,6 @@ public class ClimberSubsystem extends Subsystem {
     private DigitalInput right_a_ ;
     private DigitalInput left_right_b_ ;
     
-    // perhaps rename these as "A to B" and "B to A"
-    private MotorEncoderPowerAction windmill_power_forwards_; 
-    private MotorEncoderPowerAction windmill_power_backwards_; 
-    private MotorEncoderPowerAction windmill_power_off_; 
-
     private GrabberState a_grabbers_ ;
     private GrabberState b_grabbers_ ;
 
@@ -103,6 +97,17 @@ public class ClimberSubsystem extends Subsystem {
 
         a_grabbers_ = GrabberState.UNKNOWN ;
         b_grabbers_ = GrabberState.UNKNOWN ;
+    }
+
+    @Override
+    public SettingsValue getProperty(String name) {
+        SettingsValue v = null ;
+
+        if (name.equals("angle")) {
+            v = new SettingsValue(windmill_.getPosition()) ;
+        }
+
+        return v ;
     }
 
     @Override
