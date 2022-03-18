@@ -42,6 +42,8 @@
                 "dbmodel": "tankdrive",
                 "dbinst": "1",
 
+                "degrees_per_second_per_volt" : 157.7500054,
+
                 "first_mid_sensor_delay" : 0.5,
                 "second_mid_sensor_delay" : 0.5,
                 "second_mid_sensor_db_check" : 0.1,

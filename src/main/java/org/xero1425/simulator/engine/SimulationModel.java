@@ -15,16 +15,26 @@ public abstract class SimulationModel {
     private Map<String, SettingsValue> props_ ;
     private boolean created_ ;
     private int logger_id_ ;
+    private boolean warned_not_run_ ;
     
     public SimulationModel(SimulationEngine engine, String model, String instance) {
         engine_ = engine ;
         model_ = model ;
         instance_ = instance ;
         created_ = false ;
+        warned_not_run_ = false ;
 
         props_ = new HashMap<String, SettingsValue>() ;
 
         logger_id_ = engine.getMessageLogger().registerSubsystem(model + "_model") ;
+    }
+
+    public boolean warnedNotRun() {
+        return warned_not_run_ ;
+    }
+
+    public void setWarnedNotRun() {
+        warned_not_run_ = true ;
     }
 
     public String statusString() {
@@ -79,7 +89,6 @@ public abstract class SimulationModel {
     protected int getLoggerID() {
         return logger_id_ ;
     }
-
     
     protected int getIntProperty(String name) throws Exception {
         MessageLogger logger = getEngine().getMessageLogger() ;

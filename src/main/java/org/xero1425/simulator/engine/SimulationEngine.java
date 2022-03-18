@@ -119,7 +119,11 @@ public class SimulationEngine {
                     model.create() ;
                 }
                 catch(Exception ex) {
-                    
+                    logger_.startMessage(MessageType.Error) ;
+                    logger_.add("model ").addQuoted(model.getModelName()) ;
+                    logger_.add(", instance ").addQuoted(model.getInstanceName()) ;
+                    logger_.add(" - failed creation ").addQuoted(ex.getMessage()) ;
+                    logger_.endMessage();
                 }
             }
         }
@@ -205,10 +209,13 @@ public class SimulationEngine {
             if (m.isCreated())
                 m.run(dt) ;
             else {
-                logger_.startMessage(MessageType.Error) ;
-                logger_.add("did not run model ").addQuoted(m.getModelName()) ;
-                logger_.add(" instance ").addQuoted(m.getInstanceName()) ;
-                logger_.add(" - model not created").endMessage(); 
+                if (!m.warnedNotRun()) {
+                    logger_.startMessage(MessageType.Error) ;
+                    logger_.add("did not run model ").addQuoted(m.getModelName()) ;
+                    logger_.add(" instance ").addQuoted(m.getInstanceName()) ;
+                    logger_.add(" - model not created").endMessage(); 
+                    m.setWarnedNotRun(); 
+                }
             }
         }
     }    

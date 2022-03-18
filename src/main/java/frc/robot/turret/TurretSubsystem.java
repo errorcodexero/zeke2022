@@ -2,6 +2,7 @@ package frc.robot.turret;
 
 import org.xero1425.base.Subsystem;
 import org.xero1425.base.motorsubsystem.MotorEncoderSubsystem;
+import org.xero1425.misc.SettingsValue;
 
 public class TurretSubsystem extends MotorEncoderSubsystem {
     
@@ -17,6 +18,17 @@ public class TurretSubsystem extends MotorEncoderSubsystem {
         min_safe_angle_ = getSettingsValue("min").getDouble() ;
         max_safe_angle_ = getSettingsValue("max").getDouble() ;
         is_ready_to_fire_ = false ;
+    }
+
+    @Override
+    public SettingsValue getProperty(String name) {
+        SettingsValue v = null ;
+
+        if (name.equals("angle")) {
+            v = new SettingsValue(getPosition()) ;
+        }
+
+        return v ;
     }
 
     public double getMinSafeAngle() {

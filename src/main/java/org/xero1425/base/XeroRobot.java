@@ -138,7 +138,9 @@ public abstract class XeroRobot extends TimedRobot {
         // Setup the mesasge logger to log messages
         enableMessageLogger();
         logger_id_ = logger_.registerSubsystem(LoggerName) ;        
+        logger_.startMessage(MessageType.Info).add("============================================================").endMessage();
         logger_.startMessage(MessageType.Info).add("robot code starting").endMessage();
+        logger_.startMessage(MessageType.Info).add("============================================================").endMessage();
 
         if (RobotBase.isSimulation()) {
             String str = SimArgs.InputFileName;

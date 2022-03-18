@@ -12,6 +12,14 @@ import org.xero1425.misc.MessageType;
 import org.xero1425.misc.SettingsValue;
 
 public class TurretModel extends SimulationModel {
+        
+    private SimMotorController motor_ ;
+    private double degrees_per_second_per_volt_ ;
+    private double angle_  ;
+    private int encoder_input_ ;
+    private EncoderMapper mapper_ ;
+    private double voltage_ ;
+    
     public TurretModel(SimulationEngine engine, String model, String inst) {
         super(engine, model, inst);
         
@@ -146,11 +154,5 @@ public class TurretModel extends SimulationModel {
     public Rotation2d getAngle() {
         return Rotation2d.fromDegrees(angle_) ;
     }
-    
-    private SimMotorController motor_ ;
-    private double degrees_per_second_per_volt_ ;
-    private double angle_  ;
-    private int encoder_input_ ;
-    private EncoderMapper mapper_ ;
-    private double voltage_ ;
+
 }

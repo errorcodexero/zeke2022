@@ -36,12 +36,12 @@
             "fire-action" : false,
             "shooter-w1" : false,
             "shooter-w2" : false,
-            "shooter-h" : false,
-            
+            "shooter-h" : false,            
             "turret" : false,
+
             // Climber related
-            "climber": false,
-            "climber-model": false,
+            "climber": true,
+            "climber-model": true,
 
             // OI
             "zekeoi" : false
@@ -336,18 +336,8 @@
             "lost_count": 10,
             "track_method": "vf"
         },
-        "climber": {
-            "hw": {
-                "solenoids": {
-                    "clamp_a": {
-                        "forward": 1,
-                        "reverse": 0
-                    },
-                    "clamp_b": {
-                        "forward": 14,
-                        "reverse": 15
-                    }
-                },
+        "windmill" : {
+            "hw" : {
                 "motors": {
                     "1": {
                         "type": "sparkmax_brushless",
@@ -365,6 +355,60 @@
                     "type": "motor",
                     "m": 0.050346208,
                     "b": 0.0
+                }
+            },
+            //
+            // Used by the MotorEncoderGotoAction to compute the trapezoidal speed profile
+            //
+            "goto": {
+                "threshold": 2.5,
+                "maxa": 45,
+                "maxd": -45,
+                "maxv": 45
+            },          
+            //
+            // Used by the MotorEncoderGotoAction to follow the trapezoidal speed profile
+            //
+            "follower": {
+                "up": {
+                    "kp": 0.01,
+                    "ka": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kv": 0.006339144
+                },
+                "down": {
+                    "kp": 0.01,
+                    "ka": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kv": 0.006339144
+                }
+            },
+            //
+            // Used by the MotorEncoderHoldAction to hold the climber in place
+            //
+            "hold": {
+                "kp": 0.001,
+                "ki": 0,
+                "kd": 0,
+                "kf": 0.0,
+                "min": -0.3,
+                "max": 0.3,
+                "imax": 0.0
+            }            
+        },
+        "climber": {
+            "hw": {
+                "solenoids": {
+                    "clamp_a": {
+                        "forward": 1,
+                        "reverse": 0
+                    },
+                    "clamp_b": {
+                        "forward": 14,
+                        "reverse": 15
+                    }
                 },
                 "touchsensors": {
                     "left_a": 6,
@@ -391,63 +435,83 @@
                 "imax": 0.0
             },
 
-            //
-            // Used by the MotorEncoderGotoAction to compute the trapezoidal speed profile
-            //
-            "goto": {
-                "threshold": 2.5,
-                "maxa": 45,
-                "maxd": -45,
-                "maxv": 45
-            },
-
-            //
-            // Used by the MotorEncoderGotoAction to follow the trapezoidal speed profile
-            //
-            "follower": {
-
-                "up": {
-                    "kp": 0.01,
-                    "ka": 0.0,
-                    "ki": 0.0,
-                    "kd": 0.0,
-                    "kv": 0.006339144
-                },
-                "down": {
-                    "kp": 0.01,
-                    "ka": 0.0,
-                    "ki": 0.0,
-                    "kd": 0.0,
-                    "kv": 0.006339144
-                }
-            },
-
-            //
-            // Used by the MotorEncoderHoldAction to hold the climber in place
-            //
-            "hold": {
-                "kp": 0.001,
-                "ki": 0,
-                "kd": 0,
-                "kf": 0.0,
-                "min": -0.3,
-                "max": 0.3,
-                "imax": 0.0
-            },
 
             //
             // Parameters for the climb actions
             //
             "climbaction": {
-                "drive_action_power": 0.4,
-                "zero_unclamp_wait" : 0.0,
-                "first_clamp_wait": 2.0,
-                "second_clamp_wait": 2.0,
-                "first_unclamp_wait": 2.0,
-                "second_unclamp_wait": 2.0,
-                "backup-power" : -0.6,
-                "backup-duration" : 1.05,
-                "hold_power" : 0.15
+                // The power to use on the drive base when squaring up the robot
+                "drive-action-power": 0.4,
+
+                // The amount of time a left or right switch must be touching the mid bar to register it as at the bar
+                "squaring-touch-duration": 0.1,
+
+                // The time to wait for a clamp to close on a bar
+                "clamp-wait-time" : 2.0,
+
+                // The time to wait for a clamp to open if it is NOT clamped to a bar
+                "unclamp-unloaded-wait-time": 0.0,
+
+                // The time to wait for a clamp to open if it is clamped to a bar
+                "unclamp-loaded-wait-time" : 2.0,
+
+                // The power we apply to the windmill motor while waiting for a clamp to be closed
+                "hold_power" : 0.2,
+
+                // The position target for the high bar
+                "target-high" : 210,
+
+                // The detlta between actual position and target position in backup that means we hit the backup target
+                "backup-threshold" : 5.0,
+
+                // How far to back up while connected between the mid and high bar
+                "backup-target-mid-high" : 180,
+
+                // The maximum amount of time to spend waiting to backup
+                "backup-time-mid-high" : 2.0,
+
+                // The position target for the traverse bar
+                "target-traverse" : 300,
+
+                // How far to backup while connected between the traverse and high bar.
+                "backup-target-high-traverse" : 270,
+
+                // The maximum amount of time to spend waiting to backup
+                "backup-time-high-traverse" : 2.0,
+
+                // The range used to ramp the windmill motors, in robot loops
+                "start-range" : 10,
+
+                // The maximum power to apply to the windmill motor
+                "max-windmill-power": 0.8,
+
+                // The power to apply while finishing the windmill range
+                "finish-power" : 0.4,
+
+                // The positional range to finish the windmill state
+                "finish-range" : 15.0,
+
+                // Pid controller parameters backing up between the mid bar and high bar
+                "backup-mid-high" : {
+                    "kp": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kf": 0.0,
+                    "max": 0.0,
+                    "min": -0.6,
+                    "imax": 0.0                    
+                },
+
+                // Pid controller parameters backing up between the mid bar and high bar
+                "backup-high-traverse" : {
+                    "kp": 0.0,
+                    "ki": 0.0,
+                    "kd": 0.0,
+                    "kf": 0.0,
+                    "max": 0.0,
+                    "min": -0.6,
+                    "imax": 0.0                    
+                }
             },
             "deploy-action" : {
                 "deployed" : 90,
