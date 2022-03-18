@@ -1,5 +1,6 @@
 package frc.robot.gpm;
 
+import org.xero1425.base.Subsystem.DisplayType;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.MessageLogger;
@@ -8,6 +9,7 @@ import org.xero1425.misc.MessageType;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.conveyor.ConveyorShootAction;
 import frc.robot.shooter.SetShooterAction;
+import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.TurretSubsystem;
 
@@ -105,13 +107,10 @@ public class GPMFireAction extends Action {
         // These are initial values for shooing params.  These just get the shooter spinning up
         shoot_params_ = new ShootParams(5000, 5000, 7.0) ;
 
-
         shooter_action_ = new SetShooterAction(sub_.getShooter(), shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
 
         state_ = State.IDLE ;
 
-        // is_conveyor_on_ = false ;
-        // is_shutdown_mode_ = false ;
         shoot_params_valid_ = false ;
     }
 
@@ -153,7 +152,6 @@ public class GPMFireAction extends Action {
                 break ;
 
             case WAITING:  
-            
                 has_target = target_tracker_.hasVisionTarget() ;
 
                 if (sub_.getConveyor().getBallCount() == 0) {
@@ -198,6 +196,7 @@ public class GPMFireAction extends Action {
                         // check the collect button, which is a shoot button now
                         //
                         boolean shootButton = DriverStation.getStickButton(2, 3) ;
+
                     
                         // if the
                         //  * shooter is up to speed
@@ -218,6 +217,7 @@ public class GPMFireAction extends Action {
                     // We have no vision target, therefore our shooting parameters are invalid
                     //
                     shoot_params_valid_ = false ;
+                    System.out.println("Shooting parameters invalid") ;
                 }            
                 break ;
 
@@ -240,8 +240,8 @@ public class GPMFireAction extends Action {
                 if (sub_.getRobot().getTime() - shutdown_start_time_ > shutdown_duration_) {
                     shooter_action_.stopPlot();
                     sub_.getShooter().setAction(null, true) ;
-                    state_ = State.IDLE ;                    setDone() ;
-
+                    state_ = State.IDLE ;                    
+                    setDone() ;
                 }
                 break ;
         }
@@ -273,6 +273,18 @@ public class GPMFireAction extends Action {
             logger.add("turretready", turret_ready) ;
         }
         logger.endMessage();
+
+        
+        ShooterSubsystem shooter = sub_.getShooter() ;
+        sub_.putDashboard("targetready", DisplayType.Always, has_target);
+        sub_.putDashboard("dbready", DisplayType.Always, db_ready);
+        sub_.putDashboard("turretready", DisplayType.Always, turret_ready);
+        sub_.putDashboard("shooterready", DisplayType.Always, shooter_ready);
+        sub_.putDashboard("svel", DisplayType.Always, shoot_params_.v1_);
+        sub_.putDashboard("w1", DisplayType.Always, shooter.getWheelMotor1().getVelocity()) ;
+        sub_.putDashboard("w2", DisplayType.Always, shooter.getWheelMotor2().getVelocity());
+
+        System.out.println("shooter db " + (db_ready ? "true" : "False")) ;
     }
 
     @Override
@@ -317,13 +329,12 @@ public class GPMFireAction extends Action {
         double vel = 0.4992 * dist * dist - 38.828 * dist + 3500.5 ;        
         double hood = 0.156 * dist ;
 
-        if (hood < 1.0 || hood > 22.0) {
-            ret = false ;
-        }
-        else {
-            shoot_params_ = new ShootParams(vel, vel, hood) ;
-        }
+        if (hood < 1.0)
+            hood = 1.0 ;
+        else if (hood > 22.0)
+            hood = 22.0 ;
 
+        shoot_params_ = new ShootParams(vel, vel, hood) ;
         return ret ;
     }
 }

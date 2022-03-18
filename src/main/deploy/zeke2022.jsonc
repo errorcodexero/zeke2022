@@ -151,7 +151,7 @@
             },
             "standard_gamepad": {
                 "index": 0,
-                "deadband": 0.08,
+                "deadband": 0.10,
                 "epsilon": 0.05,
                 "max-increase" : 0.0,            // Max increase rate of power, same args as setOpenLoopRate
                 "max-decrease" : 0.0             // Max decrease rate of power, same args as setOpenLoopRate
@@ -184,7 +184,7 @@
             "fire-action" : {
                 "hood_pos_threshold" : 0.5,
                 "db_vel_threshold" : 6.0,
-                "shooter_vel_threshold" : 60.0,
+                "shooter_vel_threshold" : 100.0,
                 "shutdown-delay" : 0.5
             },
             "manual-fire-action" : {
@@ -321,7 +321,7 @@
             },
             "min": -60,
             "max": 60,
-            "fire_threshold": 5.0
+            "fire_threshold": 2.0
         },
         "zeke_limelight": {
             "timeout": 8.0,
@@ -571,7 +571,7 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 55,
+        "which": 101,
         "power": 0.2,
         "duration": 1.0,
         "distance": 21.0,

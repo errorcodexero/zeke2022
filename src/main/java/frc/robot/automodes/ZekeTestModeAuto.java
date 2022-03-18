@@ -206,11 +206,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break; 
 
             case 41:
-                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 45.0, true), true) ;
-                addAction(new DelayAction(getAutoController().getRobot(), 3.0)) ;
-                addSubActionPair(turret, new MotorEncoderGotoAction(turret, -45.0, true), true) ;
-                addAction(new DelayAction(getAutoController().getRobot(), 3.0)) ;
-                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 0.0, true), true) ;                
+                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 80.0, true), true) ;             
                 break ;
 
             case 42:
