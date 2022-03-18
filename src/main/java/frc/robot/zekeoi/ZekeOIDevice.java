@@ -140,44 +140,8 @@ public class ZekeOIDevice extends OIPanel {
                 break ;                               
         }
 
-        switch(climber_state_) {
-            case Stowed:
-                setOutput(climber_deploying_led_, true) ;            
-                setOutput(climber_deployed_led_, true) ;
-                setOutput(climber_climbing_led_, true) ;
-                setOutput(climber_complete_led_, true) ;
-                break ;
-            case Stowing:
-                setOutput(climber_deploying_led_, true) ;              
-                setOutput(climber_deployed_led_, false) ;
-                setOutput(climber_climbing_led_, true) ;
-                setOutput(climber_complete_led_, true) ;
-                break;                
-            case Deploying:
-                setOutput(climber_deploying_led_, false) ;                
-                setOutput(climber_deployed_led_, true) ;
-                setOutput(climber_climbing_led_, true) ;
-                setOutput(climber_complete_led_, true) ;
-                break ;           
-            case Deployed:
-                setOutput(climber_deploying_led_, false) ;               
-                setOutput(climber_deployed_led_, false) ;
-                setOutput(climber_climbing_led_, true) ;
-                setOutput(climber_complete_led_, true) ;
-                break ;                         
-            case Climbing:
-                setOutput(climber_deploying_led_, false) ;             
-                setOutput(climber_deployed_led_, false) ;
-                setOutput(climber_climbing_led_, false) ;
-                setOutput(climber_complete_led_, true) ;
-                break ;     
-            case Climbed:
-                setOutput(climber_deploying_led_, false) ;
-                setOutput(climber_deployed_led_, false) ;
-                setOutput(climber_climbing_led_, false) ;
-                setOutput(climber_complete_led_, false) ;
-                break ;                    
-        }                
+        if (gpm.getAction() == fire_action_) {
+        }
     }
 
     private void generateCargoActions() {
@@ -319,7 +283,7 @@ public class ZekeOIDevice extends OIPanel {
 
         setLEDs() ;
 
-        if (climber_state_ == ClimberState.Climbed || climber_state_ == ClimberState.Climbing) {
+        if (climber_state_ != ClimberState.Stowed) {
             //
             // If we prevously unlocked the climber and got into the climb sequence, we must finish
             // this sequence.

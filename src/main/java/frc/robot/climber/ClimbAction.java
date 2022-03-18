@@ -18,8 +18,6 @@ public class ClimbAction extends Action {
     private ClimberSubsystem sub_ ;
     private TankDriveSubsystem db_ ;
     private ZekeOISubsystem oi_ ;
-    private TankDrivePowerAction left_wheel_ ;
-    private TankDrivePowerAction right_wheel_ ;
     private TankDrivePowerAction stop_db_ ;
 
     private double backup_target_mid_high_ ;
@@ -78,8 +76,6 @@ public class ClimbAction extends Action {
         oi_ = oi ;
 
         drive_action_power_ = sub.getSettingsValue("climbaction:drive-action-power").getDouble() ;
-        left_wheel_ = new TankDrivePowerAction(db_, drive_action_power_, 0.0) ;
-        right_wheel_ = new TankDrivePowerAction(db_, 0.0, drive_action_power_) ;
         stop_db_ = new TankDrivePowerAction(db_, 0.0, 0.0) ;
 
         clamp_wait_time_ = sub.getSettingsValue("climbaction:clamp-wait-time").getDouble() ;
