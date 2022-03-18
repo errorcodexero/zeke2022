@@ -173,10 +173,12 @@
                 "outputs" : {
                     "ball1" : 1,
                     "ball2" : 2,
-                    "climber-deploying" : 3,
-                    "climber-deployed" : 4,
-                    "climber-climbing" : 5,
-                    "climber-climbed" : 6
+                    "shooting" : {
+                        "limelight": 3,
+                        "turret" : 4,
+                        "shooter" : 5,
+                        "distance" : 6
+                    }
                 }
             }
         },

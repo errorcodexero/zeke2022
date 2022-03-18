@@ -37,6 +37,7 @@ public class ClimbAction extends Action {
 
     private double drive_action_power_ ;
     private boolean stop_when_safe_ ;
+    private boolean set_auto_drive_ ;
 
     // timer to judge following delays off of
     private double state_start_time_ ;
@@ -105,7 +106,12 @@ public class ClimbAction extends Action {
 
         stop_when_safe_ = false ;
         past_no_return_ = false ;
+        set_auto_drive_ = false ;
         state_ = ClimbingStates.IDLE ;
+    }
+
+    public void setAutomaticDrive() {
+        set_auto_drive_ = true ;
     }
 
     public void stopWhenSafe() {
@@ -125,7 +131,6 @@ public class ClimbAction extends Action {
         }
         else {
             stop_when_safe_ = false ;
-            sub_.getWindmillMotor().setDefaultAction(null);
             state_ = ClimbingStates.OPEN_A_FOR_MID ;
         }
     }
@@ -258,6 +263,9 @@ public class ClimbAction extends Action {
         if (sub_.isLeftATouched() && sub_.leftADuration() > squaring_touch_duration_ && sub_.isRightATouched() && sub_.rightADuration() > squaring_touch_duration_) {
             // - turn off the db
             db_.setAction(stop_db_) ;
+
+            // Set the default action for the windmill to null so the hold action stops working
+            sub_.getWindmillMotor().setDefaultAction(null);
 
             // - clamp A state
             sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);

@@ -63,7 +63,6 @@ public class GPMFireAction extends Action {
     private ConveyorShootAction conveyor_shoot_action_ ;
     private SetShooterAction shooter_action_ ;
 
-
     private final double db_velocity_threshold_ ;
     private final double shooter_velocity_threshold_ ;
     private final double hood_position_threshold_ ;
@@ -76,7 +75,12 @@ public class GPMFireAction extends Action {
     private double shutdown_duration_ ;
 
     private State state_ ;
-    
+
+    private boolean shooter_ready_ ;
+    private boolean turret_ready_ ;
+    private boolean has_target_ ;
+    private boolean db_ready_ ;
+
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
             TankDriveSubsystem db, TurretSubsystem turret) 
             throws Exception {
@@ -114,6 +118,26 @@ public class GPMFireAction extends Action {
         shoot_params_valid_ = false ;
     }
 
+    public boolean distanceOk() {
+        return shoot_params_valid_ ;
+    }
+
+    public boolean turretReady() {
+        return turret_ready_ ;
+    }
+
+    public boolean shooterReady() {
+        return shooter_ready_ ;
+    }
+
+    public boolean hasTarget() {
+        return has_target_ ; 
+    }
+
+    public boolean dbReady() {
+        return db_ready_ ;
+    }
+
     @Override
     public void start() throws Exception {
         super.start();
@@ -141,10 +165,11 @@ public class GPMFireAction extends Action {
         super.run();
 
         MessageLogger logger = sub_.getRobot().getMessageLogger() ;
-        boolean has_target  = false;
-        boolean shooter_ready = false ;
-        boolean turret_ready = false ;
-        boolean db_ready = false;
+        has_target_  = false;
+        shooter_ready_ = false ;
+        turret_ready_ = false ;
+        db_ready_ = false;
+        shoot_params_valid_ = false ;
 
         switch(state_) {
             case IDLE:
@@ -152,7 +177,7 @@ public class GPMFireAction extends Action {
                 break ;
 
             case WAITING:  
-                has_target = target_tracker_.hasVisionTarget() ;
+                has_target_ = target_tracker_.hasVisionTarget() ;
 
                 if (sub_.getConveyor().getBallCount() == 0) {
                     //
@@ -161,7 +186,7 @@ public class GPMFireAction extends Action {
                     shutdown_start_time_ = sub_.getRobot().getTime() ;
                     state_ = State.FINISHING ;
                 }
-                else if (has_target) {
+                else if (has_target_) {
                     //
                     // We have a target, 
                     //
@@ -180,31 +205,22 @@ public class GPMFireAction extends Action {
                         //
                         // See if the shooter is ready
                         //
-                        shooter_ready = isShooterReady() ;
+                        shooter_ready_ = isShooterReady() ;
 
                         //
                         // See if the drive base is ready
                         //
-                        db_ready = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
+                        db_ready_ = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
 
                         //
                         // See if the turret is ready
                         //
-                        turret_ready = turret_.isReadyToFire() ;
+                        turret_ready_ = turret_.isReadyToFire() ;
 
                         //
-                        // check the collect button, which is a shoot button now
+                        // If we are here, we have a target and the shooter params are good
                         //
-                        boolean shootButton = DriverStation.getStickButton(2, 3) ;
-
-                    
-                        // if the
-                        //  * shooter is up to speed
-                        //  * db is stopped
-                        //  * target tracker sees the target
-                        //  * turret is aimed & ready to fire
-                        // then, let the conveyor push cargo into the shooter
-                        if ((shooter_ready && db_ready && target_tracker_.hasVisionTarget() && turret_ready) || shootButton)
+                        if (shooter_ready_ && db_ready_ && turret_ready_)
                         {
                             shooter_action_.startPlot();
                             sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;
@@ -212,13 +228,6 @@ public class GPMFireAction extends Action {
                         }
                     }
                 }
-                else {
-                    //
-                    // We have no vision target, therefore our shooting parameters are invalid
-                    //
-                    shoot_params_valid_ = false ;
-                    System.out.println("Shooting parameters invalid") ;
-                }            
                 break ;
 
             case SHOOTING:
@@ -226,7 +235,7 @@ public class GPMFireAction extends Action {
                 // We are shooting, shoot til all balls done
                 //
 
-                if (sub_.getConveyor() == null || sub_.getConveyor().getAction().isDone()) {
+                if (sub_.getConveyor().getAction() == null || sub_.getConveyor().getAction().isDone()) {
                     //
                     // The conveyor has delivered all balls, go to finishing state which
                     // keeps the wheels running while the last ball leaves the robot
@@ -240,7 +249,7 @@ public class GPMFireAction extends Action {
                 if (sub_.getRobot().getTime() - shutdown_start_time_ > shutdown_duration_) {
                     shooter_action_.stopPlot();
                     sub_.getShooter().setAction(null, true) ;
-                    state_ = State.IDLE ;                    
+                    state_ = State.IDLE ;
                     setDone() ;
                 }
                 break ;
@@ -254,7 +263,7 @@ public class GPMFireAction extends Action {
         logger.add("state", state_.toString()) ;
 
         if (state_ == State.WAITING) {
-            if (has_target) {
+            if (has_target_) {
                 logger.add("spvalid", shoot_params_valid_) ;
                 if (shoot_params_valid_) {
                     logger.add("thood", shoot_params_.hood_) ;
@@ -263,28 +272,16 @@ public class GPMFireAction extends Action {
                     logger.add("am1", sub_.getShooter().getWheelMotor1().getVelocity()) ;
                     logger.add("am2", sub_.getShooter().getWheelMotor2().getVelocity()) ;
                 }
-                logger.add("shooterready", shooter_ready) ;
+                logger.add("shooterready", shooter_ready_) ;
             }
             else {
                 logger.add(", no target") ;
             }
 
-            logger.add("dbready", db_ready) ;
-            logger.add("turretready", turret_ready) ;
+            logger.add("dbready", db_ready_) ;
+            logger.add("turretready", turret_ready_) ;
         }
         logger.endMessage();
-
-        
-        ShooterSubsystem shooter = sub_.getShooter() ;
-        sub_.putDashboard("targetready", DisplayType.Always, has_target);
-        sub_.putDashboard("dbready", DisplayType.Always, db_ready);
-        sub_.putDashboard("turretready", DisplayType.Always, turret_ready);
-        sub_.putDashboard("shooterready", DisplayType.Always, shooter_ready);
-        sub_.putDashboard("svel", DisplayType.Always, shoot_params_.v1_);
-        sub_.putDashboard("w1", DisplayType.Always, shooter.getWheelMotor1().getVelocity()) ;
-        sub_.putDashboard("w2", DisplayType.Always, shooter.getWheelMotor2().getVelocity());
-
-        System.out.println("shooter db " + (db_ready ? "true" : "False")) ;
     }
 
     @Override
@@ -326,13 +323,16 @@ public class GPMFireAction extends Action {
     public boolean computeShooterParams(double dist) {
         boolean ret = true ;
 
+        if (dist > 120.0) {
+            //
+            // If the shooter exceeds a given distance, we are too far for the
+            // hood or the shooter wheels.
+            //
+            return false ;
+        }
+
         double vel = 0.4992 * dist * dist - 38.828 * dist + 3500.5 ;        
         double hood = 0.156 * dist ;
-
-        if (hood < 1.0)
-            hood = 1.0 ;
-        else if (hood > 22.0)
-            hood = 22.0 ;
 
         shoot_params_ = new ShootParams(vel, vel, hood) ;
         return ret ;

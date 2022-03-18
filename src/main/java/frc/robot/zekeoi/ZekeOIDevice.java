@@ -22,7 +22,6 @@ import frc.robot.gpm.GPMManualFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
-import frc.robot.intake.ZekeIntakeArmAction;
 import frc.robot.turret.FollowTargetAction;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
@@ -52,40 +51,40 @@ public class ZekeOIDevice extends OIPanel {
     private int ball1_output_ ;
     private int ball2_output_ ;
 
-    private int climber_deploying_led_ ;
-    private int climber_deployed_led_ ;
-    private int climber_climbing_led_ ;
-    private int climber_complete_led_ ;
+    private int limelight_ready_led_ ;
+    private int shooter_ready_led_ ;
+    private int turret_ready_led_ ;
+    private int distance_ok_led_ ;
 
     private ClimberState climber_state_ ;
     private boolean is_turret_holding_ ;
-    private boolean is_windmill_holding_ ;
 
     private enum ClimberState {
-        Stowed,
-        Deploying,
-        Deployed,
-        Stowing,
-        Climbing,
-        Climbed
+        STARTUP,
+        STOWED,
+        DEPLOYING,
+        DEPLOYED,
+        STOWING,
+        CLIMBING,
+        CLIMBED
     }
 
     public ZekeOIDevice(OISubsystem sub, String name, int index)
             throws BadParameterTypeException, MissingParameterException {
         super(sub, name, index);
 
-        climber_state_ = ClimberState.Stowed ;
+        climber_state_ = ClimberState.STARTUP ;
         is_turret_holding_ = false ;
-        is_windmill_holding_ = false ;
 
         initializeGadgets();
 
         ball1_output_ = sub.getSettingsValue("oi:outputs:ball1").getInteger() ;
         ball2_output_ = sub.getSettingsValue("oi:outputs:ball2").getInteger() ;
-        climber_deploying_led_ = sub.getSettingsValue("oi:outputs:climber-deploying").getInteger() ;
-        climber_deployed_led_ = sub.getSettingsValue("oi:outputs:climber-deployed").getInteger() ;        
-        climber_climbing_led_ = sub.getSettingsValue("oi:outputs:climber-climbing").getInteger() ;
-        climber_complete_led_ = sub.getSettingsValue("oi:outputs:climber-climbed").getInteger() ;                                        
+
+        limelight_ready_led_ = sub.getSettingsValue("oi:outputs:shooting:limelight").getInteger() ;
+        shooter_ready_led_ = sub.getSettingsValue("oi:outputs:shooting:shooter").getInteger() ;        
+        turret_ready_led_ = sub.getSettingsValue("oi:outputs:shooting:turret").getInteger() ;
+        distance_ok_led_ = sub.getSettingsValue("oi:outputs:shooting:distance").getInteger() ;                                        
     }
     
     @Override
@@ -137,6 +136,10 @@ public class ZekeOIDevice extends OIPanel {
         }
 
         if (gpm.getAction() == fire_action_) {
+            setOutput(limelight_ready_led_, !fire_action_.hasTarget()) ;
+            setOutput(turret_ready_led_, !fire_action_.turretReady()) ;
+            setOutput(shooter_ready_led_, !fire_action_.shooterReady()) ;
+            setOutput(distance_ok_led_, !fire_action_.distanceOk()) ;
         }
     }
 
@@ -150,9 +153,9 @@ public class ZekeOIDevice extends OIPanel {
         if (turret.getAction() != follow_)
              turret.setAction(follow_);
 
-        if (is_windmill_holding_ == false) {
+        if (climber_state_ == ClimberState.STARTUP) {
             zeke.getClimber().setAction(stow_climber_) ;
-            is_windmill_holding_ = true ;
+            climber_state_ = ClimberState.STOWED ;
         }
 
         if (getValue(collect_v_shoot_gadget_) == 1) {
@@ -199,58 +202,54 @@ public class ZekeOIDevice extends OIPanel {
             is_turret_holding_ = true ;
         }
 
-        is_windmill_holding_ = false ;
-            
-        if (climber_state_ == ClimberState.Stowed) {
+        if (climber_state_ == ClimberState.STARTUP) {
+            climber.setAction(stow_climber_) ;
+            climber_state_ = ClimberState.STOWED ;
+        }
+        else if (climber_state_ == ClimberState.STOWED) {
             if (getValue(deploy_climb_gadget_) == 1) {
-                zeke.getClimber().setAction(deploy_climber_) ;
-                climber_state_ = ClimberState.Deploying ;
+                climber.setAction(deploy_climber_) ;
+                climber_state_ = ClimberState.DEPLOYING ;
             }
         }
-        else if (climber_state_ == ClimberState.Stowing) {
+        else if (climber_state_ == ClimberState.STOWING) {
             if (stow_climber_.isDone()) {                
-                climber_state_ = ClimberState.Stowed ;
+                climber_state_ = ClimberState.STOWED ;
             } 
             else if (getValue(deploy_climb_gadget_) == 1) {
-                zeke.getClimber().setAction(deploy_climber_) ;
-                climber_state_ = ClimberState.Deploying ;
+                climber.setAction(deploy_climber_) ;
+                climber_state_ = ClimberState.DEPLOYING ;
             }
         }
-        else if (climber_state_ == ClimberState.Deploying) {
+        else if (climber_state_ == ClimberState.DEPLOYING) {
             if (deploy_climber_.isDone()) {
-                climber_state_ = ClimberState.Deployed ;
+                climber_state_ = ClimberState.DEPLOYED ;
             }
             else if (getValue(deploy_climb_gadget_) == 0) {
                 zeke.getClimber().setAction(stow_climber_) ;
-                climber_state_ = ClimberState.Stowing ;
+                climber_state_ = ClimberState.STOWING ;
             }
         }
-        else if (climber_state_ == ClimberState.Deployed) {
-            if (getValue(deploy_climb_gadget_) == 0) {
-                zeke.getClimber().setAction(stow_climber_) ;
-                climber_state_ = ClimberState.Stowing ;
+        else if (climber_state_ == ClimberState.DEPLOYED) {
+            if (climber.getAction() != climb_) {
+                climber.setAction(climb_) ;
             }
-            else if (getValue(climb_gadget_) == 1 && climber.getAction() != climb_) {
-                climber.setAction(climb_);
-                climber_state_ = ClimberState.Climbing ;
+            else {
+                if (getValue(deploy_climb_gadget_) == 0 && !climb_.pastPointNoReturn()) {
+                    climber.setAction(deploy_climber_) ;
+                    climber_state_ = ClimberState.DEPLOYING ;                    
+                }
+                else if (getValue(climb_gadget_) == 1) {
+                    climb_.setAutomaticDrive() ;
+                }
+                else if (climb_.pastPointNoReturn()) {
+                    climber_state_ = ClimberState.CLIMBING ;
+                }
             }
         }
-        else if (climber_state_ == ClimberState.Climbing)  {
+        else if (climber_state_ == ClimberState.CLIMBING)  {
             if (climb_.isDone()) {
-                if (!climb_.pastPointNoReturn()) {
-                    //
-                    // The climb action was done, but it did not get past the 
-                    // point of no return, so it can be restarted
-                    //
-                    climber_state_ = ClimberState.Deployed ;
-                }
-                else {
-                    //
-                    // The climb action is done, and we are on the bars.  We stay 
-                    // right where we are for ever
-                    //
-                    climber_state_ = ClimberState.Climbed ;
-                }
+                climber_state_ = ClimberState.CLIMBED ;
             }
             else if (getValue(deploy_climb_gadget_) == 0) {
                 //
@@ -260,7 +259,7 @@ public class ZekeOIDevice extends OIPanel {
                 climb_.stopWhenSafe() ;
             }
         }
-        else if (climber_state_ == ClimberState.Climbed) {
+        else if (climber_state_ == ClimberState.CLIMBED) {
             //
             // Do nothing, we stay here until the match is over
             //
@@ -274,18 +273,23 @@ public class ZekeOIDevice extends OIPanel {
 
         setLEDs() ;
 
-        if (climber_state_ != ClimberState.Stowed) {
+        if (climber_state_ != ClimberState.STOWED) {
             //
             // If we prevously unlocked the climber and got into the climb sequence, we must finish
-            // this sequence.
+            // this sequence.  So unless the climber is stowed, we always go process the climber
             //
             generateClimbActions();
         }
         else if (getValue(eject_gadget_) == 1) {
+            //
+            // The second priority is the eject button.
+            //
             if (gpm.getAction() != eject_action_)
                 gpm.setAction(eject_action_) ;
         }
         else if (getValue(climb_lock_gadget_) == 1) {
+            //
+            // The climber is locked, 
             checkGrabbers() ;
             generateCargoActions();
         } else if (zeke.getClimber() != null) {
