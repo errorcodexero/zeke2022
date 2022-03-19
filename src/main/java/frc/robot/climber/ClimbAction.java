@@ -237,7 +237,7 @@ public class ClimbAction extends Action {
     //        Go to the SQUARING state
     //
     private void doWaitLeftOrRightMid() {
-        if (sub_.isLeftATouched() || sub_.isRightATouched()) {
+        if (sub_.isLeftATouched() || sub_.isRightATouched() || set_auto_drive_) {
             //
             // Disable driving from gamepad            
             //
@@ -263,9 +263,6 @@ public class ClimbAction extends Action {
         if (sub_.isLeftATouched() && sub_.leftADuration() > squaring_touch_duration_ && sub_.isRightATouched() && sub_.rightADuration() > squaring_touch_duration_) {
             // - turn off the db
             db_.setAction(stop_db_) ;
-
-            // Set the default action for the windmill to null so the hold action stops working
-            sub_.getWindmillMotor().setDefaultAction(null);
 
             // - clamp A state
             sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
@@ -315,8 +312,14 @@ public class ClimbAction extends Action {
     }
 
     private void doOpenBForHigh() throws BadMotorRequestException, MotorRequestFailedException {
-        if (sub_.getRobot().getTime() - state_start_time_ > unclamp_unloaded_wait_time_) {            
+        if (sub_.getRobot().getTime() - state_start_time_ > unclamp_unloaded_wait_time_) {
+            
+            // Set the default action for the windmill to null so the hold action stops working
+            sub_.getWindmillMotor().setDefaultAction(null);
+
+            // Start the windmill toward the high bar
             windmill_mid_to_high_ctrl_.start() ;
+            
             state_ = ClimbingStates.WINDMILL_TO_HIGH_BAR ;
         }
     }

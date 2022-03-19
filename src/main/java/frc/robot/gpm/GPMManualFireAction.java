@@ -48,6 +48,7 @@ public class GPMManualFireAction extends Action {
     public void run() {
         if (is_conveyor_on_) {
             if (conveyor_shoot_.isDone()) {
+                sub_.getShooter().cancelAction();
                 setDone() ;
             }
         }

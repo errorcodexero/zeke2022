@@ -140,6 +140,11 @@ public class ZekeOIDevice extends OIPanel {
             setOutput(turret_ready_led_, !fire_action_.turretReady()) ;
             setOutput(shooter_ready_led_, !fire_action_.shooterReady()) ;
             setOutput(distance_ok_led_, !fire_action_.distanceOk()) ;
+
+            if (fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady() && fire_action_.distanceOk()) {
+                Gamepad g = getSubsystem().getGamePad() ;
+                g.rumble(1.0, 2.0) ;
+            }
         }
     }
 
@@ -196,6 +201,7 @@ public class ZekeOIDevice extends OIPanel {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         ClimberSubsystem climber = zeke.getClimber();
         TurretSubsystem turret = zeke.getTurret();
+        Gamepad g = getSubsystem().getGamePad() ;
 
         if (is_turret_holding_ == false) {
             turret.setAction(zero_turret_) ;
@@ -223,6 +229,7 @@ public class ZekeOIDevice extends OIPanel {
         }
         else if (climber_state_ == ClimberState.DEPLOYING) {
             if (deploy_climber_.isDone()) {
+                climber.setAction(climb_) ;
                 climber_state_ = ClimberState.DEPLOYED ;
             }
             else if (getValue(deploy_climb_gadget_) == 0) {
@@ -231,20 +238,20 @@ public class ZekeOIDevice extends OIPanel {
             }
         }
         else if (climber_state_ == ClimberState.DEPLOYED) {
-            if (climber.getAction() != climb_) {
-                climber.setAction(climb_) ;
+            if (climb_.pastPointNoReturn()) {
+                climber_state_ = ClimberState.CLIMBING ;
             }
-            else {
-                if (getValue(deploy_climb_gadget_) == 0 && !climb_.pastPointNoReturn()) {
-                    climber.setAction(deploy_climber_) ;
-                    climber_state_ = ClimberState.DEPLOYING ;                    
-                }
-                else if (getValue(climb_gadget_) == 1) {
-                    climb_.setAutomaticDrive() ;
-                }
-                else if (climb_.pastPointNoReturn()) {
-                    climber_state_ = ClimberState.CLIMBING ;
-                }
+            else if (getValue(deploy_climb_gadget_) == 0) {
+                climber.setAction(stow_climber_) ;
+                climber_state_ = ClimberState.STOWING ;                    
+            }
+            else if (g.isAPressed()) {
+                g.enable();
+                climber.setAction(deploy_climber_) ;
+                climber_state_ = ClimberState.DEPLOYING ;
+            }
+            else if (getValue(climb_gadget_) == 1) {
+                climb_.setAutomaticDrive() ;
             }
         }
         else if (climber_state_ == ClimberState.CLIMBING)  {
