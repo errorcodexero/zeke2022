@@ -2,6 +2,8 @@ package frc.robot.climber;
 
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
+import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MissingParameterException;
 
 import frc.robot.climber.ClimberSubsystem.GrabberState;
 import frc.robot.climber.ClimberSubsystem.WhichClamp;
@@ -22,8 +24,13 @@ public class DeployClimberAction extends Action {
         
         sub_ = sub ;
         state_ = st ;
+    }
 
-        if (st == DeployState.Deployed) {
+    @Override
+    public void start() throws Exception {
+        super.start() ;
+        
+        if (state_ == DeployState.Deployed) {
             deploy_position_ = sub_.getSettingsValue("deploy-action:deployed").getInteger() ;        
         }
         else {
@@ -31,10 +38,7 @@ public class DeployClimberAction extends Action {
         }
 
         goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), deploy_position_, true) ;
-    }
 
-    @Override
-    public void start() {
         sub_.getWindmillMotor().setAction(goto_, true) ;
         if (state_ == DeployState.Stowed) {
             sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);

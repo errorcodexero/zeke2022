@@ -275,7 +275,7 @@
                     "emin": 0.0,
                     "emax": 5.0,
                     "ec": {
-                        "COMPETITION": 3.633,
+                        "COMPETITION": 0.9009,
                         "PRACTICE": 0.62133
                     },
                     "rc": 0.0
@@ -364,9 +364,9 @@
             //
             "goto": {
                 "threshold": 2.5,
-                "maxa": 45,
-                "maxd": -45,
-                "maxv": 45
+                "maxa": 90,
+                "maxd": -90,
+                "maxv": 90
             },          
             //
             // Used by the MotorEncoderGotoAction to follow the trapezoidal speed profile
@@ -391,7 +391,7 @@
             // Used by the MotorEncoderHoldAction to hold the climber in place
             //
             "hold": {
-                "kp": 0.001,
+                "kp": 0.005,
                 "ki": 0,
                 "kd": 0,
                 "kf": 0.0,
@@ -443,59 +443,59 @@
             //
             "climbaction": {
                 // The power to use on the drive base when squaring up the robot
-                "drive-action-power": 0.4,
+                "drive-action-power": 0.1,
 
                 // The amount of time a left or right switch must be touching the mid bar to register it as at the bar
                 "squaring-touch-duration": 0.1,
 
                 // The time to wait for a clamp to close on a bar
-                "clamp-wait-time" : 2.0,
+                "clamp-wait-time" : 1.0,
 
                 // The time to wait for a clamp to open if it is NOT clamped to a bar
                 "unclamp-unloaded-wait-time": 0.0,
 
                 // The time to wait for a clamp to open if it is clamped to a bar
-                "unclamp-loaded-wait-time" : 2.0,
+                "unclamp-loaded-wait-time" : 0.5,
 
                 // The power we apply to the windmill motor while waiting for a clamp to be closed
                 "hold_power" : 0.2,
 
                 // The position target for the high bar
-                "target-high" : 210,
+                "target-high" : 270,
 
                 // The detlta between actual position and target position in backup that means we hit the backup target
                 "backup-threshold" : 5.0,
 
                 // How far to back up while connected between the mid and high bar
-                "backup-target-mid-high" : 180,
+                "backup-target-mid-high" : 213,
 
                 // The maximum amount of time to spend waiting to backup
-                "backup-time-mid-high" : 2.0,
+                "backup-time-mid-high" : 30.0,
 
                 // The position target for the traverse bar
-                "target-traverse" : 300,
+                "target-traverse" : 440,
 
                 // How far to backup while connected between the traverse and high bar.
-                "backup-target-high-traverse" : 270,
+                "backup-target-high-traverse" : 380,
 
                 // The maximum amount of time to spend waiting to backup
-                "backup-time-high-traverse" : 2.0,
+                "backup-time-high-traverse" : 30.0,
 
                 // The range used to ramp the windmill motors, in robot loops
                 "start-range" : 10,
 
                 // The maximum power to apply to the windmill motor
-                "max-windmill-power": 0.8,
+                "max-windmill-power": 0.65,
 
                 // The power to apply while finishing the windmill range
                 "finish-power" : 0.4,
 
                 // The positional range to finish the windmill state
-                "finish-range" : 15.0,
+                "finish-range" : 30.0,
 
                 // Pid controller parameters backing up between the mid bar and high bar
                 "backup-mid-high" : {
-                    "kp": 0.0,
+                    "kp": 0.001,
                     "ki": 0.0,
                     "kd": 0.0,
                     "kf": 0.0,
@@ -506,7 +506,7 @@
 
                 // Pid controller parameters backing up between the mid bar and high bar
                 "backup-high-traverse" : {
-                    "kp": 0.0,
+                    "kp": 0.001,
                     "ki": 0.0,
                     "kd": 0.0,
                     "kf": 0.0,
@@ -637,7 +637,7 @@
     },
     "testmode": {
         "enabled": true,
-        "which": 101,
+        "which": 57,
         "power": 0.2,
         "duration": 1.0,
         "distance": 21.0,

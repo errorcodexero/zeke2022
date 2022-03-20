@@ -82,6 +82,8 @@ public class MotorEncoderGotoAction extends MotorAction {
     // The plot ID for plotting the motion
     int plot_id_ ;
 
+    static int name_id_ = 0 ;
+
     // The columns to plot
     static final String [] plot_columns_ = { "time", "tpos", "apos", "tvel", "avel", "out" } ;
 
@@ -101,7 +103,7 @@ public class MotorEncoderGotoAction extends MotorAction {
 
         ISettingsSupplier settings = sub.getRobot().getSettingsSupplier() ;
         profile_ = new TrapezoidalProfile(settings, "subsystems:" + sub.getName() + ":goto") ;
-        plot_id_ = sub.initPlot(sub.getName() + "-" + toString(0)) ;
+        plot_id_ = sub.initPlot(sub.getName() + "-" + toString(plot_id_++)) ;
     }
 
     /// \brief Create the action

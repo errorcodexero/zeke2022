@@ -281,29 +281,39 @@ public class ZekeTestModeAuto extends TestAutoMode {
             case 55:
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.OPEN), false);
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.CLOSED), false);
-                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ; 
+                addAction(new DelayAction(ctrl.getRobot(),getDuration())) ; 
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.CLOSED), false);
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.OPEN), false);
-                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;     
+                addAction(new DelayAction(ctrl.getRobot(),getDuration())) ;     
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.OPEN), false);
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.CLOSED), false);
-                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ; 
+                addAction(new DelayAction(ctrl.getRobot(),getDuration())) ; 
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.CLOSED), false);
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.OPEN), false);
-                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;   
+                addAction(new DelayAction(ctrl.getRobot(),getDuration())) ;   
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.OPEN), false);
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.CLOSED), false);
-                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ; 
+                addAction(new DelayAction(ctrl.getRobot(),getDuration())) ; 
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.CLOSED), false);
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.OPEN), false);
-                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;   
+                addAction(new DelayAction(ctrl.getRobot(),getDuration())) ;   
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.OPEN), false);
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.CLOSED), false);
-                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ; 
+                addAction(new DelayAction(ctrl.getRobot(),getDuration())) ; 
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.CLOSED), false);
                 addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.OPEN), false);
-                addAction(new DelayAction(ctrl.getRobot(), 3.0)) ;   
-                break;                                                            
+                addAction(new DelayAction(ctrl.getRobot(),getDuration())) ;   
+                break;             
+                
+            case 56:
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.OPEN), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.CLOSED), false);
+                break ;
+
+            case 57:
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_B, GrabberState.CLOSED), false);
+                addSubActionPair(climber, new ChangeClampAction(climber, WhichClamp.CLAMP_A, GrabberState.OPEN), false);
+                break ;                
 
             //
             //////////////////////////////////////////////////////////////////////////////////

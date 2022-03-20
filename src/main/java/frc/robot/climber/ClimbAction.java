@@ -7,7 +7,6 @@ import org.xero1425.base.tankdrive.TankDrivePowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
-import org.xero1425.misc.PIDCtrl;
 
 import frc.robot.climber.ClimberSubsystem.GrabberState;
 import frc.robot.climber.ClimberSubsystem.WhichClamp;
@@ -24,8 +23,8 @@ public class ClimbAction extends Action {
     private double backup_time_mid_high_ ;
     private double backup_target_high_traverse_ ;
     private double backup_time_high_traverse_ ;
-    private PIDCtrl backup_mid_to_high_pid_ ;
-    private PIDCtrl backup_high_to_traverse_pid_ ;
+    private ClimberBackupProfile backup_mid_to_high_pid_ ;
+    private ClimberBackupProfile backup_high_to_traverse_pid_ ;
     private double backup_threshold_ ;
 
     private double squaring_touch_duration_ ;
@@ -47,6 +46,8 @@ public class ClimbAction extends Action {
     private double clamp_wait_time_ ;
     private double unclamp_unloaded_wait_time_ ;
     private double unclamp_loaded_wait_time_ ;
+
+    private double sensor_dead_time_end_ ;
 
     private boolean past_no_return_ ;
 
@@ -91,8 +92,11 @@ public class ClimbAction extends Action {
         backup_target_high_traverse_ = sub.getSettingsValue("climbaction:backup-target-high-traverse").getDouble() ;
         backup_threshold_ = sub.getSettingsValue("climbaction:backup-threshold").getDouble() ;
 
-        backup_mid_to_high_pid_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:climber:climbaction:backup-mid-high", false) ;
-        backup_high_to_traverse_pid_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:climber:climbaction:backup-high-traverse", false) ;
+        backup_time_mid_high_ = sub.getSettingsValue("climbaction:backup-time-mid-high").getDouble() ;
+        backup_time_high_traverse_= sub.getSettingsValue("climbaction:backup-time-high-traverse").getDouble() ;
+
+        backup_mid_to_high_pid_ = new ClimberBackupProfile(230.0, 0.0, 0.001, 0.03) ;
+        backup_high_to_traverse_pid_ = new ClimberBackupProfile(396.0, 0.0, 0.001, 0.03) ;
 
         target_high_ = sub.getSettingsValue("climbaction:target-high").getDouble() ;
         target_traverse_ = sub.getSettingsValue("climbaction:target-traverse").getDouble() ;
@@ -363,7 +367,8 @@ public class ClimbAction extends Action {
     private void doCloseBOnHigh() throws Exception {
         // wait for 2nd "clamp time"
         if (sub_.getRobot().getTime() - state_start_time_ > clamp_wait_time_) {
-            double out = backup_mid_to_high_pid_.getOutput(backup_target_mid_high_, sub_.getWindmillMotor().getPosition(), sub_.getRobot().getDeltaTime()) ;
+            System.out.println("CLimber angle at start of backup" + sub_.getWindmillMotor().getPosition()) ;
+            double out = backup_mid_to_high_pid_.getOutput(sub_.getWindmillMotor().getPosition(), backup_target_mid_high_, sub_.getRobot().getDeltaTime()) ;
             sub_.getWindmillMotor().setPower(out);
 
             state_start_time_ = sub_.getRobot().getTime() ;
@@ -384,7 +389,7 @@ public class ClimbAction extends Action {
                 state_ = ClimbingStates.COMPLETE ;
             }
             else {
-                sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);   
+                sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);
                 state_start_time_ = sub_.getRobot().getTime() ;
 
                 if (stop_when_safe_)
@@ -395,7 +400,7 @@ public class ClimbAction extends Action {
             }            
         }
         else {
-            double out = backup_mid_to_high_pid_.getOutput(backup_target_mid_high_, sub_.getWindmillMotor().getPosition(), sub_.getRobot().getDeltaTime()) ;
+            double out = backup_mid_to_high_pid_.getOutput(sub_.getWindmillMotor().getPosition(), backup_target_mid_high_, sub_.getRobot().getTime()) ;
             sub_.getWindmillMotor().setPower(out);
         }
     }
@@ -414,6 +419,7 @@ public class ClimbAction extends Action {
     private void doOpenAOnMid() throws BadMotorRequestException, MotorRequestFailedException {
         // wait for clamp A to completely unclamp
         if (sub_.getRobot().getTime() - state_start_time_ > unclamp_loaded_wait_time_) {
+            sensor_dead_time_end_ = sub_.getRobot().getTime()  + 1.0 ;
             windmill_high_to_traverse_ctrl_.start() ;
             state_ = ClimbingStates.WINDMILL_TO_TRAVERSE_BAR ;
         }
@@ -431,7 +437,7 @@ public class ClimbAction extends Action {
     //
     private void doWindmillToTraverse() throws BadMotorRequestException, MotorRequestFailedException {
         // - waits for high sensor to hit
-        if (sub_.isLeftATouched() && sub_.isRightATouched()) {
+        if (sub_.isLeftATouched() && sub_.isRightATouched() && sub_.getRobot().getTime() > sensor_dead_time_end_) {
 
             //
             // Set windmill to a holding power, to hold use against the bar while the grabberse close
@@ -465,7 +471,7 @@ public class ClimbAction extends Action {
     private void doCloseAOnTraverse() throws Exception {     
         //wait for 2nd "unclamping time"
         if (sub_.getRobot().getTime() - state_start_time_ > unclamp_loaded_wait_time_) {
-            double out = backup_high_to_traverse_pid_.getOutput(backup_target_high_traverse_, sub_.getWindmillMotor().getPosition(), sub_.getRobot().getDeltaTime()) ;
+            double out = backup_high_to_traverse_pid_.getOutput(sub_.getWindmillMotor().getPosition(), backup_target_high_traverse_, sub_.getRobot().getTime()) ;
             sub_.getWindmillMotor().setPower(out);
 
             state_start_time_ = sub_.getRobot().getTime() ;
@@ -486,7 +492,7 @@ public class ClimbAction extends Action {
             }
         }
         else {
-            double out = backup_high_to_traverse_pid_.getOutput(backup_target_high_traverse_, sub_.getWindmillMotor().getPosition(), sub_.getRobot().getDeltaTime()) ;
+            double out = backup_high_to_traverse_pid_.getOutput(sub_.getWindmillMotor().getPosition(), backup_target_high_traverse_, sub_.getRobot().getTime()) ;
             sub_.getWindmillMotor().setPower(out);
         }
     }
@@ -502,6 +508,7 @@ public class ClimbAction extends Action {
     //        never exits; not really
     //
     private void doComplete() throws BadMotorRequestException, MotorRequestFailedException {
+        sub_.getWindmillMotor().setPower(0.0);
         setDone() ;
     }
 }
