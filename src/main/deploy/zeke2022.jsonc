@@ -151,8 +151,8 @@
             },
             "standard_gamepad": {
                 "index": 0,
-                "deadband": 0.10,
-                "epsilon": 0.05,
+                "deadband": 0.05,
+                "epsilon": 0.01,
                 "max-increase" : 0.0,            // Max increase rate of power, same args as setOpenLoopRate
                 "max-decrease" : 0.0             // Max decrease rate of power, same args as setOpenLoopRate
             },

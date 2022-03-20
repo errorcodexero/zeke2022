@@ -139,7 +139,7 @@ public class StandardGamepad extends Gamepad {
         }
 
         if (Math.abs(leftSpeed - left_) > epslion_ || Math.abs(rightSpeed - right_) > epslion_) {
-
+          
           if (use_max_increase_) {
             if (leftSpeed - left_ > max_increase_) {
               leftSpeed = left_ + max_increase_ ;

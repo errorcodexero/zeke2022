@@ -58,6 +58,7 @@ public class ZekeOIDevice extends OIPanel {
 
     private ClimberState climber_state_ ;
     private boolean is_turret_holding_ ;
+    private boolean climb_button_pressed_ ;
 
     private enum ClimberState {
         STARTUP,
@@ -75,6 +76,7 @@ public class ZekeOIDevice extends OIPanel {
 
         climber_state_ = ClimberState.STARTUP ;
         is_turret_holding_ = false ;
+        climb_button_pressed_ = false ;
 
         initializeGadgets();
 
@@ -235,6 +237,10 @@ public class ZekeOIDevice extends OIPanel {
             else if (getValue(deploy_climb_gadget_) == 0) {
                 zeke.getClimber().setAction(stow_climber_) ;
                 climber_state_ = ClimberState.STOWING ;
+                climb_button_pressed_ = false ;
+            }
+            else if (getValue(climb_gadget_) == 1) {
+                climb_button_pressed_ = true ;
             }
         }
         else if (climber_state_ == ClimberState.DEPLOYED) {
@@ -243,14 +249,16 @@ public class ZekeOIDevice extends OIPanel {
             }
             else if (getValue(deploy_climb_gadget_) == 0) {
                 climber.setAction(stow_climber_) ;
-                climber_state_ = ClimberState.STOWING ;                    
+                climber_state_ = ClimberState.STOWING ;    
+                climb_button_pressed_ = false ;                
             }
             else if (g.isAPressed()) {
                 g.enable();
                 climber.setAction(deploy_climber_) ;
                 climber_state_ = ClimberState.DEPLOYING ;
+                climb_button_pressed_ = false ;
             }
-            else if (getValue(climb_gadget_) == 1) {
+            else if (getValue(climb_gadget_) == 1 || climb_button_pressed_) {
                 climb_.setAutomaticDrive() ;
             }
         }
