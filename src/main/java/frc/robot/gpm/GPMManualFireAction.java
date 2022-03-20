@@ -1,6 +1,8 @@
 package frc.robot.gpm;
 
 import org.xero1425.base.actions.Action;
+import org.xero1425.misc.MessageLogger;
+
 import frc.robot.conveyor.ConveyorShootAction;
 import frc.robot.shooter.SetShooterAction;
 
@@ -39,13 +41,15 @@ public class GPMManualFireAction extends Action {
 
     @Override
     public void start() throws Exception {
-        sub_.getShooter().setAction(shoot_action_) ;
+        sub_.getShooter().setAction(shoot_action_, true) ;
         sub_.getConveyor().cancelAction();
         is_conveyor_on_ = false ;
     }
 
     @Override
     public void run() {
+
+        
         if (is_conveyor_on_) {
             if (conveyor_shoot_.isDone()) {
                 sub_.getShooter().cancelAction();
@@ -75,8 +79,13 @@ public class GPMManualFireAction extends Action {
         double dw2 = Math.abs(w2 - w2_) ;
         double dhood = Math.abs(hood - hood_) ;
 
+        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+        logger.add("dw1", dw1).add("dw2", dw2).add("dhood", dhood).endMessage();
+
         // return whether or not all the deltas are under the thresholds
-        boolean amIReallyReady = dw1 < shooter_velocity_threshold_ && dw2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
+        boolean amIReallyReady = (dw1 < shooter_velocity_threshold_) && 
+                                    (dw2 < shooter_velocity_threshold_) && 
+                                        (dhood < hood_position_threshold_) ;
         return  amIReallyReady ;
     }
 }
