@@ -19,6 +19,7 @@ import frc.robot.gpm.GPMFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
+import frc.robot.shooter.SetShooterAction;
 import frc.robot.turret.FollowTargetAction;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
@@ -73,7 +74,7 @@ public class ZekeAutoMode extends AutoMode {
     // collection sequence can be executed along the start of the path so that no delay is necessary
     // before following the path to let the collection sequence start.
     //
-    protected void driveAndCollect(String path, double delay1, double delay2, double angle) throws Exception {
+    protected void driveAndCollect(String path, double delay1, double delay2, double angle, SetShooterAction act) throws Exception {
         GPMSubsystem gpm = getZekeRobotSubsystem().getGPMSubsystem();
         TankDriveSubsystem db = getZekeRobotSubsystem().getTankDrive();
         TurretSubsystem turret = getZekeRobotSubsystem().getTurret() ;
@@ -107,7 +108,7 @@ public class ZekeAutoMode extends AutoMode {
         //
         // The collect sequence
         //
-        GPMStartCollectAction collect = new GPMStartCollectAction(gpm) ;
+        GPMStartCollectAction collect = new GPMStartCollectAction(gpm, act) ;
         parallel.addSubActionPair(gpm, collect, false) ;
 
         //
@@ -119,7 +120,7 @@ public class ZekeAutoMode extends AutoMode {
         //
         // When the path and delay is done, stop collecting
         //
-        GPMStopCollectAction stop = new GPMStopCollectAction(gpm) ;
+        GPMStopCollectAction stop = new GPMStopCollectAction(gpm, act) ;
         addSubActionPair(gpm, stop, false);
     }
 }

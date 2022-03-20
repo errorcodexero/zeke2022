@@ -15,8 +15,8 @@ public class ThreeBallAuto extends ZekeAutoMode {
 
     private final double FirstFireAngle = 30.0 ;
     private final double SecondFireAngle = 30.0 ;
-    private final double FirstFireHood = 6.0 ;
-    private final double ShooterWheelsSpinupSpeed = 4000.0 ;
+    private final double FirstFireHood = 20.0 ;
+    private final double ShooterWheelsSpinupSpeed = 6000.0 ;
 
     public ThreeBallAuto(ZekeAutoController ctrl, String name) throws Exception {
         super(ctrl, name);
@@ -35,10 +35,10 @@ public class ThreeBallAuto extends ZekeAutoMode {
         closeClamps();
 
         // Start the shooter wheels so they are ready to fire
-        addSubActionPair(shooter, new SetShooterAction(shooter, ShooterWheelsSpinupSpeed, ShooterWheelsSpinupSpeed, FirstFireHood), false) ;
+        var shoot = new SetShooterAction(shooter, ShooterWheelsSpinupSpeed, ShooterWheelsSpinupSpeed, FirstFireHood) ;
 
         // drive and collect the second ball
-        driveAndCollect("threeball_p1", 0.5, 0.0, FirstFireAngle) ;
+        driveAndCollect("threeball_p1", 0.5, 0.0, FirstFireAngle, shoot) ;
 
         // Start the limelight
         startLimelightTracking() ;
@@ -47,7 +47,10 @@ public class ThreeBallAuto extends ZekeAutoMode {
         addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret), true);
 
         // Drive and collect the ball near the terminal
-        driveAndCollect("threeball_p2", 0.0, 0.5, 0.0);
+        driveAndCollect("threeball_p2", 0.0, 0.5, 0.0, shoot);
+
+        // Start the shooter wheels so they are ready to fire
+        addSubActionPair(shooter, new SetShooterAction(shooter, ShooterWheelsSpinupSpeed, ShooterWheelsSpinupSpeed, FirstFireHood), false) ;
 
         // Drive back to the target and fire the ball
         driveAndFire("threeball_p3", true, SecondFireAngle) ;

@@ -38,7 +38,6 @@ public class ClimbPowerController {
             out = max_power_ ;
         }
         
-        System.out.println("ClimbPowerController position " + position + ", power " + out) ;
         return out ;
     }
 }

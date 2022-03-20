@@ -27,14 +27,14 @@ public class ZekeAutoController extends AutoController {
             test_mode_ = new ZekeTestModeAuto(this);
             modes_[0] = new TwoBallAuto(this, "Two Ball");
             modes_[1] = new ThreeBallAuto(this, "Three Ball");
-            modes_[2] = new TwoBallAuto(this, "Two Ball");
-            modes_[3] = new ThreeBallAuto(this, "Three Ball");
-            modes_[4] = new TwoBallAuto(this, "Two Ball");
-            modes_[5] = new ThreeBallAuto(this, "Three Ball");
-            modes_[6] = new TwoBallAuto(this, "Two Ball");
-            modes_[7] = new ThreeBallAuto(this, "Three Ball");
-            modes_[8] = new TwoBallAuto(this, "Two Ball");
-            modes_[9] = new ThreeBallAuto(this, "Three Ball");                                                                                                         
+            modes_[2] = new FourBallAuto(this, "Four Ball");
+            modes_[3] = new TestGrabbersAutoMode(this, "Test Grabbers") ;
+            modes_[4] = new NoOpAuto(this, "Nop-4") ;
+            modes_[5] = new NoOpAuto(this, "Nop-5") ;
+            modes_[6] = new NoOpAuto(this, "Nop-6") ;
+            modes_[7] = new NoOpAuto(this, "Nop-7") ;
+            modes_[8] = new NoOpAuto(this, "Nop-8") ;
+            modes_[9] = new NoOpAuto(this, "Nop-9") ;                                    
         }
         catch(Exception e) {
             logger.startMessage(MessageType.Error) ;

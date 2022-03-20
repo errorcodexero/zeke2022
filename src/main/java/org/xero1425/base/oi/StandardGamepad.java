@@ -4,7 +4,10 @@ import org.xero1425.base.LoopType;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
+import org.xero1425.misc.XeroPath;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -107,7 +110,8 @@ public class StandardGamepad extends Gamepad {
 
         zRotation = MathUtil.applyDeadband(zRotation, deadband_) ;
         zRotation = MathUtil.clamp(zRotation, -1.0, 1.0) ;
-        zRotation = Math.copySign(zRotation * zRotation, zRotation) ;        
+        zRotation = Math.copySign(zRotation * zRotation, zRotation) ;       
+
 
         double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed) ;
         double leftSpeed, rightSpeed ;
@@ -140,7 +144,7 @@ public class StandardGamepad extends Gamepad {
 
         if (Math.abs(leftSpeed - left_) > epslion_ || Math.abs(rightSpeed - right_) > epslion_) {
           
-          if (use_max_increase_) {
+          if (use_max_increase_ && Math.abs(zRotation) < 0.1) {
             if (leftSpeed - left_ > max_increase_) {
               leftSpeed = left_ + max_increase_ ;
             }
@@ -150,7 +154,7 @@ public class StandardGamepad extends Gamepad {
             }
           }
 
-          if (use_max_decrease_) {
+          if (use_max_decrease_ && Math.abs(zRotation) < 0.1) {
             if (left_- leftSpeed > max_decrease_) {
               leftSpeed = left_ - max_decrease_ ;
             }
@@ -159,6 +163,11 @@ public class StandardGamepad extends Gamepad {
               rightSpeed = right_ - max_decrease_ ;
             }            
           }
+
+          // logger.startMessage(MessageType.Info) ;
+          // logger.add("gamepad").add("xSpeed", xSpeed).add("zRotation", zRotation) ;
+          // logger.add("left", left_).add("right", right_) ;
+          // logger.endMessage();
 
           db_.setPower(leftSpeed, rightSpeed) ;
           left_ = leftSpeed ;

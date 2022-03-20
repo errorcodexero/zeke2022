@@ -4,6 +4,7 @@ import org.xero1425.base.actions.InvalidActionRequest;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.oi.OISubsystem;
+import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.base.oi.Gamepad;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
@@ -203,6 +204,7 @@ public class ZekeOIDevice extends OIPanel {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         ClimberSubsystem climber = zeke.getClimber();
         TurretSubsystem turret = zeke.getTurret();
+        TankDriveSubsystem db = zeke.getTankDrive() ;
         Gamepad g = getSubsystem().getGamePad() ;
 
         if (is_turret_holding_ == false) {
@@ -250,13 +252,15 @@ public class ZekeOIDevice extends OIPanel {
             else if (getValue(deploy_climb_gadget_) == 0) {
                 climber.setAction(stow_climber_) ;
                 climber_state_ = ClimberState.STOWING ;    
-                climb_button_pressed_ = false ;                
+                climb_button_pressed_ = false ;      
+                db.cancelAction();      
             }
             else if (g.isAPressed()) {
                 g.enable();
                 climber.setAction(deploy_climber_) ;
                 climber_state_ = ClimberState.DEPLOYING ;
                 climb_button_pressed_ = false ;
+                db.cancelAction();
             }
             else if (getValue(climb_gadget_) == 1 || climb_button_pressed_) {
                 climb_.setAutomaticDrive() ;
@@ -338,7 +342,7 @@ public class ZekeOIDevice extends OIPanel {
 
     private void initializeGadgets() throws BadParameterTypeException, MissingParameterException {
         int num = getSubsystem().getSettingsValue("oi:gadgets:automode").getInteger();
-        Double[] map = { -0.9, -0.75, -0.5, -0.25, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 };
+        Double[] map = { -0.9, -0.70, -0.5, -0.3, -0.1, 0.1, 0.3, 0.6, 0.9, 1.0 };
         automode_gadget_ = mapAxisScale(num, map);
 
         num = getSubsystem().getSettingsValue("oi:gadgets:shoot_collect_mode").getInteger();

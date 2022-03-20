@@ -4,16 +4,27 @@ import org.xero1425.base.actions.Action;
 
 import frc.robot.conveyor.ConveyorCollectAction;
 import frc.robot.intake.ZekeIntakeOnAction;
+import frc.robot.shooter.SetShooterAction;
 
 public class GPMStartCollectAction extends Action {
     private GPMSubsystem sub_;
     private ConveyorCollectAction conveyor_collect_action_ ;
     private ZekeIntakeOnAction intake_on_action_ ;
+    private SetShooterAction shoot_action_ ;
 
     public GPMStartCollectAction(GPMSubsystem sub) throws Exception {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
 
+        conveyor_collect_action_ = new ConveyorCollectAction(sub_.getConveyor()) ;
+        intake_on_action_ = new ZekeIntakeOnAction(sub_.getIntake()) ;
+    }
+
+    public GPMStartCollectAction(GPMSubsystem sub, SetShooterAction act) throws Exception {
+        super(sub.getRobot().getMessageLogger()) ;
+        sub_ = sub ;
+
+        shoot_action_ = act ;
         conveyor_collect_action_ = new ConveyorCollectAction(sub_.getConveyor()) ;
         intake_on_action_ = new ZekeIntakeOnAction(sub_.getIntake()) ;
     }
@@ -31,6 +42,9 @@ public class GPMStartCollectAction extends Action {
 
             // collect on action -> conveyor
             sub_.getConveyor().setAction(conveyor_collect_action_, true) ;
+
+            if (shoot_action_ != null)
+                sub_.getShooter().setAction(shoot_action_, true) ;
         }
     }
 
@@ -44,7 +58,6 @@ public class GPMStartCollectAction extends Action {
             intake_on_action_.cancel();
             setDone();
         }
-
     }
 
     @Override
@@ -56,6 +69,9 @@ public class GPMStartCollectAction extends Action {
 
         // intake_collect_action_ => set cancel
         intake_on_action_.cancel();
+
+        if (shoot_action_ != null)
+            shoot_action_.cancel() ;
     }
 
     @Override

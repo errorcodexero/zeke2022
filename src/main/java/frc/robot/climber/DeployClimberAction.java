@@ -2,8 +2,6 @@ package frc.robot.climber;
 
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
-import org.xero1425.misc.BadParameterTypeException;
-import org.xero1425.misc.MissingParameterException;
 
 import frc.robot.climber.ClimberSubsystem.GrabberState;
 import frc.robot.climber.ClimberSubsystem.WhichClamp;

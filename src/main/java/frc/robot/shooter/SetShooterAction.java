@@ -73,8 +73,8 @@ public class SetShooterAction extends Action {
     }
 
     @Override
-    public String toString(int indent){
-        return spaces(indent) + "SetShooterAction";
+    public String toString(int indent) {
+        return spaces(indent) + "SetShooterAction vel " + w1_action_.getTarget() + " " + w2_action_.getTarget() + " " + hood_action_.getTarget() ; 
     }
 
     @Override

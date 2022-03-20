@@ -136,6 +136,7 @@ public class ClimbAction extends Action {
         else {
             stop_when_safe_ = false ;
             state_ = ClimbingStates.OPEN_A_FOR_MID ;
+            set_auto_drive_ = false ;
         }
     }
 
@@ -367,7 +368,6 @@ public class ClimbAction extends Action {
     private void doCloseBOnHigh() throws Exception {
         // wait for 2nd "clamp time"
         if (sub_.getRobot().getTime() - state_start_time_ > clamp_wait_time_) {
-            System.out.println("CLimber angle at start of backup" + sub_.getWindmillMotor().getPosition()) ;
             double out = backup_mid_to_high_pid_.getOutput(sub_.getWindmillMotor().getPosition(), backup_target_mid_high_, sub_.getRobot().getDeltaTime()) ;
             sub_.getWindmillMotor().setPower(out);
 

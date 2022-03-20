@@ -53,8 +53,6 @@ public class ClimberBackupProfile {
         else if (out > -0.1)
             out = -0.1 ;
 
-        System.out.println("State " + state_.toString() + ", output " + out + ", actual " + actual + ", target " + target) ;
-
         return out ;
     }
 }

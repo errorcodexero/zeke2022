@@ -37,7 +37,6 @@ public class ZekeIntakeSubsystem extends Subsystem {
     right_intake_color_ = CargoType.None;
     left_count_ = 0;
     right_count_ = 0;
-
   }
 
   public void setLeftCollectorPower(double power) throws BadMotorRequestException, MotorRequestFailedException {

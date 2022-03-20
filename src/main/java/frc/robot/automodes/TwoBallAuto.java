@@ -34,10 +34,10 @@ public class TwoBallAuto extends ZekeAutoMode {
         closeClamps();        
 
         // Start the shooter wheels so they are ready to fire
-        addSubActionPair(shooter, new SetShooterAction(shooter, ShooterWheelsSpinupSpeed, ShooterWheelsSpinupSpeed, FirstFireHood), false) ;
+        var shoot = new SetShooterAction(shooter, ShooterWheelsSpinupSpeed, ShooterWheelsSpinupSpeed, FirstFireHood) ;
 
         // Drive and collect the second ball
-        driveAndCollect("twoball_p1", 1.0, 0.0, FirstFireAngle);
+        driveAndCollect("twoball_p1", 1.0, 0.0, FirstFireAngle, shoot);
 
         // Start the limelight
         startLimelightTracking();

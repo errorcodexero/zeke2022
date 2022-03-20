@@ -1,15 +1,13 @@
 package frc.robot.gpm;
 
-import org.xero1425.base.Subsystem.DisplayType;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
+import org.xero1425.base.utils.PieceWiseLinear;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.conveyor.ConveyorShootAction;
 import frc.robot.shooter.SetShooterAction;
-import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.TurretSubsystem;
 
@@ -81,6 +79,9 @@ public class GPMFireAction extends Action {
     private boolean has_target_ ;
     private boolean db_ready_ ;
 
+    private PieceWiseLinear pwl_hood_ ;
+    private PieceWiseLinear pwl_velocity_ ;
+
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
             TankDriveSubsystem db, TurretSubsystem turret) 
             throws Exception {
@@ -116,6 +117,9 @@ public class GPMFireAction extends Action {
         state_ = State.IDLE ;
 
         shoot_params_valid_ = false ;
+
+        pwl_hood_ = new PieceWiseLinear(sub_.getRobot().getSettingsSupplier(), "subsystems:gpm:fire-action:hood-pwl") ;
+        pwl_velocity_ = new PieceWiseLinear(sub_.getRobot().getSettingsSupplier(), "subsystems:gpm:fire-action:velocity-pwl") ;
     }
 
     public boolean distanceOk() {
@@ -225,6 +229,8 @@ public class GPMFireAction extends Action {
                             shooter_action_.startPlot();
                             sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;
                             state_ = State.SHOOTING ;
+
+                            System.out.println("Shooting: " + shoot_params_.hood_ + " " + shoot_params_.v1_) ;
                         }
                     }
                 }
@@ -321,9 +327,8 @@ public class GPMFireAction extends Action {
     }
 
     public boolean computeShooterParams(double dist) {
-        boolean ret = true ;
-
-        if (dist > 120.0) {
+        
+        if (dist >= 140.0) {
             //
             // If the shooter exceeds a given distance, we are too far for the
             // hood or the shooter wheels.
@@ -331,10 +336,10 @@ public class GPMFireAction extends Action {
             return false ;
         }
 
-        double vel = 0.4992 * dist * dist - 38.828 * dist + 3500.5 ;        
-        double hood = 0.156 * dist ;
+        double vel = pwl_velocity_.getValue(dist) ;
+        double hood = pwl_hood_.getValue(dist) ;
 
         shoot_params_ = new ShootParams(vel, vel, hood) ;
-        return ret ;
+        return true ;
     }
 }
