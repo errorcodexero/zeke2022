@@ -69,6 +69,36 @@ public class ZekeAutoMode extends AutoMode {
         addSubActionPair(gpm, new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret(), false), true) ;
     }
 
+        //
+    // Add a sequence that drives a path and fires the balls in the robot once the path is
+    // complete.
+    //
+    // If the path is null, then no driving is performed before firing the balls.
+    //
+    protected void driveAndFireMoving(String path, boolean reverse, double angle) throws Exception {
+        
+        ZekeSubsystem zeke = getZekeRobotSubsystem() ;
+        GPMSubsystem gpm = zeke.getGPMSubsystem();
+        TurretSubsystem turret = zeke.getTurret() ;
+        ParallelAction parallel;
+        SequenceAction series ;
+
+        parallel = new ParallelAction(getAutoController().getRobot().getMessageLogger(), ParallelAction.DonePolicy.All);
+
+        // This series points the turret in the right direction, starts limelight tracking, and then fires on the move
+        series = new SequenceAction(getAutoController().getRobot().getMessageLogger()) ;
+        series.addSubActionPair(turret, new MotorEncoderGotoAction(turret, angle, true), false) ;
+        FollowTargetAction act = new FollowTargetAction(zeke.getTurret(), zeke.getTargetTracker()) ;
+        series.addSubActionPair(zeke.getTurret(), act, false);
+        series.addSubActionPair(gpm, new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret(), true), true) ;
+        parallel.addAction(series);
+
+        // This action puts the path in parallel with the firing related activities
+        parallel.addSubActionPair(zeke.getTankDrive(), new TankDrivePathFollowerAction(zeke.getTankDrive(), path, reverse), true);
+
+        addAction(parallel);
+    }
+
     //
     // Add a sequence that drives a path and collects balls along the path.  This assumes that the
     // collection sequence can be executed along the start of the path so that no delay is necessary

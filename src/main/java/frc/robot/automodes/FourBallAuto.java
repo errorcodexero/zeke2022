@@ -33,13 +33,16 @@ public class FourBallAuto extends ZekeAutoMode {
         // Start firing the two balls
         addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
 
-        addSubActionPair(gpm.getConveyor(), new ConveyorSetBall(gpm.getConveyor()), false);
+        // Drive and pick up two balls from the field
         driveAndCollect("fourball_p1", 0.0, 2.0, FirstShotAngle, null);
 
-        // addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret), true);
+        // Fire the two we collected in this first path
+        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
 
-        // addSubActionPair(db, new TankDrivePathFollowerAction(db, "fourball_p2", true), true) ;
-        // driveAndCollect("fourball_p3", 0.0, 0.0, 0.0, null);
-        // driveAndFire("fourball_p4", true, 0.0) ;
+        // Drive out and collect the balls at the terminal
+        driveAndCollect("fourball_p2", 0.0, 0.0, 0.0, null);
+
+        // Drive back and fire while driving back
+        driveAndFireMoving("fourball_p3", true, 0.0) ;
     }
 }
