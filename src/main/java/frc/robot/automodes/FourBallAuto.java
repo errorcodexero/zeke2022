@@ -34,7 +34,7 @@ public class FourBallAuto extends ZekeAutoMode {
         addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
 
         // Drive and pick up two balls from the field
-        driveAndCollect("fourball_p1", 0.0, 2.0, FirstShotAngle, null);
+        driveAndCollect("fourball_p1", 0.0, 0.5, FirstShotAngle, null);
 
         // Fire the two we collected in this first path
         addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
