@@ -13,8 +13,8 @@ import frc.robot.climber.ClimberSubsystem.WhichClamp;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
-public class TestGrabbersAutoMode extends ZekeAutoMode {
-    public TestGrabbersAutoMode(ZekeAutoController ctrl, String name) throws Exception {
+public class PitTestAutoMode extends ZekeAutoMode {
+    public PitTestAutoMode(ZekeAutoController ctrl, String name) throws Exception {
         super(ctrl, name) ;
 
         ZekeSubsystem robot = (ZekeSubsystem) ctrl.getRobot().getRobotSubsystem() ;

@@ -17,13 +17,13 @@ public class GPMSubsystem extends Subsystem {
     private ConveyorSubsystem conveyor_ ;
     private ShooterSubsystem shooter_ ;
 
-    public GPMSubsystem(Subsystem parent, TankDriveSubsystem db, ZekeColorSensor color) throws Exception {
+    public GPMSubsystem(Subsystem parent, TankDriveSubsystem db, ZekeColorSensor color, boolean nointake) throws Exception {
         super(parent, SubsystemName) ;
 
         intake_ = new ZekeIntakeSubsystem(this, color) ;
         addChild(intake_) ;
 
-        conveyor_ = new ConveyorSubsystem(this, color) ;
+        conveyor_ = new ConveyorSubsystem(this, color, nointake) ;
         addChild(conveyor_) ;
         
         shooter_ = new ShooterSubsystem(this);

@@ -18,6 +18,8 @@ public class ZekeSubsystem extends RobotSubsystem {
     public final static String SubsystemName = "zeke" ;
     public final static String TankdriveSubsystemName = "tankdrive" ;
 
+    private final static boolean NoIntakeSensor = true ;
+
     private TankDriveSubsystem db_ ;
     private ZekeOISubsystem oi_;
     private ZekeLimeLightSubsystem limelight_ ;
@@ -33,7 +35,6 @@ public class ZekeSubsystem extends RobotSubsystem {
         Zeke2022 zrobot = (Zeke2022)robot ;
 
         db_ = new TankDriveSubsystem(this, TankdriveSubsystemName, "tankdrive") ;
-        // db_.setOpenLoopRampRates(0.4, 0.0);
         addChild(db_) ;
 
         oi_ = new ZekeOISubsystem(this, db_) ;
@@ -42,7 +43,7 @@ public class ZekeSubsystem extends RobotSubsystem {
         color_sensor_ = new ZekeColorSensor(this, I2C.Port.kMXP) ;
         addChild(color_sensor_) ;
 
-        gpm_ = new GPMSubsystem(this, db_, color_sensor_) ;
+        gpm_ = new GPMSubsystem(this, db_, color_sensor_, NoIntakeSensor) ;
         addChild(gpm_) ;
 
         limelight_ = new ZekeLimeLightSubsystem(this) ;

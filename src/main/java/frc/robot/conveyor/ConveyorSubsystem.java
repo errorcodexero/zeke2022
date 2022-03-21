@@ -123,10 +123,13 @@ public class ConveyorSubsystem extends Subsystem {
     private double move_to_start_ ;
     private boolean waiting_for_timeout_ ;
 
-    public ConveyorSubsystem(Subsystem parent, ZekeColorSensor color) throws Exception {
+    private boolean nointake_ ;
+
+    public ConveyorSubsystem(Subsystem parent, ZekeColorSensor color, boolean nointake) throws Exception {
         super(parent, SubsystemName);
       
         color_sensor_ = color;
+        nointake_ = nointake ;
 
         bypass_ = false ;
         run_intake_motor_shoot_ = false ;
@@ -218,12 +221,23 @@ public class ConveyorSubsystem extends Subsystem {
                 return ;
             }
 
-            if (risingEdge(SENSOR_IDX_INTAKE)) {
+            if (!nointake_ && risingEdge(SENSOR_IDX_INTAKE)) {
                 //
                 // There is a rising edge on the intake sensor, add a new ball
                 // to the conveyor
                 //
                 balls_info_.add(new BallInfo()) ;
+            }
+            
+            if (nointake_ && cargo_type_ != CargoType.None && cargo_type_ != prev_cargo_type_) {
+                //
+                // We see a change on the cargo type
+                //
+                BallInfo b = new BallInfo() ;
+                b.type_ = cargo_type_ ;
+                b.state_ = State.COLORSENSOR ;
+                
+                balls_info_.add(b) ;
             }
 
             if (fallingEdge(SENSOR_IDX_SHOOTER) && mode_ == Mode.SHOOT) {

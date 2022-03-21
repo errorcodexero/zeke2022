@@ -28,7 +28,7 @@ public class ZekeAutoController extends AutoController {
             modes_[0] = new TwoBallAuto(this, "Two Ball");
             modes_[1] = new ThreeBallAuto(this, "Three Ball");
             modes_[2] = new FourBallAuto(this, "Four Ball");
-            modes_[3] = new TestGrabbersAutoMode(this, "Test Grabbers") ;
+            modes_[3] = new PitTestAutoMode(this, "Pit Test") ;
             modes_[4] = new NoOpAuto(this, "Nop-4") ;
             modes_[5] = new NoOpAuto(this, "Nop-5") ;
             modes_[6] = new NoOpAuto(this, "Nop-6") ;
