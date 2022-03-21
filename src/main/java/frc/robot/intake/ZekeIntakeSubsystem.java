@@ -26,10 +26,15 @@ public class ZekeIntakeSubsystem extends Subsystem {
   public ZekeIntakeSubsystem(Subsystem parent, ZekeColorSensor sensor) throws Exception {
     super(parent, SubsystemName);
 
+    double ramprate = getSettingsValue("ramp-rate").getDouble() ;
+
     collector_left_ = getRobot().getMotorFactory().createMotor(
         "intake-collector-left", "subsystems:intake:hw:collector:motor-left");
     collector_right_ = getRobot().getMotorFactory().createMotor(
         "intake-collecor-right", "subsystems:intake:hw:collector:motor-right");
+
+    collector_left_.setOpenLoopRampRate(ramprate) ;
+    collector_right_.setOpenLoopRampRate(ramprate) ;
 
     solenoid_ = new XeroSolenoid(this, "deploy");
     color_sensor_ = sensor;

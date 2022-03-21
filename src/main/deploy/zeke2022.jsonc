@@ -274,6 +274,7 @@
             }
         },
         "intake": {
+            "ramp-rate" : 0.2,
             "intake-on": {
                 "in_speed": 0.8,
                 "out_slow": -0.2,
