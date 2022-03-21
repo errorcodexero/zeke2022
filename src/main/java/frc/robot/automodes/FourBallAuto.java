@@ -1,6 +1,5 @@
 package frc.robot.automodes;
 
-import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 
 import frc.robot.conveyor.ConveyorSetBall;
@@ -32,7 +31,7 @@ public class FourBallAuto extends ZekeAutoMode {
         startLimelightTracking() ;
 
         // Start firing the two balls
-        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret), true);
+        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
 
         addSubActionPair(gpm.getConveyor(), new ConveyorSetBall(gpm.getConveyor()), false);
         driveAndCollect("fourball_p1", 0.0, 2.0, FirstShotAngle, null);

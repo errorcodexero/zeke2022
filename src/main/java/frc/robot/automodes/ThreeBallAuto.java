@@ -44,7 +44,7 @@ public class ThreeBallAuto extends ZekeAutoMode {
         startLimelightTracking() ;
 
         // Start firing the two balls
-        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret), true);
+        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, true), true);
 
         // Drive and collect the ball near the terminal
         driveAndCollect("threeball_p2", 0.0, 0.5, 0.0, shoot);

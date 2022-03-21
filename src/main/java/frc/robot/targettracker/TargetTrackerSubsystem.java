@@ -97,6 +97,10 @@ public class TargetTrackerSubsystem extends Subsystem {
         enable(false) ;
     }
 
+    public ZekeLimeLightSubsystem getLimelight() {
+        return ll_ ;
+    }
+
     public void enable(boolean b) {
         enabled_ = b ;
 
@@ -177,15 +181,5 @@ public class TargetTrackerSubsystem extends Subsystem {
             distance_ = 0.0 ;
             desired_turret_angle_ = 0.0 ;
         }
-
-        //
-        // Butch: This was put in as a hack because of errors we 
-        //        were seeing with the turret.  We think these are
-        //        fixed now
-        //
-        // if (desired_turret_angle_ > 60.0)
-        //     desired_turret_angle_ = 60.0 ;
-        // else if (desired_turret_angle_ < -60.0)
-        //     desired_turret_angle_ = -60.0 ;
     }
 }

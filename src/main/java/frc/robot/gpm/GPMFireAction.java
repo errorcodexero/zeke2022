@@ -81,24 +81,36 @@ public class GPMFireAction extends Action {
 
     private PieceWiseLinear pwl_hood_ ;
     private PieceWiseLinear pwl_velocity_ ;
+    private double moving_velocity_limit_ ;
+    private double shooter_latency_ ;
+    private boolean while_moving_ ;
 
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
-            TankDriveSubsystem db, TurretSubsystem turret) 
+            TankDriveSubsystem db, TurretSubsystem turret, boolean moving) 
             throws Exception {
         super(sub.getRobot().getMessageLogger());
-        
+
+        double value ;        
+
         sub_ = sub ;
         target_tracker_ = target_tracker ;
         db_ = db ;
         turret_ = turret ;
+        while_moving_ = moving ;
  
         shutdown_duration_ = sub_.getSettingsValue("fire-action:shutdown-delay").getDouble() ;
 
         fire_action_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action") ;
 
-        double value ;
+
         value = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
         db_velocity_threshold_ = value;
+
+        value = sub_.getSettingsValue("fire-action:db_moving_vel_threshold").getDouble() ;
+        moving_velocity_limit_ = value ;
+
+        sub_.getSettingsValue("fire-action:shooter_latency").getDouble() ;
+        shooter_latency_ = value ;
 
         value = sub_.getSettingsValue("fire-action:shooter_vel_threshold").getDouble() ;
         shooter_velocity_threshold_ = value;
@@ -214,7 +226,8 @@ public class GPMFireAction extends Action {
                         //
                         // See if the drive base is ready
                         //
-                        db_ready_ = Math.abs(db_.getVelocity()) < db_velocity_threshold_ ;
+                        double dbthres = (while_moving_ ? moving_velocity_limit_ : db_velocity_threshold_) ;
+                        db_ready_ = Math.abs(db_.getVelocity()) < dbthres ;
 
                         //
                         // See if the turret is ready
@@ -320,6 +333,7 @@ public class GPMFireAction extends Action {
             double dw2 = Math.abs(w2 - shoot_params_.v2_) ;
             double dhood = Math.abs(hood - shoot_params_.hood_) ;
 
+
             // return whether or not all the deltas are under the thresholds
             ret = dw1 < shooter_velocity_threshold_ && dw2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
         }
@@ -328,7 +342,18 @@ public class GPMFireAction extends Action {
 
     public boolean computeShooterParams(double dist) {
         
-        if (dist >= 140.0) {
+        if (while_moving_) {
+            //
+            // This is the speed of the robot toward the target
+            //
+            double to_target_speed = db_.getVelocity() * Math.cos(Math.toRadians(turret_.getPosition())) ;
+            double camera_latency = target_tracker_.getLimelight().getTotalLatency() ;
+            double total_latency = camera_latency + shooter_latency_ ;
+
+            dist = dist - total_latency * to_target_speed ;
+        }
+       
+        if (dist < 20 || dist > 120.0) {
             //
             // If the shooter exceeds a given distance, we are too far for the
             // hood or the shooter wheels.

@@ -43,6 +43,6 @@ public class TwoBallAuto extends ZekeAutoMode {
         startLimelightTracking();
 
         // Start firing the two balls
-        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret), true);
+        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
     }
 }
