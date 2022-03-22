@@ -573,6 +573,9 @@
                 // The maximum amount of time to spend waiting to backup
                 "backup-time-high-traverse" : 30.0,
 
+                // The pneumatic pressure required to start climb sequence
+                "pneumatic-pressure-required" : 100,
+
                 // The range used to ramp the windmill motors, in robot loops
                 "start-range" : 10,
 

@@ -1,7 +1,10 @@
 package org.xero1425.base.oi;
 
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.DriverStation;
 
 /// \file
@@ -17,6 +20,9 @@ public class OIPanel extends HIDDevice
     // The iame from logical item numbers to panel items
     Map<Integer, OIPanelItem> items_ ;
 
+    // The set of LEDs
+    List<OILed> leds_ ;
+
     /// \brief Create a new OI panel assocaited with a HID device
     /// \param sub the subsystem that owns this OIPanel
     /// \param name the name of the OIPanel device
@@ -24,6 +30,7 @@ public class OIPanel extends HIDDevice
     public OIPanel(OISubsystem sub, String name, int index) {
         super(sub, name, index) ;
 
+        leds_ = new ArrayList<OILed>() ;
         items_ = new HashMap<Integer, OIPanelItem>() ;
         next_handle_ = 1 ;
     }
@@ -72,9 +79,23 @@ public class OIPanel extends HIDDevice
         return items_.get(handle).getValue() ;
     }
 
+    public OILed createLED(int io) {
+        for(OILed led: leds_) {
+            if (led.getIndex() == io)
+                return led ;
+        }
+
+        OILed led = new OILed(this, io) ;
+        leds_.add(led) ;
+        return led ;
+    }
+
     /// \brief computes the state of the logical items
     @Override
     public void computeState() throws Exception {
+
+        for(OILed led : leds_)
+            led.run() ;
         
         for(OIPanelItem item : items_.values()) {
             if (item.getResourceType() == OIPanelItem.JoystickResourceType.Button)

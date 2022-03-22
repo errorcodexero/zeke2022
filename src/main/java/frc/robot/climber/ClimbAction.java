@@ -51,8 +51,11 @@ public class ClimbAction extends Action {
 
     private boolean past_no_return_ ;
 
+    private double pneumatic_pressure_required_ ;
+
     private enum ClimbingStates {
         IDLE,
+        WAIT_FOR_PRESSURE,
         OPEN_A_FOR_MID,
         WAIT_LEFT_OR_RIGHT_MID,
         SQUARING,
@@ -95,6 +98,8 @@ public class ClimbAction extends Action {
         backup_time_mid_high_ = sub.getSettingsValue("climbaction:backup-time-mid-high").getDouble() ;
         backup_time_high_traverse_= sub.getSettingsValue("climbaction:backup-time-high-traverse").getDouble() ;
 
+        pneumatic_pressure_required_ = sub.getSettingsValue("climbaction:pneumatic-pressure-required").getDouble() ;
+
         backup_mid_to_high_pid_ = new ClimberBackupProfile(230.0, 0.0, 0.001, 0.03) ;
         backup_high_to_traverse_pid_ = new ClimberBackupProfile(396.0, 0.0, 0.001, 0.03) ;
 
@@ -130,12 +135,21 @@ public class ClimbAction extends Action {
     public void start() throws Exception {
         super.start() ;
 
+        //
+        // Record the pneumatic pressure when starting the climb
+        //
+        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Info) ;
+        logger.add("Starting climb action, pneumatic pressure is ") ;
+        logger.add(sub_.getRobot().getPressure()) ;
+        logger.endMessage();
+
         if (past_no_return_) {
             setDone() ;
         }
         else {
             stop_when_safe_ = false ;
-            state_ = ClimbingStates.OPEN_A_FOR_MID ;
+            state_ = ClimbingStates.WAIT_FOR_PRESSURE ;
             set_auto_drive_ = false ;
         }
     }
@@ -158,6 +172,9 @@ public class ClimbAction extends Action {
         switch (state_) {
             case IDLE:
                 state_ = ClimbingStates.OPEN_A_FOR_MID ;
+                break ;
+            case WAIT_FOR_PRESSURE:
+                doWaitForPressure() ;
                 break ;
             case OPEN_A_FOR_MID:
                 doOpenAforMid() ;
@@ -221,6 +238,12 @@ public class ClimbAction extends Action {
     @Override
     public String toString(int indent) {
         return prefix(indent) + "ClimbAction" ;
+    }
+
+    private void doWaitForPressure() {
+        if (sub_.getRobot().getPressure() > pneumatic_pressure_required_) {
+            state_ = ClimbingStates.OPEN_A_FOR_MID ;
+        }
     }
 
     private void doOpenAforMid() {

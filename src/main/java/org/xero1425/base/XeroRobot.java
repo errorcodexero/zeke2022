@@ -245,6 +245,10 @@ public abstract class XeroRobot extends TimedRobot {
         compressor_.enableAnalog(minp, maxp);
     }
 
+    public double getPressure() {
+        return compressor_.getPressure() ;
+    }
+
     /// \brief enable pneumatics for this robot
     /// \returns true if pneumatics were enabled sucessfully, otherwise false
     protected boolean enablePneumatics() {

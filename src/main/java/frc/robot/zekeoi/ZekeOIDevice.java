@@ -6,6 +6,7 @@ import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;
 import org.xero1425.base.oi.OISubsystem;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.base.oi.Gamepad;
+import org.xero1425.base.oi.OILed;
 import org.xero1425.base.oi.OIPanel;
 import org.xero1425.misc.BadParameterTypeException;
 import org.xero1425.misc.MissingParameterException;
@@ -23,6 +24,7 @@ import frc.robot.gpm.GPMManualFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
+import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.FollowTargetAction;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
@@ -49,13 +51,13 @@ public class ZekeOIDevice extends OIPanel {
     private int deploy_climb_gadget_ ;
     private int shoot_manual_mode_gadget_ ;
 
-    private int ball1_output_ ;
-    private int ball2_output_ ;
+    private OILed ball1_output_ ;
+    private OILed ball2_output_ ;
 
-    private int limelight_ready_led_ ;
-    private int shooter_ready_led_ ;
-    private int turret_ready_led_ ;
-    private int distance_ok_led_ ;
+    private OILed limelight_ready_led_ ;
+    private OILed shooter_ready_led_ ;
+    private OILed turret_ready_led_ ;
+    private OILed distance_ok_led_ ;
 
     private ClimberState climber_state_ ;
     private boolean is_turret_holding_ ;
@@ -81,13 +83,13 @@ public class ZekeOIDevice extends OIPanel {
 
         initializeGadgets();
 
-        ball1_output_ = sub.getSettingsValue("oi:outputs:ball1").getInteger() ;
-        ball2_output_ = sub.getSettingsValue("oi:outputs:ball2").getInteger() ;
+        ball1_output_ = createLED(sub.getSettingsValue("oi:outputs:ball1").getInteger()) ;
+        ball2_output_ = createLED(sub.getSettingsValue("oi:outputs:ball2").getInteger()) ;
 
-        limelight_ready_led_ = sub.getSettingsValue("oi:outputs:shooting:limelight").getInteger() ;
-        shooter_ready_led_ = sub.getSettingsValue("oi:outputs:shooting:shooter").getInteger() ;        
-        turret_ready_led_ = sub.getSettingsValue("oi:outputs:shooting:turret").getInteger() ;
-        distance_ok_led_ = sub.getSettingsValue("oi:outputs:shooting:distance").getInteger() ;                                        
+        limelight_ready_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:limelight").getInteger()) ;
+        shooter_ready_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:shooter").getInteger()) ;        
+        turret_ready_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:turret").getInteger()) ;
+        distance_ok_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:distance").getInteger()) ;                                        
     }
     
     @Override
@@ -120,40 +122,56 @@ public class ZekeOIDevice extends OIPanel {
     private void setLEDs()
     {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
-        GPMSubsystem gpm = zeke.getGPMSubsystem();   
+        GPMSubsystem gpm = zeke.getGPMSubsystem();
+        TurretSubsystem turret = zeke.getTurret() ;
+        TargetTrackerSubsystem tracker = zeke.getTargetTracker() ;
 
         switch(gpm.getConveyor().getBallCount())
         {
             case 0:
-                setOutput(ball1_output_, true);
-                setOutput(ball2_output_, true) ;
+                ball1_output_.setState(OILed.State.OFF);
+                ball2_output_.setState(OILed.State.OFF);
                 break ;
             case 1:
-                setOutput(ball1_output_, false);
-                setOutput(ball2_output_, true) ;
+            ball1_output_.setState(OILed.State.ON);
+            ball2_output_.setState(OILed.State.OFF);
                 break ;    
             case 2:
-                setOutput(ball1_output_, false);
-                setOutput(ball2_output_, false) ;
+            ball1_output_.setState(OILed.State.ON);
+            ball2_output_.setState(OILed.State.ON);
                 break ;                               
         }
 
         if (gpm.getAction() == fire_action_) {
-            setOutput(limelight_ready_led_, !fire_action_.hasTarget()) ;
-            setOutput(turret_ready_led_, !fire_action_.turretReady()) ;
-            setOutput(shooter_ready_led_, !fire_action_.shooterReady()) ;
-            setOutput(distance_ok_led_, !fire_action_.distanceOk()) ;
+            if (fire_action_.shooterReady())
+                shooter_ready_led_.setState(OILed.State.ON) ;
+            else
+                shooter_ready_led_.setState(OILed.State.BLINK_FAST) ;
 
-            // if (fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady() && fire_action_.distanceOk()) {
-            //     Gamepad g = getSubsystem().getGamePad() ;
-            //     g.rumble(1.0, 2.0) ;
-            // }
+            if (fire_action_.distanceOk())
+                distance_ok_led_.setState(OILed.State.ON) ; 
+            else
+                distance_ok_led_.setState(OILed.State.BLINK_FAST) ;
+
         }
         else {
-            setOutput(limelight_ready_led_, true) ;
-            setOutput(turret_ready_led_, true) ;
-            setOutput(shooter_ready_led_, true) ;
-            setOutput(distance_ok_led_, true) ;            
+            shooter_ready_led_.setState(OILed.State.OFF) ;
+            distance_ok_led_.setState(OILed.State.OFF) ;
+        }
+
+        if (turret.getAction() == follow_) {
+            if (tracker.hasVisionTarget())
+                limelight_ready_led_.setState(OILed.State.ON) ;
+            else
+                limelight_ready_led_.setState(OILed.State.BLINK_FAST) ;
+
+            if (turret.isReadyToFire())
+                turret_ready_led_.setState(OILed.State.ON) ;  
+            else
+                turret_ready_led_.setState(OILed.State.BLINK_FAST) ;
+        } else {
+            limelight_ready_led_.setState(OILed.State.OFF) ;
+            turret_ready_led_.setState(OILed.State.OFF) ;            
         }
     }
 
