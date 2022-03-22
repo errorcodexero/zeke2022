@@ -1,7 +1,5 @@
 package org.xero1425.base.oi;
 
-import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
-
 public class OILed {
     public enum State {
         ON,

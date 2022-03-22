@@ -213,11 +213,16 @@ public class GPMFireAction extends Action {
                     //
                     shoot_params_valid_ = computeShooterParams(target_tracker_.getDistance()) ;
 
+                    //
+                    // Update the shooter with the current shooting parameters.  We do this whether or not the
+                    // shooting parameters are valid because if they are not valid, we set the parameter values to
+                    // be at the edge of the range.  This way, we keep the shooter wheels spun up to the best speed
+                    // for when the distance comes in range.
+                    //
+                    shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
+
                     if (shoot_params_valid_) {
-                        //
-                        // Update the shooter with the current shooting parameters
-                        //
-                        shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
+
 
                         //
                         // See if the shooter is ready
@@ -342,7 +347,8 @@ public class GPMFireAction extends Action {
     }
 
     public boolean computeShooterParams(double dist) {
-        
+        boolean ret = true ;
+
         if (while_moving_) {
             //
             // This is the speed of the robot toward the target
@@ -353,22 +359,28 @@ public class GPMFireAction extends Action {
 
             dist = dist - total_latency * to_target_speed ;
         }
+
+        double hood, vel ;
        
-        if (dist < 20 || dist > 160) {
+        if (dist < 40) {
             //
             // If the shooter exceeds a given distance, we are too far for the
             // hood or the shooter wheels.
             //
-            return false ;
+            ret = false ;
+            vel = pwl_velocity_.getValue(20) ;
+            hood = pwl_hood_.getValue(20) ;
         }
-
-        double vel = pwl_velocity_.getValue(dist) ;
-        double hood = pwl_hood_.getValue(dist) ;
-
-        sub_.putDashboard("svel", DisplayType.Always, vel);
-        sub_.putDashboard("shood", DisplayType.Always, hood);
-
+        else if (dist > 140) {
+            ret = false ;
+            vel = pwl_velocity_.getValue(120) ;
+            hood = pwl_hood_.getValue(120) ;
+        }
+        else {
+            vel = pwl_velocity_.getValue(dist) ;
+            hood = pwl_hood_.getValue(dist) ;
+        }
         shoot_params_ = new ShootParams(vel, vel, hood) ;
-        return true ;
+        return ret ;
     }
 }
