@@ -19,6 +19,27 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.zeke_color_sensor.ZekeColorSensor;
 import frc.robot.zeke_color_sensor.ZekeColorSensor.CargoType;
 
+//
+// Shooting ----
+//
+// Shooting is started by call setShootMode(), this call sets 
+//    mode_ = Mode.SHOOT
+//    intake motor power = OFF
+//    shooter motor power = ON
+//    starts intake motor timer
+//
+// Then each robot loop
+//
+// If intake motor timer has expired, start the intake motor
+// if we see the falling edge of the shooter sensor
+//    set parked_ = NULL indicating that ball has left the robot
+//    set the move_to_chimney flag indicating we want to move the next ball to the chminey and park it
+// 
+// If we have balls and we are moving a ball to the chimney, run both motors  until we get a parked ball
+//
+// Once second ball is parked, delay for 0.02 seconds, then run everything again to shoot
+//
+
 public class ConveyorSubsystem extends Subsystem {
 
     // States in the state machine, basically the last sensor seen
