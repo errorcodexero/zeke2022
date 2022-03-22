@@ -231,17 +231,6 @@ public class ConveyorSubsystem extends Subsystem {
                 balls_info_.add(new BallInfo()) ;
             }
             
-            // if (nointake_ && cargo_type_ != CargoType.None && cargo_type_ != prev_cargo_type_) {
-            //     //
-            //     // We see a change on the cargo type
-            //     //
-            //     BallInfo b = new BallInfo() ;
-            //     b.type_ = cargo_type_ ;
-            //     b.state_ = State.COLORSENSOR ;
-                
-            //     balls_info_.add(b) ;
-            // }
-
             if (fallingEdge(SENSOR_IDX_SHOOTER) && mode_ == Mode.SHOOT) {
                 if (parked_ != null) {
                     //
@@ -442,14 +431,6 @@ public class ConveyorSubsystem extends Subsystem {
     private boolean isValidStopState() {
         if (balls_info_.size() == 0)
             return true ;
-
-        // if (PrintOnChanged) {
-        //     MessageLogger logger = getRobot().getMessageLogger() ;
-        //     logger.startMessage(MessageType.Debug, getLoggerID()) ;
-        //     logger.add("ValidStopState:");
-        //     logger.add("parked", (parked_ != null ? "true" : "false")) ;
-        //     logger.endMessage();
-        // }
 
         //
         // The only valid stop state is if the horizontal conveyor is empty, or if I already have a ball of my
