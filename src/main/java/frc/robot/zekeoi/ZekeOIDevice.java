@@ -144,10 +144,16 @@ public class ZekeOIDevice extends OIPanel {
             setOutput(shooter_ready_led_, !fire_action_.shooterReady()) ;
             setOutput(distance_ok_led_, !fire_action_.distanceOk()) ;
 
-            if (fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady() && fire_action_.distanceOk()) {
-                Gamepad g = getSubsystem().getGamePad() ;
-                g.rumble(1.0, 2.0) ;
-            }
+            // if (fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady() && fire_action_.distanceOk()) {
+            //     Gamepad g = getSubsystem().getGamePad() ;
+            //     g.rumble(1.0, 2.0) ;
+            // }
+        }
+        else {
+            setOutput(limelight_ready_led_, true) ;
+            setOutput(turret_ready_led_, true) ;
+            setOutput(shooter_ready_led_, true) ;
+            setOutput(distance_ok_led_, true) ;            
         }
     }
 

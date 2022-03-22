@@ -1,5 +1,6 @@
 package frc.robot.gpm;
 
+import org.xero1425.base.Subsystem.DisplayType;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.base.utils.PieceWiseLinear;
@@ -353,7 +354,7 @@ public class GPMFireAction extends Action {
             dist = dist - total_latency * to_target_speed ;
         }
        
-        if (dist < 20 || dist > 120.0) {
+        if (dist < 20 || dist > 160) {
             //
             // If the shooter exceeds a given distance, we are too far for the
             // hood or the shooter wheels.
@@ -363,6 +364,9 @@ public class GPMFireAction extends Action {
 
         double vel = pwl_velocity_.getValue(dist) ;
         double hood = pwl_hood_.getValue(dist) ;
+
+        sub_.putDashboard("svel", DisplayType.Always, vel);
+        sub_.putDashboard("shood", DisplayType.Always, hood);
 
         shoot_params_ = new ShootParams(vel, vel, hood) ;
         return true ;

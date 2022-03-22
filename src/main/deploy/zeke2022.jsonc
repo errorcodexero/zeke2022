@@ -29,7 +29,7 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": false,
+            "conveyor": true,
 
             // Shoot related
             "shooter": false,
@@ -64,7 +64,7 @@
         //
         "pneumatics": {
             "type": "REVPH",
-            "min-pressure": 105.0,
+            "min-pressure": 115.0,
             "max-pressure": 120.0
         }
     },
@@ -226,16 +226,20 @@
                     "9" : {
                         "x" : 141,
                         "y" : 21
+                    },
+                    "10" : {
+                        "x": 152,
+                        "y" : 21
                     }
                 },
                 "velocity-pwl" : {
                     "1" : {
                         "x" : 42.86,
-                        "y" : 3000
+                        "y" : 3100
                     },
                     "2" : {
                         "x" : 56.5,
-                        "y" : 3000
+                        "y" : 3100
                     },
                     "3" : {
                         "x" : 68.5,
@@ -247,23 +251,32 @@
                     },
                     "5" : {
                         "x" : 95.4,
-                        "y" : 3500
+                        "y" : 3800
                     },
                     "6" : { 
                         "x" : 106.7,
-                        "y" : 3700
+                        "y" : 4000
                     },
                     "7" : {
-                        "x" : 119.8,
-                        "y" : 3800
+                        "x" : 110.8,
+                        "y" : 4600
                     },
                     "8" : {
-                        "x" : 128,
-                        "y" : 6200
+                        "x" : 119.8,
+                        "y" : 4600
                     },
                     "9" : {
+                        "x" : 128,
+                        "y" : 6600
+                    },
+                    "10" : {
                         "x" : 141,
-                        "y" : 7000
+                        "y" : 7600
+                    },
+                    "11" : {
+                        "x" : 152,
+                        "y" : 8000
+
                     }
                 }
             },
@@ -712,7 +725,7 @@
         }
     },
     "testmode": {
-        "enabled": false,
+        "enabled": true,
         "which": 101,
         "power": 0.2,
         "duration": 1.0,

@@ -79,15 +79,6 @@ public class FollowTargetAction extends MotorAction {
             // the desired positon of the turret.
             //
             double out = pid_.getOutput(desired_, sub_.getPosition(), sub_.getRobot().getDeltaTime()) ;
-
-            // Butch: This was a hack that was put into place based on the turret overrotating
-            //        We this this is fixed now.
-            // 
-            // if (sub_.getPosition() > 60.0 && out > 0)
-            //     out = 0 ;
-            // else if (sub_.getPosition() < -60.0 && out < 0.0)
-            //     out = 0 ;
-
             sub_.setPower(out) ;
 
 
@@ -115,9 +106,9 @@ public class FollowTargetAction extends MotorAction {
         }
         else {
             sub_.setReadyToFire(false);
-            sub_.setPower(0.0) ;
+            double out = pid_.getOutput(0.0, sub_.getPosition(), sub_.getRobot().getDeltaTime()) ;
+            sub_.setPower(out) ;
         }
-
     }
 
     @Override

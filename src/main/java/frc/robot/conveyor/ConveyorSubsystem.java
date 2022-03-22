@@ -78,8 +78,8 @@ public class ConveyorSubsystem extends Subsystem {
     // The name of the subsystem
     public static final String SubsystemName = "conveyor";
 
-    // If true, print detailed information every robot loop
-    private static final boolean PrintDetailed = false ;
+    // If true, print the motor power when it changs
+    private static final boolean PrintMotorPower = true ;
 
     // If true, print sensor info and ball state info on change
     private static final boolean PrintOnChanged = true ;
@@ -213,6 +213,8 @@ public class ConveyorSubsystem extends Subsystem {
         if (!bypass_) {
 
             if (stop_requested_ && isValidStopState()) {
+                logger.startMessage(MessageType.Debug, getLoggerID()) ;
+                logger.add("processing stop requested").endMessage();
                 mode_ = Mode.IDLE ;
                 stop_requested_ = false ;
                 setIntakeMotor(0.0);
@@ -229,16 +231,16 @@ public class ConveyorSubsystem extends Subsystem {
                 balls_info_.add(new BallInfo()) ;
             }
             
-            if (nointake_ && cargo_type_ != CargoType.None && cargo_type_ != prev_cargo_type_) {
-                //
-                // We see a change on the cargo type
-                //
-                BallInfo b = new BallInfo() ;
-                b.type_ = cargo_type_ ;
-                b.state_ = State.COLORSENSOR ;
+            // if (nointake_ && cargo_type_ != CargoType.None && cargo_type_ != prev_cargo_type_) {
+            //     //
+            //     // We see a change on the cargo type
+            //     //
+            //     BallInfo b = new BallInfo() ;
+            //     b.type_ = cargo_type_ ;
+            //     b.state_ = State.COLORSENSOR ;
                 
-                balls_info_.add(b) ;
-            }
+            //     balls_info_.add(b) ;
+            // }
 
             if (fallingEdge(SENSOR_IDX_SHOOTER) && mode_ == Mode.SHOOT) {
                 if (parked_ != null) {
@@ -362,21 +364,27 @@ public class ConveyorSubsystem extends Subsystem {
     }
 
     private void setShooterMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
-        if (PrintDetailed) {
-            MessageLogger logger = getRobot().getMessageLogger() ;
-            logger.startMessage(MessageType.Debug, getLoggerID()).add("setShooterMotor").add("power", power).endMessage();
+        double delta = Math.abs(power - shooter_motor_power_) ;
+        if (delta > 0.01) {
+            if (PrintMotorPower) {
+                MessageLogger logger = getRobot().getMessageLogger() ;
+                logger.startMessage(MessageType.Debug, getLoggerID()).add("setShooterMotor").add("power", power).endMessage();
+            }
+            shooter_motor_power_ = power ;
+            shooter_motor_.set(power) ;
         }
-        shooter_motor_power_ = power ;
-        shooter_motor_.set(power) ;
     }
 
     private void setIntakeMotor(double power) throws BadMotorRequestException, MotorRequestFailedException {
-        if (PrintDetailed) {
-            MessageLogger logger = getRobot().getMessageLogger() ;
-            logger.startMessage(MessageType.Debug, getLoggerID()).add("setIntakeMotor").add("power", power).endMessage();
+        double delta = Math.abs(power-intake_motor_power_) ;
+        if (delta > 0.01) {
+            if (PrintMotorPower) {
+                MessageLogger logger = getRobot().getMessageLogger() ;
+                logger.startMessage(MessageType.Debug, getLoggerID()).add("setIntakeMotor").add("power", power).endMessage();
+            }
+            intake_motor_power_ = power ;
+            intake_motor_.set(power) ;
         }
-        intake_motor_power_ = power ;
-        intake_motor_.set(power) ;
     }
 
     public void setMotorsPower(double intake, double shooter) throws BadMotorRequestException, MotorRequestFailedException {
@@ -435,13 +443,13 @@ public class ConveyorSubsystem extends Subsystem {
         if (balls_info_.size() == 0)
             return true ;
 
-        if (PrintOnChanged) {
-            MessageLogger logger = getRobot().getMessageLogger() ;
-            logger.startMessage(MessageType.Debug, getLoggerID()) ;
-            logger.add("ValidStopState:");
-            logger.add("parked", (parked_ != null ? "true" : "false")) ;
-            logger.endMessage();
-        }
+        // if (PrintOnChanged) {
+        //     MessageLogger logger = getRobot().getMessageLogger() ;
+        //     logger.startMessage(MessageType.Debug, getLoggerID()) ;
+        //     logger.add("ValidStopState:");
+        //     logger.add("parked", (parked_ != null ? "true" : "false")) ;
+        //     logger.endMessage();
+        // }
 
         //
         // The only valid stop state is if the horizontal conveyor is empty, or if I already have a ball of my

@@ -18,7 +18,7 @@ public class ZekeSubsystem extends RobotSubsystem {
     public final static String SubsystemName = "zeke" ;
     public final static String TankdriveSubsystemName = "tankdrive" ;
 
-    private final static boolean NoIntakeSensor = true ;
+    private final static boolean NoIntakeSensor = false ;
 
     private TankDriveSubsystem db_ ;
     private ZekeOISubsystem oi_;

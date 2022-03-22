@@ -10,7 +10,7 @@ import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
 public class FourBallAuto extends ZekeAutoMode {
-    private final double FirstShotAngle = 30.0 ;
+    private final double FirstShotAngle = 43.0 ;
 
     public FourBallAuto(ZekeAutoController ctrl, String name) throws Exception {
         super(ctrl, name);
@@ -34,13 +34,14 @@ public class FourBallAuto extends ZekeAutoMode {
         addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
 
         // Drive and pick up two balls from the field
-        driveAndCollect("fourball_p1", 0.0, 0.5, FirstShotAngle, null);
+        driveAndCollect("fourball_p1", 0.0, 0.3, FirstShotAngle, null);
 
         // Fire the two we collected in this first path
+        startLimelightTracking() ;
         addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
 
         // Drive out and collect the balls at the terminal
-        driveAndCollect("fourball_p2", 0.0, 0.0, 0.0, null);
+        driveAndCollect("fourball_p2", 0.0, 0.3, 0.0, null);
 
         // Drive back and fire while driving back
         driveAndFireMoving("fourball_p3", true, 0.0) ;

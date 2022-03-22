@@ -2,12 +2,10 @@ package org.xero1425.base;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.NetworkInterface;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -130,16 +128,20 @@ public abstract class XeroRobot extends TimedRobot {
     public XeroRobot(final double period) {
         super(period);
 
+        double start ;
+
         period_ = period;
 
         // Generate the paths to the various important places (logfile directory, settings file, path follow paths directoryh, etc.)
         robot_paths_ = new RobotPaths(RobotBase.isSimulation(), getName());
 
         // Setup the mesasge logger to log messages
+        start = getTime() ;
         enableMessageLogger();
         logger_id_ = logger_.registerSubsystem(LoggerName) ;        
         logger_.startMessage(MessageType.Info).add("============================================================").endMessage();
         logger_.startMessage(MessageType.Info).add("robot code starting").endMessage();
+        logger_.startMessage(MessageType.Info).add("enableMessageLogger time", getTime() - start) ;
         logger_.startMessage(MessageType.Info).add("============================================================").endMessage();
 
         if (RobotBase.isSimulation()) {
@@ -158,16 +160,23 @@ public abstract class XeroRobot extends TimedRobot {
             }
         }
 
+        start = getTime() ;
         // Get the network MAC address, used to determine comp bot versus practice bot
         getMacAddress();
+        logger_.startMessage(MessageType.Info).add("getMacAddress time", getTime() - start).endMessage(); ;
 
         // Read the parameters file
+        start = getTime() ;
         readParamsFile();
+        logger_.startMessage(MessageType.Info).add("readParamsFile time", getTime() - start).endMessage() ;
 
         // Enable messages in the message logger based on params file values
+        start = getTime() ;
         enableMessagesFromSettingsFile() ;
+        logger_.startMessage(MessageType.Info).add("enableMessagesFromSettingsFile time", getTime() - start).endMessage() ;
 
         // Read the paths files needed
+        start = getTime() ;
         paths_ = new XeroPathManager(logger_, robot_paths_.pathsDirectory(), getPathType());
         try {
             loadPathsFile();
@@ -175,6 +184,7 @@ public abstract class XeroRobot extends TimedRobot {
             logger_.startMessage(MessageType.Error) ;
             logger_.add("caught exception reading path files -").add(ex.getMessage()).endMessage();
         }
+        logger_.startMessage(MessageType.Info).add("loadPathsFiles time", getTime() - start).endMessage() ;
 
         // Create the motor factor
         motors_ = new MotorFactory(logger_, settings_);
@@ -318,6 +328,7 @@ public abstract class XeroRobot extends TimedRobot {
     @Override
     public void robotInit() {
         boolean v;
+        double start ;
 
         logger_.startMessage(MessageType.Info).add("initializing robot") ;
         if (DriverStation.isFMSAttached())
@@ -327,6 +338,7 @@ public abstract class XeroRobot extends TimedRobot {
         logger_.endMessage();
 
         /// Initialize the plotting subsystem
+        start = getTime() ;
         try {
             v = settings_.get("system:plotting").getBoolean();
             if (v == true)
@@ -339,13 +351,16 @@ public abstract class XeroRobot extends TimedRobot {
             // case we just turn off plotting
             plot_mgr_.enable(false);
         }
+        logger_.startMessage(MessageType.Info).add("plotMgrInit time", getTime() - start).endMessage() ;
 
         //
         // initialize the basic hardware
         //
         try {
             // Create the robot hardware
+            start = getTime() ;
             hardwareInit();
+            logger_.startMessage(MessageType.Info).add("hardwareInit time", getTime() - start).endMessage() ;
             
             if (RobotBase.isSimulation() && SimulationEngine.getInstance() != null)
             {
@@ -374,6 +389,7 @@ public abstract class XeroRobot extends TimedRobot {
 
         // Now that all subsystem are in place, compute the initial state of the robot
         delta_time_ = period_;
+        start = getTime() ;
         try {
             robot_subsystem_.computeState();
         } catch (Exception ex) {
@@ -382,9 +398,11 @@ public abstract class XeroRobot extends TimedRobot {
             logger_.endMessage();
             ;
         }
+        logger_.startMessage(MessageType.Info).add("computeInitalState time", getTime() - start).endMessage() ;
 
         // Now perform any initialization that might depend on the subsystem hierarchy
         // being in place or the initial state of the subsystems being ready.
+        start = getTime() ;
         try {
             robot_subsystem_.postHWInit();
         } catch (Exception ex) {
@@ -393,6 +411,7 @@ public abstract class XeroRobot extends TimedRobot {
             logger_.add("Exception caught in postHWInit() - ").add(ex.toString());
             logger_.endMessage();
         }
+        logger_.startMessage(MessageType.Info).add("postHWInit time", getTime() - start).endMessage() ;
 
         // Create the auto mode controller
         try {
@@ -915,26 +934,26 @@ public abstract class XeroRobot extends TimedRobot {
     }
      
     private void getMacAddress() {
-        Enumeration<NetworkInterface> netlist ;
+        // Enumeration<NetworkInterface> netlist ;
         mac_addr_ = null ;
 
-        try {
-            netlist = NetworkInterface.getNetworkInterfaces() ;
-            while (netlist.hasMoreElements())
-            {
-                NetworkInterface ni = netlist.nextElement() ;
-                String name = ni.getName() ;
-                if (name.equals("lo"))
-                    continue ;
+        // try {
+        //     netlist = NetworkInterface.getNetworkInterfaces() ;
+        //     while (netlist.hasMoreElements())
+        //     {
+        //         NetworkInterface ni = netlist.nextElement() ;
+        //         String name = ni.getName() ;
+        //         if (name.equals("lo"))
+        //             continue ;
                     
-                mac_addr_ = ni.getHardwareAddress() ;
-                break ;
-            }
-        }
-        catch(Exception ex)
-        {
-            mac_addr_ = null ;
-        }
+        //         mac_addr_ = ni.getHardwareAddress() ;
+        //         break ;
+        //     }
+        // }
+        // catch(Exception ex)
+        // {
+        //     mac_addr_ = null ;
+        // }
 
         logger_.startMessage(MessageType.Info).add("Mac Address: ") ;
         if (mac_addr_ == null)
