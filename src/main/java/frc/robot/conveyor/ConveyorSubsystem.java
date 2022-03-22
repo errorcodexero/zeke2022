@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xero1425.base.Subsystem;
+import org.xero1425.base.misc.XeroTimer;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorController;
 import org.xero1425.base.motors.MotorRequestFailedException;
@@ -116,12 +117,12 @@ public class ConveyorSubsystem extends Subsystem {
     private boolean[] sensor_states_prev_;          // The states of ball detect sensors
 
     private boolean run_intake_motor_shoot_ ;
-    private double start_intake_motor_start_ ;
-    private double start_intake_motor_duration_ ;
 
     private boolean move_to_chimney_ ;
     private double move_to_start_ ;
     private boolean waiting_for_timeout_ ;
+
+    private XeroTimer start_intake_timer_ ;
 
     private boolean nointake_ ;
 
@@ -149,7 +150,7 @@ public class ConveyorSubsystem extends Subsystem {
 
         mode_ = Mode.IDLE ;
 
-        start_intake_motor_duration_ = getSettingsValue("shoot-action:second-ball-delay").getDouble() ;
+        start_intake_timer_ = new XeroTimer(getRobot(), "start-intake-timer", getSettingsValue("shoot-action:second-ball-delay").getDouble()) ;
 
         attachHardware() ;
     }
@@ -203,7 +204,7 @@ public class ConveyorSubsystem extends Subsystem {
         }
 
         if (mode_ == Mode.SHOOT) {
-            if (getRobot().getTime() - start_intake_motor_start_ > start_intake_motor_duration_) {
+            if (start_intake_timer_.isExpired()) {
                 run_intake_motor_shoot_ = true ;
             }
         }
@@ -407,7 +408,7 @@ public class ConveyorSubsystem extends Subsystem {
         mode_ = Mode.SHOOT ;
         stop_requested_ = false;
         run_intake_motor_shoot_ = false ;
-        start_intake_motor_start_ = getRobot().getTime() ;
+        start_intake_timer_.start() ;
         setMotorsPower(0.0, shooter_motor_on_) ;
     }  
 
