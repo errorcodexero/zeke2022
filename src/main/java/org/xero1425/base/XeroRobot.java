@@ -141,7 +141,7 @@ public abstract class XeroRobot extends TimedRobot {
         logger_id_ = logger_.registerSubsystem(LoggerName) ;        
         logger_.startMessage(MessageType.Info).add("============================================================").endMessage();
         logger_.startMessage(MessageType.Info).add("robot code starting").endMessage();
-        logger_.startMessage(MessageType.Info).add("enableMessageLogger time", getTime() - start) ;
+        logger_.startMessage(MessageType.Info).add("enableMessageLogger time", getTime() - start).endMessage();
         logger_.startMessage(MessageType.Info).add("============================================================").endMessage();
 
         if (RobotBase.isSimulation()) {

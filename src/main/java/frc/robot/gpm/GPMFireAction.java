@@ -1,6 +1,5 @@
 package frc.robot.gpm;
 
-import org.xero1425.base.Subsystem.DisplayType;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.base.utils.PieceWiseLinear;
@@ -245,11 +244,17 @@ public class GPMFireAction extends Action {
                         //
                         if (shooter_ready_ && db_ready_ && turret_ready_)
                         {
+                            logger.startMessage(MessageType.Info) ;
+                            logger.add("shooting: ") ;
+                            logger.add("distance", target_tracker_.getDistance()) ;
+                            logger.add("hood", shoot_params_.hood_) ;
+                            logger.add("velocity", shoot_params_.v1_) ;
+                            logger.add("balls", sub_.getConveyor().getBallCount()) ;
+                            logger.endMessage();
+
                             shooter_action_.startPlot();
                             sub_.getConveyor().setAction(conveyor_shoot_action_, true) ;
                             state_ = State.SHOOTING ;
-
-                            System.out.println("Shooting: " + shoot_params_.hood_ + " " + shoot_params_.v1_) ;
                         }
                     }
                 }

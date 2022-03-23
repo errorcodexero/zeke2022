@@ -153,8 +153,10 @@
                 "index": 0,
                 "deadband": 0.05,
                 "epsilon": 0.01,
-                "max-increase" : 1.0,            // Max increase rate of power, same args as setOpenLoopRate
-                "max-decrease" : 0.6             // Max decrease rate of power, same args as setOpenLoopRate
+                "max-increase" : 0.4,             // Max increase rate of power, same args as setOpenLoopRate
+                "max-decrease" : 0.4,             // Max decrease rate of power, same args as setOpenLoopRate
+                "incr-decr-threshold" : 0.3,
+                "exponent" : 2.5
             },
             "oi": {
                 "index": 2,
@@ -271,12 +273,7 @@
                     },
                     "10" : {
                         "x" : 141,
-                        "y" : 7600
-                    },
-                    "11" : {
-                        "x" : 152,
-                        "y" : 8000
-
+                        "y" : 7200
                     }
                 }
             },
@@ -729,7 +726,7 @@
     },
     "testmode": {
         "enabled": false,
-        "which": 54,
+        "which": 101,
         "power": 0.2,
         "duration": 1.0,
         "distance": 21.0,

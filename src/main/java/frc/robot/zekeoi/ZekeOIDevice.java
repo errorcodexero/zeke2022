@@ -130,55 +130,67 @@ public class ZekeOIDevice extends OIPanel {
         if (gpm.getAction() == fire_action_ && fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady())
             g.rumble(1.0, 2.0);
 
-        switch(gpm.getConveyor().getBallCount())
-        {
-            case 0:
-                ball1_output_.setState(OILed.State.OFF);
-                ball2_output_.setState(OILed.State.OFF);
-                break ;
-            case 1:
-            ball1_output_.setState(OILed.State.ON);
-            ball2_output_.setState(OILed.State.OFF);
-                break ;    
-            case 2:
-            ball1_output_.setState(OILed.State.ON);
-            ball2_output_.setState(OILed.State.ON);
-                break ;                               
-        }
-
-        if (gpm.getAction() == fire_action_) {
-            if (fire_action_.shooterReady())
-                shooter_ready_led_.setState(OILed.State.ON) ;
-            else
-                shooter_ready_led_.setState(OILed.State.BLINK_FAST) ;
-
-            if (fire_action_.distanceOk())
-                distance_ok_led_.setState(OILed.State.ON) ; 
-            else
+        if (climber_state_ != ClimberState.STOWED) {
+            if (climb_.waitingForPressure()) {
+                ball1_output_.setState(OILed.State.BLINK_FAST);
+                ball2_output_.setState(OILed.State.BLINK_FAST);
                 distance_ok_led_.setState(OILed.State.BLINK_FAST) ;
-
+                shooter_ready_led_.setState(OILed.State.BLINK_FAST) ;
+                limelight_ready_led_.setState(OILed.State.BLINK_FAST) ;
+                turret_ready_led_.setState(OILed.State.BLINK_FAST) ;
+            }
         }
         else {
-            shooter_ready_led_.setState(OILed.State.OFF) ;
-            distance_ok_led_.setState(OILed.State.OFF) ;
+            switch(gpm.getConveyor().getBallCount())
+            {
+                case 0:
+                    ball1_output_.setState(OILed.State.OFF);
+                    ball2_output_.setState(OILed.State.OFF);
+                    break ;
+                case 1:
+                ball1_output_.setState(OILed.State.ON);
+                ball2_output_.setState(OILed.State.OFF);
+                    break ;    
+                case 2:
+                ball1_output_.setState(OILed.State.ON);
+                ball2_output_.setState(OILed.State.ON);
+                    break ;                               
+            }
+
+            if (gpm.getAction() == fire_action_) {
+                if (fire_action_.shooterReady())
+                    shooter_ready_led_.setState(OILed.State.ON) ;
+                else
+                    shooter_ready_led_.setState(OILed.State.BLINK_FAST) ;
+
+                if (fire_action_.distanceOk())
+                    distance_ok_led_.setState(OILed.State.ON) ; 
+                else
+                    distance_ok_led_.setState(OILed.State.BLINK_FAST) ;
+
+            }
+            else {
+                shooter_ready_led_.setState(OILed.State.OFF) ;
+                distance_ok_led_.setState(OILed.State.OFF) ;
+            }
+
+            if (turret.getAction() == follow_) {
+                if (tracker.hasVisionTarget())
+                    limelight_ready_led_.setState(OILed.State.ON) ;
+                else
+                    limelight_ready_led_.setState(OILed.State.BLINK_FAST) ;
+
+                if (turret.isReadyToFire())
+                    turret_ready_led_.setState(OILed.State.ON) ;
+                else if (tracker.hasVisionTarget())
+                    turret_ready_led_.setState(OILed.State.BLINK_FAST) ;
+                else
+                    turret_ready_led_.setState(OILed.State.OFF);
+            } else {
+                limelight_ready_led_.setState(OILed.State.OFF) ;
+                turret_ready_led_.setState(OILed.State.OFF) ;            
+            }
         }
-
-        if (turret.getAction() == follow_) {
-            if (tracker.hasVisionTarget())
-                limelight_ready_led_.setState(OILed.State.ON) ;
-            else
-                limelight_ready_led_.setState(OILed.State.BLINK_FAST) ;
-
-            if (turret.isReadyToFire())
-                turret_ready_led_.setState(OILed.State.ON) ;  
-            else
-                turret_ready_led_.setState(OILed.State.BLINK_FAST) ;
-        } else {
-            limelight_ready_led_.setState(OILed.State.OFF) ;
-            turret_ready_led_.setState(OILed.State.OFF) ;            
-        }
-
-
     }
 
     private void generateCargoActions() {

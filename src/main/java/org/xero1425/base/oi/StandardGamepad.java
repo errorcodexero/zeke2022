@@ -4,6 +4,8 @@ import org.xero1425.base.LoopType;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.BadParameterTypeException;
+import org.xero1425.misc.MessageLogger;
+import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
 import edu.wpi.first.math.MathUtil;
@@ -46,11 +48,15 @@ public class StandardGamepad extends Gamepad {
     // If true, use the max increase value above
     private boolean use_max_increase_ ;
 
+    private double max_incr_decr_threshold_ ;
+
     // The maximum increase in power to the motors in any one robot loop
     private double max_decrease_ ;
 
     // If true, use the max increase value above
     private boolean use_max_decrease_ ;
+
+    private double power_ ;
 
     /// \brief Create a new TankDrive gamepad device
     /// \param oi the subsystems that owns this device
@@ -79,6 +85,8 @@ public class StandardGamepad extends Gamepad {
         epslion_ = getSubsystem().getSettingsValue(getName() + ":epsilon").getDouble() ;
         max_increase_ = getSubsystem().getSettingsValue(getName() + ":max-increase").getDouble() ;
         max_decrease_ = getSubsystem().getSettingsValue(getName() + ":max-decrease").getDouble() ;
+        max_incr_decr_threshold_ = getSubsystem().getSettingsValue(getName() + ":incr-decr-threshold").getDouble() ;
+        power_ = getSubsystem().getSettingsValue(getName() + ":exponent").getDouble() ;
 
         if (max_increase_ > 0.01) {
           use_max_increase_ = true ;
@@ -103,12 +111,11 @@ public class StandardGamepad extends Gamepad {
         
         xSpeed = MathUtil.applyDeadband(xSpeed, deadband_) ;
         xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0) ;
-        xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed) ;
+        xSpeed = Math.copySign(Math.pow(Math.abs(xSpeed), power_), xSpeed) ;
 
         zRotation = MathUtil.applyDeadband(zRotation, deadband_) ;
         zRotation = MathUtil.clamp(zRotation, -1.0, 1.0) ;
-        zRotation = Math.copySign(zRotation * zRotation, zRotation) ;       
-
+        zRotation = Math.copySign(Math.pow(Math.abs(zRotation), power_), zRotation) ;
 
         double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed) ;
         double leftSpeed, rightSpeed ;
@@ -141,7 +148,7 @@ public class StandardGamepad extends Gamepad {
 
         if (Math.abs(leftSpeed - left_) > epslion_ || Math.abs(rightSpeed - right_) > epslion_) {
           
-          if (use_max_increase_ && Math.abs(zRotation) < 0.1) {
+          if (use_max_increase_ && Math.abs(zRotation) < max_incr_decr_threshold_) {
             if (leftSpeed - left_ > max_increase_) {
               leftSpeed = left_ + max_increase_ ;
             }
@@ -151,7 +158,7 @@ public class StandardGamepad extends Gamepad {
             }
           }
 
-          if (use_max_decrease_ && Math.abs(zRotation) < 0.1) {
+          if (use_max_decrease_ && Math.abs(zRotation) < max_incr_decr_threshold_) {
             if (left_- leftSpeed > max_decrease_) {
               leftSpeed = left_ - max_decrease_ ;
             }
@@ -161,10 +168,11 @@ public class StandardGamepad extends Gamepad {
             }            
           }
 
-          // logger.startMessage(MessageType.Info) ;
-          // logger.add("gamepad").add("xSpeed", xSpeed).add("zRotation", zRotation) ;
-          // logger.add("left", left_).add("right", right_) ;
-          // logger.endMessage();
+          MessageLogger logger = getSubsystem().getRobot().getMessageLogger() ;
+          logger.startMessage(MessageType.Info) ;
+          logger.add("gamepad").add("xSpeed", xSpeed).add("zRotation", zRotation) ;
+          logger.add("left", left_).add("right", right_) ;
+          logger.endMessage();
 
           db_.setPower(leftSpeed, rightSpeed) ;
           left_ = leftSpeed ;

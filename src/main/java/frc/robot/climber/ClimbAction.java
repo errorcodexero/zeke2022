@@ -120,6 +120,10 @@ public class ClimbAction extends Action {
         set_auto_drive_ = false ;
         state_ = ClimbingStates.IDLE ;
     }
+    
+    public boolean waitingForPressure() {
+        return state_ == ClimbingStates.WAIT_FOR_PRESSURE ;
+    }
 
     public void setAutomaticDrive() {
         set_auto_drive_ = true ;
@@ -249,6 +253,12 @@ public class ClimbAction extends Action {
     }
 
     private void doWaitForPressure() {
+        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Info) ;
+        logger.add("Waiting for pressure to build,") ;
+        logger.add("pressure", sub_.getRobot().getPressure()) ;
+        logger.endMessage();
+
         if (sub_.getRobot().getPressure() > pneumatic_pressure_required_) {
             state_ = ClimbingStates.OPEN_A_FOR_MID ;
         }

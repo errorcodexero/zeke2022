@@ -38,7 +38,7 @@ public class DeployClimberAction extends Action {
         goto_ = new MotorEncoderGotoAction(sub_.getWindmillMotor(), deploy_position_, true) ;
 
         sub_.getWindmillMotor().setAction(goto_, true) ;
-        if (state_ == DeployState.Stowed) {
+        if (state_ == DeployState.Stowed && !sub_.isLeftATouched() && !sub_.isLeftBTouched()) {
             sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.CLOSED);
             sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.CLOSED);
         }
@@ -58,6 +58,6 @@ public class DeployClimberAction extends Action {
 
     @Override
     public String toString(int indent) {
-        return spaces(indent) + "DeployClimberAction" ;
+        return spaces(indent) + "DeployClimberAction " + state_.toString() ;
     }
 }
