@@ -41,6 +41,7 @@ public class GPMManualFireAction extends Action {
 
     @Override
     public void start() throws Exception {
+        super.start();
         sub_.getShooter().setAction(shoot_action_, true) ;
         sub_.getConveyor().cancelAction();
         is_conveyor_on_ = false ;
@@ -49,16 +50,16 @@ public class GPMManualFireAction extends Action {
     @Override
     public void run() {
 
-        
         if (is_conveyor_on_) {
             if (conveyor_shoot_.isDone()) {
+                System.out.println("manual shoot done") ;
                 sub_.getShooter().cancelAction();
                 setDone() ;
             }
         }
         else {
             if (isShooterReady()) {
-                sub_.getConveyor().setAction(conveyor_shoot_) ;
+                sub_.getConveyor().setAction(conveyor_shoot_, true) ;
                 is_conveyor_on_ = true ;
             }
         }

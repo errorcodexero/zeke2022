@@ -64,7 +64,7 @@
         //
         "pneumatics": {
             "type": "REVPH",
-            "min-pressure": 115.0,
+            "min-pressure": 119.9,
             "max-pressure": 120.0
         }
     },
@@ -574,7 +574,7 @@
                 "backup-time-high-traverse" : 30.0,
 
                 // The pneumatic pressure required to start climb sequence
-                "pneumatic-pressure-required" : 100,
+                "pneumatic-pressure-required" : 50,
 
                 // The range used to ramp the windmill motors, in robot loops
                 "start-range" : 10,
@@ -728,7 +728,7 @@
         }
     },
     "testmode": {
-        "enabled": true,
+        "enabled": false,
         "which": 54,
         "power": 0.2,
         "duration": 1.0,

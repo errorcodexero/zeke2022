@@ -64,10 +64,12 @@ public class ClimbAction extends Action {
         WINDMILL_TO_HIGH_BAR,
         CLOSE_B_ON_HIGH,
         BACKUP_MID_TO_HIGH,
+        DELAY_BEFORE_MID_RELEASE,
         OPEN_A_ON_MID,
         WINDMILL_TO_TRAVERSE_BAR,
         CLOSE_A_ON_TRAVERSE,
         BACKUP_HIGH_TO_TRAVERSE,
+        DELAY_BEFORE_HIGH_RELEASE,
         COMPLETE
     }
 
@@ -197,6 +199,9 @@ public class ClimbAction extends Action {
             case BACKUP_MID_TO_HIGH:
                 doBackupMidToHigh() ;
                 break ;
+            case DELAY_BEFORE_MID_RELEASE:
+                doDelayBeforeMidRelease() ;
+                break ;
             case CLOSE_B_ON_HIGH:
                 doCloseBOnHigh() ;
                 break ;
@@ -211,6 +216,9 @@ public class ClimbAction extends Action {
                 break ;
             case BACKUP_HIGH_TO_TRAVERSE:
                 doBackupHighToTraverse() ;
+                break ;
+            case DELAY_BEFORE_HIGH_RELEASE:
+                doDelayBeforeHighRelease() ;
                 break ;
             case COMPLETE:
                 doComplete() ;
@@ -412,19 +420,26 @@ public class ClimbAction extends Action {
                 state_ = ClimbingStates.COMPLETE ;
             }
             else {
-                sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);
+
                 state_start_time_ = sub_.getRobot().getTime() ;
 
                 if (stop_when_safe_)
                     state_ = ClimbingStates.COMPLETE ;
                 else {
-                    state_ = ClimbingStates.OPEN_A_ON_MID ;
+                    state_ = ClimbingStates.DELAY_BEFORE_MID_RELEASE ;
                 }
             }            
         }
         else {
             double out = backup_mid_to_high_pid_.getOutput(sub_.getWindmillMotor().getPosition(), backup_target_mid_high_, sub_.getRobot().getTime()) ;
             sub_.getWindmillMotor().setPower(out);
+        }
+    }
+
+    private void doDelayBeforeMidRelease() {
+        if (sub_.getRobot().getTime() - state_start_time_ > 0.150) {
+            sub_.changeClamp(WhichClamp.CLAMP_A, GrabberState.OPEN);
+            state_ = ClimbingStates.OPEN_A_ON_MID ;
         }
     }
     
@@ -506,17 +521,25 @@ public class ClimbAction extends Action {
 
         double err = Math.abs(sub_.getWindmillMotor().getPosition() - backup_target_high_traverse_) ;
         if (err < backup_threshold_ || sub_.getRobot().getTime() - state_start_time_ > backup_time_high_traverse_) {
+            sub_.getWindmillMotor().setPower(0.0);
             if (!sub_.isLeftATouched() || !sub_.isRightATouched()) {
                 state_ = ClimbingStates.COMPLETE ;
             }
             else {
-                sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);
-                state_ = ClimbingStates.COMPLETE ;
+                state_ = ClimbingStates.DELAY_BEFORE_HIGH_RELEASE ;
+                state_start_time_ = sub_.getRobot().getTime() ;
             }
         }
         else {
             double out = backup_high_to_traverse_pid_.getOutput(sub_.getWindmillMotor().getPosition(), backup_target_high_traverse_, sub_.getRobot().getTime()) ;
             sub_.getWindmillMotor().setPower(out);
+        }
+    }
+
+    private void doDelayBeforeHighRelease() {
+        if (sub_.getRobot().getTime() - state_start_time_ > 0.150) {
+            sub_.changeClamp(WhichClamp.CLAMP_B, GrabberState.OPEN);
+            state_ = ClimbingStates.COMPLETE ;
         }
     }
      
@@ -531,6 +554,12 @@ public class ClimbAction extends Action {
     //        never exits; not really
     //
     private void doComplete() throws BadMotorRequestException, MotorRequestFailedException {
+        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
+        logger.startMessage(MessageType.Info) ;
+        logger.add("Ending climb action, pneumatic pressure is ") ;
+        logger.add(sub_.getRobot().getPressure()) ;
+        logger.endMessage();
+
         sub_.getWindmillMotor().setPower(0.0);
         setDone() ;
     }

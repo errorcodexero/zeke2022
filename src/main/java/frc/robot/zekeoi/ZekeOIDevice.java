@@ -125,6 +125,10 @@ public class ZekeOIDevice extends OIPanel {
         GPMSubsystem gpm = zeke.getGPMSubsystem();
         TurretSubsystem turret = zeke.getTurret() ;
         TargetTrackerSubsystem tracker = zeke.getTargetTracker() ;
+        Gamepad g = getSubsystem().getGamePad() ;
+
+        if (gpm.getAction() == fire_action_ && fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady())
+            g.rumble(1.0, 2.0);
 
         switch(gpm.getConveyor().getBallCount())
         {
@@ -173,6 +177,8 @@ public class ZekeOIDevice extends OIPanel {
             limelight_ready_led_.setState(OILed.State.OFF) ;
             turret_ready_led_.setState(OILed.State.OFF) ;            
         }
+
+
     }
 
     private void generateCargoActions() {
@@ -217,8 +223,10 @@ public class ZekeOIDevice extends OIPanel {
                 }
             }
             else {
-                if (gpm.getAction() != manual_fire_action_) {
-                    gpm.setAction(manual_fire_action_);
+                if (gpm.getConveyor().getBallCount() > 0) {
+                    if (gpm.getAction() != manual_fire_action_) {
+                        gpm.setAction(manual_fire_action_);
+                    }
                 }
             }
         }
@@ -366,7 +374,9 @@ public class ZekeOIDevice extends OIPanel {
 
     private void initializeGadgets() throws BadParameterTypeException, MissingParameterException {
         int num = getSubsystem().getSettingsValue("oi:gadgets:automode").getInteger();
-        Double[] map = { -0.9, -0.70, -0.5, -0.3, -0.1, 0.1, 0.3, 0.6, 0.9, 1.0 };
+        // Double[] map = { -0.9, -0.7, -0.5, -0.3, -0.1, 0.1, 0.3, 0.6, 0.9, 1.0 };-0.9,
+        Double[] map = { -0.3, 0.05, 0.20, 0.30, 0.50, 0.60, 0.80, 0.9, 1.0} ;
+        
         automode_gadget_ = mapAxisScale(num, map);
 
         num = getSubsystem().getSettingsValue("oi:gadgets:shoot_collect_mode").getInteger();
