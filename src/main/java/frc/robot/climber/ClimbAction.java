@@ -160,6 +160,10 @@ public class ClimbAction extends Action {
         }
     }
 
+    public boolean waitingOnPressure() {
+        return state_ == ClimbingStates.WAIT_FOR_PRESSURE ;
+    }
+
     @Override
     public void run() throws Exception {
         super.run() ;

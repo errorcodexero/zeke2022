@@ -16,7 +16,7 @@ public class OILed {
     private double blink_time_ ;
 
     private final double FastBlinkTime = 0.25 ;
-    private final double SlowBlinkTime = 0.75 ;
+    private final double SlowBlinkTime = 1.0 ;
 
     public OILed(OIPanel panel, int index) {
         panel_ = panel ;
