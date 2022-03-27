@@ -34,7 +34,8 @@ public class ClimbAction extends Action {
     private ClimbPowerController windmill_mid_to_high_ctrl_ ;
     private ClimbPowerController windmill_high_to_traverse_ctrl_ ;
 
-    private double drive_action_power_ ;
+    private double drive_action_high_power_ ;
+    private double drive_action_low_power_ ;
     private boolean stop_when_safe_ ;
     private boolean set_auto_drive_ ;
 
@@ -82,7 +83,9 @@ public class ClimbAction extends Action {
         db_ = db ;
         oi_ = oi ;
 
-        drive_action_power_ = sub.getSettingsValue("climbaction:drive-action-power").getDouble() ;
+        drive_action_high_power_ = sub.getSettingsValue("climbaction:drive-action-high-power").getDouble() ;
+        drive_action_low_power_ = sub.getSettingsValue("climbaction:drive-action-low-power").getDouble() ;
+
         stop_db_ = new TankDrivePowerAction(db_, 0.0, 0.0) ;
 
         clamp_wait_time_ = sub.getSettingsValue("climbaction:clamp-wait-time").getDouble() ;
@@ -330,11 +333,18 @@ public class ClimbAction extends Action {
             double left = 0.0 ;
             double right = 0.0 ;
 
+            double power = drive_action_high_power_ ;
+
+            if ((sub_.isLeftATouched() && sub_.leftADuration() > squaring_touch_duration_) || (sub_.isRightATouched() && sub_.rightADuration() > squaring_touch_duration_)) {
+                // If one side has touched, reduce the power for squaring up the robot
+                power = drive_action_low_power_ ;
+            }
+
             if (sub_.isLeftATouched() == false || sub_.leftADuration() <= squaring_touch_duration_)
-                left =  drive_action_power_ ;
+                left =  power ;
 
             if (sub_.isRightATouched() == false || sub_.rightADuration() <= squaring_touch_duration_)
-                right = drive_action_power_ ;
+                right = power ;
 
             TankDrivePowerAction pa = new TankDrivePowerAction(db_, left, right) ;
             db_.setAction(pa) ;
