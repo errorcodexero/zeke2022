@@ -32,8 +32,8 @@
             "conveyor": true,
 
             // Shoot related
-            "shooter": false,
-            "fire-action" : false,
+            "shooter": true,
+            "fire-action" : true,
             "shooter-w1" : false,
             "shooter-w2" : false,
             "shooter-h" : false,            
@@ -237,23 +237,23 @@
                 "velocity-pwl" : {
                     "1" : {
                         "x" : 42.86,
-                        "y" : 3100
+                        "y" : 3200          // 3000
                     },
                     "2" : {
                         "x" : 56.5,
-                        "y" : 3100
+                        "y" : 3500          // 3000
                     },
                     "3" : {
                         "x" : 68.5,
-                        "y" : 3300
+                        "y" : 3500          // 3300
                     },
                     "4" : {
                         "x" : 82.5,
-                        "y" : 3400
+                        "y" : 3600          // 34005
                     },
                     "5" : {
                         "x" : 95.4,
-                        "y" : 3800
+                        "y" : 3800          // 3800
                     },
                     "6" : { 
                         "x" : 106.7,
@@ -269,7 +269,7 @@
                     },
                     "9" : {
                         "x" : 128,
-                        "y" : 6600
+                        "y" : 6300                  // 6600
                     },
                     "10" : {
                         "x" : 141,
@@ -340,7 +340,7 @@
             },
             "power" : {
                 "intake" : 1.0,
-                "shooter" : 1.0
+                "shooter" : 0.5
             },
             "eject-action" : {
                 "power" : -1.0,
@@ -571,7 +571,7 @@
                 "backup-time-high-traverse" : 30.0,
 
                 // The pneumatic pressure required to start climb sequence
-                "pneumatic-pressure-required" : 50,
+                "pneumatic-pressure-required" : 0,
 
                 // The range used to ramp the windmill motors, in robot loops
                 "start-range" : 10,

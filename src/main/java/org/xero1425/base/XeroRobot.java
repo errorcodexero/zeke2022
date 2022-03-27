@@ -34,6 +34,7 @@ import org.xero1425.misc.XeroPathManager;
 import org.xero1425.misc.XeroPathType;
 import org.xero1425.base.motors.MotorFactory;
 import org.xero1425.base.tankdrive.TankDrivePathFollowerAction;
+import org.xero1425.base.Subsystem.DisplayType;
 import org.xero1425.base.actions.Action;
 import org.xero1425.base.controllers.BaseController;
 import org.xero1425.base.controllers.AutoController;
@@ -465,6 +466,7 @@ public abstract class XeroRobot extends TimedRobot {
         if (robot_subsystem_ == null)
             return;
 
+
         robotLoop(LoopType.Autonomous);
 
         loop_count_++ ;
@@ -744,6 +746,8 @@ public abstract class XeroRobot extends TimedRobot {
     private void robotLoop(LoopType ltype) {
         double initial_time = getTime() ;
         delta_time_ = initial_time - last_time_ ;
+
+        robot_subsystem_.putDashboard("Pressure", DisplayType.Always, getPressure());
 
         if (isSimulation() && delta_time_ < 0.005) {
             //

@@ -4,8 +4,6 @@ import org.xero1425.base.LoopType;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.BadParameterTypeException;
-import org.xero1425.misc.MessageLogger;
-import org.xero1425.misc.MessageType;
 import org.xero1425.misc.MissingParameterException;
 
 import edu.wpi.first.math.MathUtil;
@@ -168,11 +166,9 @@ public class StandardGamepad extends Gamepad {
             }            
           }
 
-          MessageLogger logger = getSubsystem().getRobot().getMessageLogger() ;
-          logger.startMessage(MessageType.Info) ;
-          logger.add("gamepad").add("xSpeed", xSpeed).add("zRotation", zRotation) ;
-          logger.add("left", left_).add("right", right_) ;
-          logger.endMessage();
+          // logger.add("gamepad").add("xSpeed", xSpeed).add("zRotation", zRotation) ;
+          // logger.add("left", left_).add("right", right_) ;
+          // logger.endMessage();
 
           db_.setPower(leftSpeed, rightSpeed) ;
           left_ = leftSpeed ;

@@ -367,7 +367,7 @@ public class GPMFireAction extends Action {
 
         double hood, vel ;
        
-        if (dist < 40) {
+        if (dist < 60) {
             //
             // If the shooter exceeds a given distance, we are too far for the
             // hood or the shooter wheels.

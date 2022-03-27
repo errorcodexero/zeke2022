@@ -252,6 +252,14 @@ public class ConveyorSubsystem extends Subsystem {
                 //
                 balls_info_.add(new BallInfo()) ;
             }
+
+            if (nointake_ && prev_cargo_type_ != cargo_type_ && cargo_type_ != CargoType.None) {
+                BallInfo b = new BallInfo() ;
+                b.state_ = State.COLORSENSOR ;
+                b.type_ = cargo_type_ ;
+                changeToCargoType() ;
+                balls_info_.add(b) ;
+            }
             
             if (fallingEdge(SENSOR_IDX_SHOOTER) && mode_ == Mode.SHOOT) {
                 if (parked_ != null) {
@@ -635,9 +643,6 @@ public class ConveyorSubsystem extends Subsystem {
         shooter_motor_ = getRobot().getMotorFactory().createMotor("shooter", "subsystems:conveyor:hw:motors:shooter");
         shooter_motor_power_ = 0.0 ;
         shooter_motor_on_ = getSettingsValue("power:shooter").getDouble() ;
-
-        shooter_motor_on_ = 0.5 ;
-        intake_motor_on_ = 1.0 ;
 
         int num;
         String name = null ;
