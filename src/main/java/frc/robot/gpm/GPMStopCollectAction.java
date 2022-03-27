@@ -12,18 +12,18 @@ public class GPMStopCollectAction extends Action {
     private ZekeIntakeOffAction intake_stop_action_ ;
     private SetShooterAction shoot_ ;
 
-    public GPMStopCollectAction(GPMSubsystem sub) throws Exception {
+    public GPMStopCollectAction(GPMSubsystem sub, boolean intakedown) throws Exception {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
 
-        intake_stop_action_ = new ZekeIntakeOffAction(sub_.getIntake()) ;
+        intake_stop_action_ = new ZekeIntakeOffAction(sub_.getIntake(), intakedown) ;
     }
 
-    public GPMStopCollectAction(GPMSubsystem sub, SetShooterAction act) throws Exception {
+    public GPMStopCollectAction(GPMSubsystem sub, SetShooterAction act, boolean intakedown) throws Exception {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
 
-        intake_stop_action_ = new ZekeIntakeOffAction(sub_.getIntake()) ;
+        intake_stop_action_ = new ZekeIntakeOffAction(sub_.getIntake(), intakedown) ;
         shoot_ = act ;
     }
 
