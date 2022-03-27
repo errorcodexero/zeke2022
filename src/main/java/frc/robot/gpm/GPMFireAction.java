@@ -344,8 +344,6 @@ public class GPMFireAction extends Action {
         if (Math.abs(db_.getLeftVelocity()) > db_velocity_threshold_ || Math.abs(db_.getRightVelocity()) > db_velocity_threshold_)
             return false ;
 
-
-
         if (Math.abs(gyro.getGyroX()) > gyro_threshold_)
             return false ;
 
@@ -364,7 +362,7 @@ public class GPMFireAction extends Action {
         if (Math.abs(gyro.getAccelZ()) > accel_threshold_)
             return false ;              
 
-            return true ;
+        return true ;
     }
 
     private boolean isShooterReady() {
