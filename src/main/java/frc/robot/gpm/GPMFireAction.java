@@ -221,8 +221,6 @@ public class GPMFireAction extends Action {
                     shooter_action_.update(shoot_params_.v1_, shoot_params_.v2_, shoot_params_.hood_) ;
 
                     if (shoot_params_valid_) {
-
-
                         //
                         // See if the shooter is ready
                         //
