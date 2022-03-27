@@ -188,6 +188,8 @@
             "fire-action" : {
                 "hood_pos_threshold" : 0.5,
                 "db_vel_threshold" : 2.0,
+                "navx_gyro_threshold" : 1.0,
+                "navx_accel_threshold" : 1.0,
                 "db_moving_vel_threshold" : 36.0,
                 "shooter_vel_threshold" : 100.0,
                 "shutdown-delay" : 0.5,

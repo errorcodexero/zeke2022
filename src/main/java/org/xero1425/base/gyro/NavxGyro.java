@@ -40,4 +40,27 @@ public class NavxGyro implements XeroGyro {
     public double getAngle() {
         return navx_.getAngle() ;
     }
+
+    public double getGyroX() {
+        return navx_.getRawGyroX() ;
+    }
+    public double getGyroY() {
+        return navx_.getRawGyroY() ;
+    }
+
+    public double getGyroZ() {
+        return navx_.getRawGyroZ() ;
+    }
+    
+    public double getAccelX() {
+        return navx_.getRawAccelX() ;
+    }
+
+    public double getAccelY() {
+        return navx_.getRawAccelY() ;
+    }
+
+    public double getAccelZ() {
+        return navx_.getRawAccelZ() ;
+    }
 }

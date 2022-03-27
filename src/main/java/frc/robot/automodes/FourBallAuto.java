@@ -31,19 +31,19 @@ public class FourBallAuto extends ZekeAutoMode {
         startLimelightTracking() ;
 
         // Start firing the two balls
-        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
+        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret), true);
 
         // Drive and pick up two balls from the field
         driveAndCollect("fourball_p1", 0.0, 0.3, FirstShotAngle, null);
 
         // Fire the two we collected in this first path
         startLimelightTracking() ;
-        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret, false), true);
+        addSubActionPair(gpm, new GPMFireAction(gpm, tracker, db, turret), true);
 
         // Drive out and collect the balls at the terminal
         driveAndCollect("fourball_p2", 0.0, 0.3, 0.0, null);
 
         // Drive back and fire while driving back
-        driveAndFireMoving("fourball_p3", true, 0.0) ;
+        driveAndFire("fourball_p3", true, 0.0) ;
     }
 }

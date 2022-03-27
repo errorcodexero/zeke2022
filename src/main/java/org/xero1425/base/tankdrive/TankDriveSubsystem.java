@@ -135,6 +135,10 @@ public class TankDriveSubsystem extends Subsystem {
         attachHardware();
     }
 
+    public XeroGyro getGyro() {
+        return gyro_ ;
+    }
+
     /// \brief set the open loop ramp rate for the tank drive motors
     /// \param teleop the ramp rate for teleop mode
     /// \param auto the ramp rate for auto mode

@@ -1,6 +1,8 @@
 package frc.robot.gpm;
 
 import org.xero1425.base.actions.Action;
+import org.xero1425.base.gyro.XeroGyro;
+import org.xero1425.base.misc.XeroTimer;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.base.utils.PieceWiseLinear;
 import org.xero1425.misc.MessageLogger;
@@ -64,13 +66,14 @@ public class GPMFireAction extends Action {
     private final double db_velocity_threshold_ ;
     private final double shooter_velocity_threshold_ ;
     private final double hood_position_threshold_ ;
+    private final double gyro_threshold_ ;
+    private final double accel_threshold_ ;
 
     private int fire_action_id_ ;
 
     private boolean shoot_params_valid_ ;
 
-    private double shutdown_start_time_ ;
-    private double shutdown_duration_ ;
+    private XeroTimer shutdown_start_timer_ ;
 
     private State state_ ;
 
@@ -81,12 +84,9 @@ public class GPMFireAction extends Action {
 
     private PieceWiseLinear pwl_hood_ ;
     private PieceWiseLinear pwl_velocity_ ;
-    private double moving_velocity_limit_ ;
     private double shooter_latency_ ;
-    private boolean while_moving_ ;
 
-    public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, 
-            TankDriveSubsystem db, TurretSubsystem turret, boolean moving) 
+    public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, TankDriveSubsystem db, TurretSubsystem turret) 
             throws Exception {
         super(sub.getRobot().getMessageLogger());
 
@@ -96,18 +96,19 @@ public class GPMFireAction extends Action {
         target_tracker_ = target_tracker ;
         db_ = db ;
         turret_ = turret ;
-        while_moving_ = moving ;
  
-        shutdown_duration_ = sub_.getSettingsValue("fire-action:shutdown-delay").getDouble() ;
+        shutdown_start_timer_ = new XeroTimer(sub.getRobot(), "fire-action-shutdown-timer", sub_.getSettingsValue("fire-action:shutdown-delay").getDouble()) ;
 
         fire_action_id_ = sub.getRobot().getMessageLogger().registerSubsystem("fire-action") ;
-
 
         value = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
         db_velocity_threshold_ = value;
 
-        value = sub_.getSettingsValue("fire-action:db_moving_vel_threshold").getDouble() ;
-        moving_velocity_limit_ = value ;
+        value = sub_.getSettingsValue("fire-action:navx_gyro_threshold").getDouble() ;
+        gyro_threshold_ = value;
+
+        value = sub_.getSettingsValue("fire-action:navx_accel_threshold").getDouble() ;
+        accel_threshold_ = value;
 
         sub_.getSettingsValue("fire-action:shooter_latency").getDouble() ;
         shooter_latency_ = value ;
@@ -199,7 +200,7 @@ public class GPMFireAction extends Action {
                     //
                     // This should never happen
                     //
-                    shutdown_start_time_ = sub_.getRobot().getTime() ;
+                    shutdown_start_timer_.start();
                     state_ = State.FINISHING ;
                 }
                 else if (has_target_) {
@@ -229,8 +230,7 @@ public class GPMFireAction extends Action {
                         //
                         // See if the drive base is ready
                         //
-                        double dbthres = (while_moving_ ? moving_velocity_limit_ : db_velocity_threshold_) ;
-                        db_ready_ = Math.abs(db_.getVelocity()) < dbthres ;
+                        db_ready_ = isDBReady() ;
 
                         //
                         // See if the turret is ready
@@ -268,13 +268,13 @@ public class GPMFireAction extends Action {
                     // The conveyor has delivered all balls, go to finishing state which
                     // keeps the wheels running while the last ball leaves the robot
                     //
-                    shutdown_start_time_ = sub_.getRobot().getTime() ;
+                    shutdown_start_timer_.start() ;
                     state_ = State.FINISHING ;
                 }
                 break ;            
 
             case FINISHING:
-                if (sub_.getRobot().getTime() - shutdown_start_time_ > shutdown_duration_) {
+                if (shutdown_start_timer_.isExpired()) {
                     shooter_action_.stopPlot();
                     sub_.getShooter().setAction(null, true) ;
                     state_ = State.IDLE ;
@@ -327,7 +327,47 @@ public class GPMFireAction extends Action {
         return prefix(indent) + "GPMFireAction";
     }
 
-    boolean isShooterReady() {
+    private boolean isDBReady() {
+        XeroGyro gyro = db_.getGyro() ;
+
+        MessageLogger logger = sub_.getRobot().getMessageLogger();
+        logger.startMessage(MessageType.Debug, sub_.getLoggerID()) ;
+        logger.add("isDbReady:") ;
+        logger.add("gyrox", gyro.getGyroX()) ;
+        logger.add("gyroy", gyro.getGyroY()) ;
+        logger.add("gyroz", gyro.getGyroZ()) ;
+        logger.add("accelx", gyro.getAccelX()) ;
+        logger.add("accely", gyro.getAccelY()) ;
+        logger.add("accelz", gyro.getAccelZ()) ;
+        logger.endMessage();
+
+        if (Math.abs(db_.getLeftVelocity()) > db_velocity_threshold_ || Math.abs(db_.getRightVelocity()) > db_velocity_threshold_)
+            return false ;
+
+
+
+        if (Math.abs(gyro.getGyroX()) > gyro_threshold_)
+            return false ;
+
+        if (Math.abs(gyro.getGyroY()) > gyro_threshold_)
+            return false ;
+
+        if (Math.abs(gyro.getGyroX()) > gyro_threshold_)
+            return false ;        
+            
+        if (Math.abs(gyro.getAccelX()) > accel_threshold_)
+            return false ;  
+
+        if (Math.abs(gyro.getAccelY()) > accel_threshold_)
+            return false ;  
+            
+        if (Math.abs(gyro.getAccelZ()) > accel_threshold_)
+            return false ;              
+
+            return true ;
+    }
+
+    private boolean isShooterReady() {
         boolean ret = false ;
 
         if (shoot_params_valid_ && shoot_params_ != null) {
@@ -342,7 +382,6 @@ public class GPMFireAction extends Action {
             double dw2 = Math.abs(w2 - shoot_params_.v2_) ;
             double dhood = Math.abs(hood - shoot_params_.hood_) ;
 
-
             // return whether or not all the deltas are under the thresholds
             ret = dw1 < shooter_velocity_threshold_ && dw2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
         }
@@ -351,18 +390,6 @@ public class GPMFireAction extends Action {
 
     public boolean computeShooterParams(double dist) {
         boolean ret = true ;
-
-        if (while_moving_) {
-            //
-            // This is the speed of the robot toward the target
-            //
-            double to_target_speed = db_.getVelocity() * Math.cos(Math.toRadians(turret_.getPosition())) ;
-            double camera_latency = target_tracker_.getLimelight().getTotalLatency() ;
-            double total_latency = camera_latency + shooter_latency_ ;
-
-            dist = dist - total_latency * to_target_speed ;
-        }
-
         double hood, vel ;
        
         if (dist < 60) {
