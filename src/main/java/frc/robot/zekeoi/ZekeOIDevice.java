@@ -113,7 +113,7 @@ public class ZekeOIDevice extends OIPanel {
         zero_turret_ = new MotorEncoderGotoAction(zeke.getTurret(), 0, true) ;
 
         if (zeke.getClimber() != null) {
-            climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI());
+            climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI(), true);
             deploy_climber_ = new DeployClimberAction(zeke.getClimber(), DeployState.Deployed) ;
             stow_climber_ = new DeployClimberAction(zeke.getClimber(), DeployState.Stowed) ;
         }

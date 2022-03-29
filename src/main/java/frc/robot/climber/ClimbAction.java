@@ -4,6 +4,7 @@ import org.xero1425.base.actions.Action;
 import org.xero1425.base.motors.BadMotorRequestException;
 import org.xero1425.base.motors.MotorRequestFailedException;
 import org.xero1425.base.tankdrive.TankDrivePowerAction;
+import org.xero1425.base.tankdrive.TankDriveRotateAction;
 import org.xero1425.base.tankdrive.TankDriveSubsystem;
 import org.xero1425.misc.MessageLogger;
 import org.xero1425.misc.MessageType;
@@ -18,6 +19,8 @@ public class ClimbAction extends Action {
     private TankDriveSubsystem db_ ;
     private ZekeOISubsystem oi_ ;
     private TankDrivePowerAction stop_db_ ;
+    private TankDriveRotateAction rotate_db_ ;
+    private boolean rotate_ ;
 
     private double backup_target_mid_high_ ;
     private double backup_time_mid_high_ ;
@@ -57,6 +60,7 @@ public class ClimbAction extends Action {
     private enum ClimbingStates {
         IDLE,
         WAIT_FOR_PRESSURE,
+        ROTATE_DRIVEBASE,
         OPEN_A_FOR_MID,
         WAIT_LEFT_OR_RIGHT_MID,
         SQUARING,
@@ -77,11 +81,12 @@ public class ClimbAction extends Action {
     private ClimbingStates state_ = ClimbingStates.IDLE ;
 
     // todo: also take the gamepad/OI as a param so climber can disable it after it starts climbing
-    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, ZekeOISubsystem oi) throws Exception {
+    public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, ZekeOISubsystem oi, boolean rotate) throws Exception {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;
         db_ = db ;
         oi_ = oi ;
+        rotate_ = rotate ;
 
         drive_action_high_power_ = sub.getSettingsValue("climbaction:drive-action-high-power").getDouble() ;
         drive_action_low_power_ = sub.getSettingsValue("climbaction:drive-action-low-power").getDouble() ;
@@ -189,6 +194,9 @@ public class ClimbAction extends Action {
             case WAIT_FOR_PRESSURE:
                 doWaitForPressure() ;
                 break ;
+            case ROTATE_DRIVEBASE:
+                doRotateDrivebase() ;
+                break ;
             case OPEN_A_FOR_MID:
                 doOpenAforMid() ;
                 break ;
@@ -267,6 +275,18 @@ public class ClimbAction extends Action {
         logger.endMessage();
 
         if (sub_.getRobot().getPressure() > pneumatic_pressure_required_) {
+            if (rotate_) {
+                db_.setAction(rotate_db_) ;
+                state_ = ClimbingStates.ROTATE_DRIVEBASE ;
+            }
+            else {
+                state_ = ClimbingStates.OPEN_A_FOR_MID ;
+            }
+        }
+    }
+
+    private void doRotateDrivebase() {
+        if (rotate_db_.isCanceled()) {
             state_ = ClimbingStates.OPEN_A_FOR_MID ;
         }
     }
