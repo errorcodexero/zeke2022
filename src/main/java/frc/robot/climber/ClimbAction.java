@@ -113,6 +113,8 @@ public class ClimbAction extends Action {
         backup_mid_to_high_pid_ = new ClimberBackupProfile(230.0, 0.0, 0.001, 0.03) ;
         backup_high_to_traverse_pid_ = new ClimberBackupProfile(396.0, 0.0, 0.001, 0.03) ;
 
+        rotate_db_ = new TankDriveRotateAction(db_, 180.0) ;
+
         target_high_ = sub.getSettingsValue("climbaction:target-high").getDouble() ;
         target_traverse_ = sub.getSettingsValue("climbaction:target-traverse").getDouble() ;
         double startrange = sub.getSettingsValue("climbaction:start-range").getDouble() ;
