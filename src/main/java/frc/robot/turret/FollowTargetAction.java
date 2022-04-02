@@ -81,6 +81,7 @@ public class FollowTargetAction extends MotorAction {
             double out = pid_.getOutput(desired_, sub_.getPosition(), sub_.getRobot().getDeltaTime()) ;
             sub_.setPower(out) ;
 
+            System.out.println("TURRET desired " + desired_ + ", actual " + sub_.getPosition() + ", output " + out) ;
 
             //
             // Determine if the turret is close enough to the desired position to enable 

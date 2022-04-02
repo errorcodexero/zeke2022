@@ -50,7 +50,7 @@ public class MotorEncoderVelocityAction extends MotorAction {
         target_ = target;
 
         pid_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:" + sub.getName() + ":" + name_, false);
-        plot_id_ = sub.initPlot(toString() + "-" + String.valueOf(which_++)) ;     
+        plot_id_ = sub.initPlot(toString(0) + "-" + String.valueOf(which_++)) ;     
     }
 
     /// \brief Create a new MotorEncoderVelocityAction

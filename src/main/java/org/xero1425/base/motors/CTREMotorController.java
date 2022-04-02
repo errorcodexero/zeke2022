@@ -84,7 +84,7 @@ public class CTREMotorController extends MotorController
             if (code != ErrorCode.OK)
                 throw new MotorRequestFailedException(this, "CTRE configFactoryDefault() call failed during initialization", code) ;
                 
-            code = controller_.configVoltageCompSaturation(12.0, ControllerTimeout) ;
+            code = controller_.configVoltageCompSaturation(11.0, ControllerTimeout) ;
             if (code != ErrorCode.OK)
                 throw new MotorRequestFailedException(this, "CTRE configVoltageCompSaturation() call failed during initialization", code) ;
 

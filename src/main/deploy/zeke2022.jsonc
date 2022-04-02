@@ -409,7 +409,7 @@
                 }
             },
             "follow": {
-                "kp": 0.014084508,
+                "kp": 0.04, //0.014084508,
                 "ki": 0,
                 "kd": 0,
                 "kf": 0,
@@ -434,14 +434,14 @@
             "timeout": 8.0,
             "camera_latency": 0.011,
             "network_latency": 0.010,
-            "camera_angle": 27.5,
+            "camera_angle": 28.83,
             "camera_height": 51.0,
-            "target_height": 102
+            "target_height": 103
         },
         "targettracker": {
             "camera_offset_angle": -1.5,
             "lost_count": 10,
-            "track_method": "vf"
+            "track_method": "v"
         },
         "windmill" : {
             "hw" : {
@@ -640,6 +640,7 @@
                 "hood-position-threshold": 10
             }
         },
+        // Left shooter motor
         "shooter-w1": {
             "hw": {
                 "motors": {
@@ -653,15 +654,16 @@
                 }
             },
             "w1": {
-                "kp": 0.0, // 0.00017,
+                "kp": 0.00003,
                 "ki": 0.0,
                 "kd": 0.0,
-                "kf": 9.8464e-5,
+                "kf": 1.04667e-4,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
             }
         },
+        // Right shooter motor
         "shooter-w2": {
             "hw": {
                 "motors": {
@@ -676,10 +678,10 @@
                 }
             },
             "w2": {
-                "kp": 0.0, // 0.00017,
+                "kp": 0.00003,
                 "ki": 0.0,
                 "kd": 0.0,
-                "kf": 9.97805e-5,
+                "kf": 1.0968e-4,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
@@ -745,9 +747,9 @@
     },
     "testmode": {
         "enabled": true,
-        "which":34,
-        "power": 4000,
-        "duration": 5.0,
+        "which": 40,
+        "power": 0.2,
+        "duration": 1.0,
         "distance": 1.0,
         "name": "far_tarmac_4_ball_1"
     }

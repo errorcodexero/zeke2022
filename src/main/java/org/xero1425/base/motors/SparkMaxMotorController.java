@@ -86,7 +86,7 @@ public class SparkMaxMotorController extends MotorController
 
             // controller_.restoreFactoryDefaults() ;
             
-            code = controller_.enableVoltageCompensation(12.0) ;
+            code = controller_.enableVoltageCompensation(11.0) ;
             if (code != REVLibError.kOk)
                 throw new MotorRequestFailedException(this, "enableVoltageCompensation() failed during initialization", code) ;
 

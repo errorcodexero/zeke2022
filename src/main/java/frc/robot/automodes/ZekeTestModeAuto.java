@@ -193,6 +193,16 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 // Set the hood to a specific position
                 addSubActionPair(shooter, new SetShooterAction(shooter, 0.0, 0.0, getPosition()), false);
                 break ;    
+
+            case 36:
+                // Set the shooter wheels to a specific velocity
+                addSubActionPair(shooter, new SetShooterAction(shooter, getPower(), 0.0, shooter.getHoodMotor().getPosition()), false);
+                break ;     
+
+            case 37:
+                // Set the shooter wheels to a specific velocity
+                addSubActionPair(shooter, new SetShooterAction(shooter, 0.0, getPower(), shooter.getHoodMotor().getPosition()), false);
+                break ;                  
                 
             //
             //////////////////////////////////////////////////////////////////////////////////
@@ -206,7 +216,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
                 break; 
 
             case 41:
-                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 80.0, true), true) ;             
+                addSubActionPair(turret, new MotorEncoderGotoAction(turret, 50.0, true), true) ;             
                 break ;
 
             case 42:
