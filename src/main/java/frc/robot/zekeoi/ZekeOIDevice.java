@@ -1,7 +1,5 @@
 package frc.robot.zekeoi;
 
-import javax.lang.model.util.ElementScanner6;
-
 import org.xero1425.base.actions.InvalidActionRequest;
 import org.xero1425.base.actions.SequenceAction;
 import org.xero1425.base.motorsubsystem.MotorEncoderGotoAction;

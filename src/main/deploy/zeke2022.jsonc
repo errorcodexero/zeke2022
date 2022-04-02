@@ -107,6 +107,20 @@
                 "linearsamples": 2,
                 "angluarsamples": 2
             },
+            "rotate" : {
+                "trapezoid" : {
+                    "threshold": 1.5,
+                    "maxa": 250,
+                    "maxd": -250,
+                    "maxv": 250
+                },
+                "follower" : {
+                    "ka": 0.0003,
+                    "kv": 0.005740528,
+                    "kp": 0.035,
+                    "kd": 0.0                    
+                }
+            },
             "follower": {
                 "left": {
                     "ka": 0.0003,
@@ -639,10 +653,10 @@
                 }
             },
             "w1": {
-                "kp": 0.00017,
+                "kp": 0.0, // 0.00017,
                 "ki": 0.0,
                 "kd": 0.0,
-                "kf": 1.0039152695512498745105913060938e-4,
+                "kf": 9.8464e-5,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
@@ -662,10 +676,10 @@
                 }
             },
             "w2": {
-                "kp": 0.00017,
+                "kp": 0.0, // 0.00017,
                 "ki": 0.0,
                 "kd": 0.0,
-                "kf": 1.0188487009679062659195109526235e-4,
+                "kf": 9.97805e-5,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
@@ -681,10 +695,10 @@
                     "type": "analog",
                     "ainput": 0,
                     "rmin": 0,
-                    "rmax": 24,
-                    "emin": 0.4138,
-                    "emax": 3.374,
-                    "ec": 0.4138,
+                    "rmax": 25,
+                    "emin": 0.586,
+                    "emax": 3.643,
+                    "ec": 0.586,
                     "rc": 0
                 }
             },
@@ -730,11 +744,11 @@
         }
     },
     "testmode": {
-        "enabled": false,
-        "which": 101,
-        "power": 0.2,
-        "duration": 1.0,
-        "distance": 21.0,
+        "enabled": true,
+        "which":34,
+        "power": 4000,
+        "duration": 5.0,
+        "distance": 1.0,
         "name": "far_tarmac_4_ball_1"
     }
 }

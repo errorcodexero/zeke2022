@@ -44,8 +44,8 @@ public class GPMShooterTestAction extends Action {
 
         if (hood < 1)
             hood = 1 ;
-        else if (hood > 21.0)
-            hood = 21.0 ;
+        else if (hood > 24.0)
+            hood = 24.0 ;
 
         shoot_action_.update(w1, w1, hood) ;
     }

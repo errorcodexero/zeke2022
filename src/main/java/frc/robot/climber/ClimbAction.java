@@ -80,7 +80,6 @@ public class ClimbAction extends Action {
 
     private ClimbingStates state_ = ClimbingStates.IDLE ;
 
-    // todo: also take the gamepad/OI as a param so climber can disable it after it starts climbing
     public ClimbAction(ClimberSubsystem sub, TankDriveSubsystem db, ZekeOISubsystem oi, boolean rotate) throws Exception {
         super(sub.getRobot().getMessageLogger()) ;
         sub_ = sub ;

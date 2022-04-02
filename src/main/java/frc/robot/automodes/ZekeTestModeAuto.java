@@ -175,7 +175,7 @@ public class ZekeTestModeAuto extends TestAutoMode {
         
             case 32: 
                 // Set the power to both wheel motors
-                addSubActionPair(shooter.getWheelMotor1(), new MotorEncoderPowerAction(shooter.getWheelMotor1(), getPower(), getDuration()), true) ;
+                addSubActionPair(shooter.getWheelMotor1(), new MotorEncoderPowerAction(shooter.getWheelMotor1(), getPower(), getDuration()), false) ;
                 addSubActionPair(shooter.getWheelMotor2(), new MotorEncoderPowerAction(shooter.getWheelMotor2(), getPower(), getDuration()), true) ;
                 break ;
 
