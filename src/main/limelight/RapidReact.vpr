@@ -36,7 +36,7 @@ image_source:0
 img_to_show:0
 intersection_filter:0
 invert_hue:0
-multigroup_max:3
+multigroup_max:4
 multigroup_min:2
 multigroup_rejector:1
 pipeline_led_enabled:0
