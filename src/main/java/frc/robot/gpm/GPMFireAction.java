@@ -194,7 +194,7 @@ public class GPMFireAction extends Action {
                 break ;
 
             case WAITING:  
-                has_target_ = target_tracker_.hasVisionTarget() ;
+                has_target_ = target_tracker_.hasTarget() ;
 
                 if (sub_.getConveyor().getBallCount() == 0) {
                     //
