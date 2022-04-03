@@ -32,13 +32,20 @@ public class FollowTargetAction extends MotorAction {
     private double desired_ ;
     private double error_ ;
 
+    private boolean locked_ ;
+
     public FollowTargetAction(TurretSubsystem sub, TargetTrackerSubsystem tracker)
             throws BadParameterTypeException, MissingParameterException {
         super(sub);
 
         sub_ = sub ;
         tracker_ = tracker ;
+        locked_ = false ;
         threshold_ = sub.getSettingsValue("fire_threshold").getDouble() ;
+    }
+
+    public void lock(boolean l) {
+        locked_ = l ;
     }
 
     public double getDesired() {
@@ -66,6 +73,8 @@ public class FollowTargetAction extends MotorAction {
 
     @Override
     public void run() {
+        double out = 0.0 ;
+
         //
         // Ask the target tracker what angle the turret should be at to 
         // point at the target.
@@ -78,10 +87,13 @@ public class FollowTargetAction extends MotorAction {
             // Update the turret motor power based on the current position of the turret and
             // the desired positon of the turret.
             //
-            double out = pid_.getOutput(desired_, sub_.getPosition(), sub_.getRobot().getDeltaTime()) ;
+            if (!locked_) {
+                out = pid_.getOutput(desired_, sub_.getPosition(), sub_.getRobot().getDeltaTime()) ;
+
+            }
             sub_.setPower(out) ;
 
-            System.out.println("TURRET desired " + desired_ + ", actual " + sub_.getPosition() + ", output " + out) ;
+            // System.out.println("TURRET desired " + desired_ + ", actual " + sub_.getPosition() + ", output " + out) ;
 
             //
             // Determine if the turret is close enough to the desired position to enable 
@@ -90,7 +102,6 @@ public class FollowTargetAction extends MotorAction {
             double error_ = Math.abs(desired_ - sub_.getPosition()) ;
             boolean ready = error_ < threshold_ ;
             sub_.setReadyToFire(ready) ;
-
 
             //
             // Print debug messages for this action
@@ -107,7 +118,7 @@ public class FollowTargetAction extends MotorAction {
         }
         else {
             sub_.setReadyToFire(false);
-            double out = pid_.getOutput(0.0, sub_.getPosition(), sub_.getRobot().getDeltaTime()) ;
+            out = pid_.getOutput(0.0, sub_.getPosition(), sub_.getRobot().getDeltaTime()) ;
             sub_.setPower(out) ;
         }
     }

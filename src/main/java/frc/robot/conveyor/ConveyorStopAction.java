@@ -2,7 +2,11 @@ package frc.robot.conveyor;
 
 import org.xero1425.base.actions.Action;
 
+import frc.robot.shooter.SetShooterAction;
+
 public class ConveyorStopAction extends Action {
+    private ConveyorSubsystem sub_ ;
+
     public ConveyorStopAction(ConveyorSubsystem sub) {
         super(sub.getRobot().getMessageLogger()) ;
         
@@ -30,6 +34,4 @@ public class ConveyorStopAction extends Action {
     public String toString(int indent) {
         return prefix(indent) + "ConveyorStopAction" ;
     }
-
-    ConveyorSubsystem sub_ ;
 } ;

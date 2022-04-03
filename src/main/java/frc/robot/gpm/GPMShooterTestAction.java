@@ -33,7 +33,7 @@ public class GPMShooterTestAction extends Action {
     @Override
     public void start() throws BadMotorRequestException, MotorRequestFailedException {
         sub_.getConveyor().setBypass(true);
-        sub_.getConveyor().setMotorsPower(1.0, 1.0);
+        sub_.getConveyor().setMotorsPower(1.0, 0.2);
         sub_.getShooter().setAction(shoot_action_, true) ;
     }
 

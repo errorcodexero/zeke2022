@@ -24,6 +24,7 @@ import frc.robot.gpm.GPMManualFireAction;
 import frc.robot.gpm.GPMStartCollectAction;
 import frc.robot.gpm.GPMStopCollectAction;
 import frc.robot.gpm.GPMSubsystem;
+import frc.robot.shooter.SetShooterAction;
 import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.FollowTargetAction;
 import frc.robot.turret.TurretSubsystem;
@@ -41,6 +42,7 @@ public class ZekeOIDevice extends OIPanel {
     private DeployClimberAction stow_climber_ ;
     private FollowTargetAction follow_;
     private MotorEncoderGotoAction zero_turret_ ;
+    private SetShooterAction shoot_act_ ;
 
     private int start_collect_gadget_;
     private int automode_gadget_;
@@ -73,8 +75,7 @@ public class ZekeOIDevice extends OIPanel {
         CLIMBED
     }
 
-    public ZekeOIDevice(OISubsystem sub, String name, int index)
-            throws BadParameterTypeException, MissingParameterException {
+    public ZekeOIDevice(OISubsystem sub, String name, int index) throws Exception {
         super(sub, name, index);
 
         climber_state_ = ClimberState.STARTUP ;
@@ -89,7 +90,8 @@ public class ZekeOIDevice extends OIPanel {
         limelight_ready_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:limelight").getInteger()) ;
         shooter_ready_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:shooter").getInteger()) ;        
         turret_ready_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:turret").getInteger()) ;
-        distance_ok_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:distance").getInteger()) ;                                        
+        distance_ok_led_ = createLED(sub.getSettingsValue("oi:outputs:shooting:distance").getInteger()) ;   
+
     }
     
     @Override
@@ -103,15 +105,17 @@ public class ZekeOIDevice extends OIPanel {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();
 
-        start_collect_action_ = new GPMStartCollectAction(gpm);
-        stop_collect_action_ = new GPMStopCollectAction(gpm, false);
+        //shoot_act_ = new SetShooterAction(zeke.getGPMSubsystem().getShooter(), 4000, 4000, 16.0) ;
+        shoot_act_ = null ;
+        start_collect_action_ = new GPMStartCollectAction(gpm, shoot_act_);
+        stop_collect_action_ = new GPMStopCollectAction(gpm, shoot_act_, false);
         fire_action_ = new GPMFireAction(gpm, zeke.getTargetTracker(), zeke.getTankDrive(), zeke.getTurret()) ;
         manual_fire_action_ = new GPMManualFireAction(gpm) ;
         eject_action_ = new GPMEjectAction(gpm) ;
         zero_turret_ = new MotorEncoderGotoAction(zeke.getTurret(), 0, true) ;
 
         if (zeke.getClimber() != null) {
-            climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI(), true);
+            climb_ = new ClimbAction(zeke.getClimber(), zeke.getTankDrive(), zeke.getOI(), false);
             deploy_climber_ = new DeployClimberAction(zeke.getClimber(), DeployState.Deployed) ;
             stow_climber_ = new DeployClimberAction(zeke.getClimber(), DeployState.Stowed) ;
         }
@@ -123,13 +127,14 @@ public class ZekeOIDevice extends OIPanel {
     {
         ZekeSubsystem zeke = (ZekeSubsystem) getSubsystem().getRobot().getRobotSubsystem();
         GPMSubsystem gpm = zeke.getGPMSubsystem();
-        ClimberSubsystem climber = zeke.getClimber() ;
         TurretSubsystem turret = zeke.getTurret() ;
         TargetTrackerSubsystem tracker = zeke.getTargetTracker() ;
         Gamepad g = getSubsystem().getGamePad() ;
 
-        if (gpm.getAction() == fire_action_ && fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady())
-            g.rumble(1.0, 2.0);
+        // if (gpm.getAction() == fire_action_ && fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady())
+        //     g.rumble(1.0, 2.0);
+        // else if (getValue(collect_v_shoot_gadget_) == 1 && gpm.getConveyor().getBallCount() == 2)
+        //     g.rumble(1.0, 2.0) ;
 
         if (climber_state_ != ClimberState.STOWED) {
             if (climb_.waitingForPressure()) {

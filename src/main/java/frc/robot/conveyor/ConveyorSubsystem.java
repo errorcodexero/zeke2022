@@ -477,7 +477,7 @@ public class ConveyorSubsystem extends Subsystem {
         if (mode_ == Mode.SHOOT) {
             if (getBallCount() > 0) {
                 if (waiting_for_timeout_ && move_to_chimney_) {
-                    if (getRobot().getTime() - move_to_start_ > 0.02) {
+                    if (getRobot().getTime() - move_to_start_ > 0.250) {
                         waiting_for_timeout_ =false ;
                         move_to_chimney_ = false ;
                         setShooterMotor(0.0);  
@@ -529,13 +529,14 @@ public class ConveyorSubsystem extends Subsystem {
         //
         if (mode_ == Mode.SHOOT) {
             if (getBallCount() > 0 && run_intake_motor_shoot_) {
-                setIntakeMotor(intake_motor_on_);
+                // setIntakeMotor(intake_motor_on_);
+                setIntakeMotor(1.0);
             }
             else {
                 setIntakeMotor(0.0);
             }
         }
-        else if (parked_ != null && balls_info_.size() > 0 && balls_info_.get(0).type_ == CargoType.Same && balls_info_.get(0).state_ == State.CHIMNEY) {
+        else if (parked_ != null && balls_info_.size() > 0 && balls_info_.get(0).type_ == CargoType.Same && balls_info_.get(0).state_ == State.COLORSENSOR) {
             //
             // We have a ball in the chimney laready, and we have a ball in the horizontal conveyor, and the
             // ball in the horizontal conveyor is the same color as the robot, and it has triggered the chimney sensor, 

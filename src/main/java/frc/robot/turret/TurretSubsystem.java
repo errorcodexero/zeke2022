@@ -74,8 +74,6 @@ public class TurretSubsystem extends MotorEncoderSubsystem {
         else if (p > 0 && getPosition() > getMaxSafeAngle())
             p = 0 ;
 
-        System.out.println("limitPower orig " + orig + ", final " + p + ", pos " + getPosition() + ", min " + getMinSafeAngle() + ", max " + getMaxSafeAngle()) ; 
-
         return p ;
     }
 }
