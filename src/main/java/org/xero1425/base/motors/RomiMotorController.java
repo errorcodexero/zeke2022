@@ -23,6 +23,10 @@ public class RomiMotorController extends MotorController {
         motor_ = new Spark(index) ;
     }
 
+    public double getVelocity() throws BadMotorRequestException, MotorRequestFailedException {
+        return 0.0 ;
+    }
+
     /// \brief Set the motor power
     /// \param percent the motor power to assign to the motor        
     public void set(double percent) throws BadMotorRequestException {

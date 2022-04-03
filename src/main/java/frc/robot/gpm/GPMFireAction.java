@@ -94,7 +94,7 @@ public class GPMFireAction extends Action {
     private int plot_id_ ;
     private double plot_start_ ;
     private Double [] plot_data_ ;
-    private static String [] columns_ = { "time", "dist", "go", "target(rpm)", "l-actual(rpm)", "r-actual(rpm)", "w1out", "w2out" } ;
+    private static String [] columns_ = { "time", "dist", "go", "target(rpm)", "l-actual(rpm)", "r-actual(rpm)" } ;
 
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, TankDriveSubsystem db, TurretSubsystem turret) 
             throws Exception {
@@ -102,7 +102,7 @@ public class GPMFireAction extends Action {
 
         double value ;        
 
-        delay_timer_ = new XeroTimer(sub.getRobot(), "DelayTimer", 0.02) ;
+        delay_timer_ = new XeroTimer(sub.getRobot(), "DelayTimer", 0.01) ;
 
         sub_ = sub ;
         target_tracker_ = target_tracker ;
@@ -340,8 +340,6 @@ public class GPMFireAction extends Action {
         plot_data_[3] = shoot_params_.v1_ ;
         plot_data_[4] = sub_.getShooter().getWheelMotor1().getVelocity() ;
         plot_data_[5] = sub_.getShooter().getWheelMotor2().getVelocity() ;
-        plot_data_[6] = sub_.getShooter().getWheelMotor1().getPower() ;
-        plot_data_[7] = sub_.getShooter().getWheelMotor2().getPower() ;
         sub_.addPlotData(plot_id_, plot_data_) ;
     }
 

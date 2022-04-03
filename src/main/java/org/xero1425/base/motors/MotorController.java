@@ -57,6 +57,8 @@ public abstract class MotorController
         Velocity,                   ///< Velocity PID control
     }
 
+    public abstract double getVelocity()  throws BadMotorRequestException, MotorRequestFailedException ;
+
     /// \brief Set the motor power
     /// \param percent the motor power to assign to the motor
     public abstract void set(double percent)  throws BadMotorRequestException, MotorRequestFailedException ;

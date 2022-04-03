@@ -94,6 +94,10 @@ public class SparkMaxMotorController extends MotorController
         }
     }
 
+    public double getVelocity() throws BadMotorRequestException, MotorRequestFailedException {
+        return encoder_.getVelocity() ;
+    }
+
     /// \brief Return the current input voltage to the motor controller
     /// \returns the current input voltage to the motor controller    
     public double getInputVoltage() throws BadMotorRequestException {

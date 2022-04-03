@@ -33,6 +33,13 @@ public class MotorGroupController extends MotorController
             ctrl.follow(motors_.get(0), inverted) ;
     }
 
+    public double getVelocity() throws BadMotorRequestException, MotorRequestFailedException {
+        if (motors_.size() == 0)
+            throw new BadMotorRequestException(this, "request made to empty MotorGroupController") ;
+
+        return motors_.get(0).getVelocity() ;
+    }
+
     /// \brief Return the current input voltage to the motor controller
     /// \returns the current input voltage to the motor controller    
     public double getInputVoltage() throws BadMotorRequestException, MotorRequestFailedException {

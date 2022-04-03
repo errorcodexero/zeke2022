@@ -12,11 +12,19 @@ public class ShooterSubsystem extends Subsystem {
 
     public ShooterSubsystem(Subsystem parent) throws Exception {
         super(parent, SubsystemName);
+
+        double ticks_per_rev = 42 ;
+        double seconds_per_minute = 60 ;
+        double motor_to_shooter_gear_ratio  = 2 / 1 ;
+        double factor =  seconds_per_minute / ticks_per_rev * motor_to_shooter_gear_ratio ;
+
         wheelMotor1_ = new MotorEncoderSubsystem(this, SubsystemName + "-w1", false, 8);
         addChild(wheelMotor1_) ;
+        wheelMotor2_.setVelocityConversion(factor);
 
         wheelMotor2_ = new MotorEncoderSubsystem(this, SubsystemName + "-w2", false, 8);
         addChild(wheelMotor2_);
+        wheelMotor2_.setVelocityConversion(factor);
         
         hoodMotor_ = new HoodMotorSubsystem(this) ;
         addChild(hoodMotor_) ;

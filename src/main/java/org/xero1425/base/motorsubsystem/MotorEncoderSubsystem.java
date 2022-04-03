@@ -21,6 +21,9 @@ public class MotorEncoderSubsystem extends MotorSubsystem
     // If true, the measured output is angular
     private boolean angular_ ;
 
+    // If true, use the velocity from the motor controller
+    private boolean use_ctrl_velocity_ ;
+
     /// \brief Create the subsystem
     /// \param parent the owning subsystem
     /// \param name the name of this subsystem
@@ -30,6 +33,8 @@ public class MotorEncoderSubsystem extends MotorSubsystem
 
         speedometer_ = new Speedometer(name, 2, angle) ;
         angular_ = angle ;
+
+        use_ctrl_velocity_ = false ;
 
         String encname = "subsystems:" + name + ":hw:encoder" ;
         encoder_ = new XeroEncoder(parent.getRobot(), encname, angle, getMotorController()) ;
@@ -77,6 +82,7 @@ public class MotorEncoderSubsystem extends MotorSubsystem
     /// \param factor the factor to multiply the encoder ticks rate by to get real world velocity
     public void setVelocityConversion(double factor) throws BadMotorRequestException, MotorRequestFailedException {
         getMotorController().setVelocityConversion(factor);
+        use_ctrl_velocity_ = true ;
     }
 
     /// \brief Returns true if measuring an angular quantity
@@ -94,7 +100,20 @@ public class MotorEncoderSubsystem extends MotorSubsystem
     /// \brief Returns the velocity of the motor output, as measured by the speedometer
     /// \returns the velocity of the motor output, as measured by the speedometer    
     public double getVelocity() {
-        return speedometer_.getVelocity() ;
+        double ret = 0.0 ;
+
+        if (use_ctrl_velocity_) {
+            try {
+                ret = getMotorController().getVelocity() ;
+            } catch (BadMotorRequestException | MotorRequestFailedException e) {
+                ret = 0.0 ;
+            }
+        }
+        else {
+            ret = speedometer_.getVelocity() ;
+        }
+
+        return ret ;
     }
 
     /// \brief Returns the acceleration of the motor output, as measured by the speedometer
