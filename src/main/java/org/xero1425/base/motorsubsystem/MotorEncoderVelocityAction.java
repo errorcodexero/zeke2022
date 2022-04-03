@@ -53,6 +53,7 @@ public class MotorEncoderVelocityAction extends MotorAction {
 
         name_ = name ;
         target_ = target;
+        forcesw_ = true ;
 
         if (useSWPID()) {
             pid_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:" + sub.getName() + ":" + name_, false);

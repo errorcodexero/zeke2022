@@ -48,6 +48,20 @@ public class GPMShooterTestAction extends Action {
             hood = 24.0 ;
 
         shoot_action_.update(w1, w1, hood) ;
+
+        double d1 = Math.abs(w1 - sub_.getShooter().getWheelMotor1().getVelocity()) ;
+        double d2 = Math.abs(w1 - sub_.getShooter().getWheelMotor2().getVelocity()) ;
+
+        double p1 = d1 / w1 * 100 ;
+        double p2 = d2 / w1 * 100 ;
+        double thresh = 7.0 ;
+
+        if (p1 > thresh && p2 > thresh) {
+            sub_.getConveyor().setMotorsPower(0.0, 0.0);
+        }
+        else {
+            sub_.getConveyor().setMotorsPower(1.0, 0.6);
+        }
     }
 
     @Override

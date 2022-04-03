@@ -166,10 +166,6 @@ public class StandardGamepad extends Gamepad {
             }            
           }
 
-          // logger.add("gamepad").add("xSpeed", xSpeed).add("zRotation", zRotation) ;
-          // logger.add("left", left_).add("right", right_) ;
-          // logger.endMessage();
-
           db_.setPower(leftSpeed, rightSpeed) ;
           left_ = leftSpeed ;
           right_ = rightSpeed ;

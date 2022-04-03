@@ -20,7 +20,7 @@ public class ShooterSubsystem extends Subsystem {
 
         wheelMotor1_ = new MotorEncoderSubsystem(this, SubsystemName + "-w1", false, 8);
         addChild(wheelMotor1_) ;
-        wheelMotor2_.setVelocityConversion(factor);
+        wheelMotor1_.setVelocityConversion(factor);
 
         wheelMotor2_ = new MotorEncoderSubsystem(this, SubsystemName + "-w2", false, 8);
         addChild(wheelMotor2_);

@@ -25,11 +25,11 @@ public class ZekeAutoController extends AutoController {
         
         try {
             test_mode_ = new ZekeTestModeAuto(this);
-            modes_[0] = new TwoBallAuto(this, "Two Ball");
-            modes_[1] = new ThreeBallAuto(this, "Three Ball");
-            modes_[2] = new FourBallAuto(this, "Four Ball");
-            modes_[3] = new PitTestAutoMode(this, "Pit Test") ;
-            modes_[4] = new NoOpAuto(this, "Nop-4") ;
+            modes_[0] = new TwoBallLeftAuto(this, "Two Left");
+            modes_[1] = new TwoBallRightAuto(this, "Two Right");
+            modes_[2] = new ThreeBallAuto(this, "Three Ball");
+            modes_[3] = new FourBallAuto(this, "Four Ball");
+            modes_[4] = new PitTestAutoMode(this, "Pit Test") ;
             modes_[5] = new NoOpAuto(this, "Nop-5") ;
             modes_[6] = new NoOpAuto(this, "Nop-6") ;
             modes_[7] = new NoOpAuto(this, "Nop-7") ;

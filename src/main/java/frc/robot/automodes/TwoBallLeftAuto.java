@@ -11,13 +11,13 @@ import frc.robot.targettracker.TargetTrackerSubsystem;
 import frc.robot.turret.TurretSubsystem;
 import frc.robot.zekesubsystem.ZekeSubsystem;
 
-public class TwoBallAuto extends ZekeAutoMode {
+public class TwoBallLeftAuto extends ZekeAutoMode {
 
     private final double FirstFireAngle = 0.0 ;
     private final double ShooterWheelsSpinupSpeed = 4000.0 ;
     private final double FirstFireHood = 6.0 ;
 
-    public TwoBallAuto(ZekeAutoController ctrl, String name) throws Exception {
+    public TwoBallLeftAuto(ZekeAutoController ctrl, String name) throws Exception {
         super(ctrl, name);
 
         ZekeSubsystem zeke = (ZekeSubsystem)ctrl.getRobot().getRobotSubsystem() ;

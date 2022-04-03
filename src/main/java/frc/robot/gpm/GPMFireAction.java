@@ -94,7 +94,7 @@ public class GPMFireAction extends Action {
     private int plot_id_ ;
     private double plot_start_ ;
     private Double [] plot_data_ ;
-    private static String [] columns_ = { "time", "dist", "go", "target(rpm)", "l-actual(rpm)", "r-actual(rpm)" } ;
+    private static String [] columns_ = { "time", "dist", "go", "target(rpm)", "l-actual(rpm)", "r-actual(rpm)", "count"} ;
 
     public GPMFireAction(GPMSubsystem sub, TargetTrackerSubsystem target_tracker, TankDriveSubsystem db, TurretSubsystem turret) 
             throws Exception {
@@ -177,7 +177,7 @@ public class GPMFireAction extends Action {
         //
         // We have started and are waiting to be ready to shoot
         //
-        state_ = State.DELAY ;
+        state_ = State.WAITING ;
 
         //
         // We have no valid shooting parameters
@@ -340,6 +340,7 @@ public class GPMFireAction extends Action {
         plot_data_[3] = shoot_params_.v1_ ;
         plot_data_[4] = sub_.getShooter().getWheelMotor1().getVelocity() ;
         plot_data_[5] = sub_.getShooter().getWheelMotor2().getVelocity() ;
+        plot_data_[6] = (double)sub_.getConveyor().getBallCount() ;
         sub_.addPlotData(plot_id_, plot_data_) ;
     }
 
@@ -415,8 +416,11 @@ public class GPMFireAction extends Action {
             double dw2 = Math.abs(w2 - shoot_params_.v2_) ;
             double dhood = Math.abs(hood - shoot_params_.hood_) ;
 
+            double p1 = dw1 / shoot_params_.v1_ * 100 ;
+            double p2 = dw2 / shoot_params_.v2_ * 100 ;
+
             // return whether or not all the deltas are under the thresholds
-            ret = dw1 < shooter_velocity_threshold_ && dw2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
+            ret = p1 < shooter_velocity_threshold_ && p2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
         }
         return  ret ;
     }

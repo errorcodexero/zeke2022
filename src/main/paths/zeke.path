@@ -268,7 +268,7 @@
                             "y": 297.8132704469933
                         },
                         {
-                            "heading": -2.726310993906275,
+                            "heading": -2.7263109939062744,
                             "x": 433.67097121483704,
                             "y": 247.11254904354678
                         }
@@ -333,6 +333,73 @@
                             "heading": -158.5522636728946,
                             "x": 430.74197683646224,
                             "y": 241.25456028679721
+                        }
+                    ],
+                    "startangle": 0,
+                    "startangledelay": 0,
+                    "startvelocity": 0
+                }
+            ]
+        },
+        {
+            "name": "twoballupper",
+            "paths": [
+                {
+                    "constraints": [
+                    ],
+                    "endangle": 0,
+                    "endangledelay": 0,
+                    "endvelocity": 0,
+                    "flags": [
+                    ],
+                    "markers": [
+                    ],
+                    "maxacceleration": 60,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1800,
+                    "maxvelocity": 60,
+                    "name": "p1",
+                    "points": [
+                        {
+                            "heading": 91,
+                            "x": 345.8011398635937,
+                            "y": 249.9705378002963
+                        },
+                        {
+                            "heading": 90,
+                            "x": 346.77747132305194,
+                            "y": 281.00012763808496
+                        }
+                    ],
+                    "startangle": 0,
+                    "startangledelay": 0,
+                    "startvelocity": 0
+                },
+                {
+                    "constraints": [
+                    ],
+                    "endangle": 0,
+                    "endangledelay": 0,
+                    "endvelocity": 0,
+                    "flags": [
+                    ],
+                    "markers": [
+                    ],
+                    "maxacceleration": 60,
+                    "maxcentripetal": 100000,
+                    "maxjerk": 1800,
+                    "maxvelocity": 60,
+                    "name": "p2",
+                    "points": [
+                        {
+                            "heading": 90,
+                            "x": 346.777,
+                            "y": 281
+                        },
+                        {
+                            "heading": 90,
+                            "x": 345.8011398635937,
+                            "y": 303.5740939083336
                         }
                     ],
                     "startangle": 0,

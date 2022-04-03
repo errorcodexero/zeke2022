@@ -18,8 +18,12 @@ public class VelocityTestAction extends MotorAction {
         super(sub) ;
 
         current_ = 0.0 ;
-        action_ = new MotorEncoderVelocityAction(sub, "testvelaction", current_) ;
-
+        try {
+            action_ = new MotorEncoderVelocityAction(sub, "testvelaction", current_) ;
+        }
+        catch(Exception ex) {
+            action_ = null ;
+        }
         var item = Shuffleboard.getTab("MotorTest").add("Velocity", 0.0) ;
         widget_ = item.withWidget(BuiltInWidgets.kTextView) ;
     }

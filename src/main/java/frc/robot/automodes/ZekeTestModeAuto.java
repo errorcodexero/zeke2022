@@ -186,7 +186,9 @@ public class ZekeTestModeAuto extends TestAutoMode {
 
             case 34:
                 // Set the shooter wheels to a specific velocity
-                addSubActionPair(shooter, new SetShooterAction(shooter, getPower(), getPower(), shooter.getHoodMotor().getPosition()), false);
+                addSubActionPair(shooter, new SetShooterAction(shooter, 2500, 2500, 11), false);
+                // addAction(new DelayAction(shooter.getRobot(), 4.0)) ;
+                // addSubActionPair(shooter, new SetShooterAction(shooter, 3500, 3500, 11), false);
                 break ;   
                 
             case 35:

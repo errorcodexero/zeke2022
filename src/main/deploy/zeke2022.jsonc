@@ -29,7 +29,7 @@
             // Ball path related
             "zeke-color-sensor": false,
             "intake": false,
-            "conveyor": true,
+            "conveyor": false,
 
             // Shoot related
             "shooter": false,
@@ -58,7 +58,8 @@
         //
         // Enable plotting for actions that support plotting
         //
-        "plotting": false,
+        "plotting": true,
+        
         //
         // The global pneumatics settings for the robot
         //
@@ -170,7 +171,7 @@
                 "epsilon": 0.01,
                 "max-increase" : 0.0,             // Max increase rate of power, same args as setOpenLoopRate
                 "max-decrease" : 0.0,             // Max decrease rate of power, same args as setOpenLoopRate
-                "incr-decr-threshold" : 0.3,
+                "incr-decr-threshold" : 0.1,
                 "exponent" : 2.5
             },
             "oi": {
@@ -203,93 +204,85 @@
             "fire-action" : {
                 "hood_pos_threshold" : 0.5,
                 "db_vel_threshold" : 2.0,
-                "navx_gyro_threshold" : 5.0,
-                "navx_accel_threshold" : 5.0,
+                "navx_gyro_threshold" : 15.0,
+                "navx_accel_threshold" : 10000000.0,
                 "db_moving_vel_threshold" : 36.0,
-                "shooter_vel_threshold" : 100.0,
+                "shooter_vel_threshold" : 5.0,
                 "shutdown-delay" : 1.0,
                 "shooter_latency" : 0.2,
                 "hood-pwl" : {
                     "1" : {
-                        "x" : 42.7,
+                        "x" : 42.5,
                         "y" : 9
                     },
                     "2" : {
-                        "x" : 67.1,
-                        "y" : 13
+                        "x" : 68.4,
+                        "y" : 10
                     },
                     "3" : {
-                        "x" : 82.4,
-                        "y" : 15
+                        "x" : 92,
+                        "y" : 12
                     },
                     "4" : {
-                        "x" : 99.3,
-                        "y" : 16
+                        "x" : 110,
+                        "y" : 14
                     },
                     "5" : {
-                        "x" : 119.2,
-                        "y" : 19
+                        "x" : 128.5,
+                        "y" : 14
                     },
                     "6" : {
-                        "x" : 138.5,
-                        "y" : 21
+                        "x" : 148,
+                        "y" : 16
                     },
                     "7" : {
-                        "x" : 155.2,
-                        "y" : 23
-                    },
-                    "8" : {
-                        "x": 172.1,
+                        "x" : 162,
                         "y" : 24
                     },
-                    "9" : {
-                        "x" : 205,
-                        "y" : 25
+                    "8" : {
+                        "x" : 250,
+                        "y" : 24
                     }
                 },
                 "velocity-pwl" : {
                     "1" : {
-                        "x" : 42.7,
-                        "y" : 2500
-                    },
-                    "2" : {
-                        "x": 67.1,
-                        "y" : 2650
-                    },
-                    "3" : {
-                        "x": 82.4,
-                        "y" : 2650
-                    },
-                    "4" : {
-                        "x": 99.3,
-                        "y" : 2800
-                    },
-                    "5" : {
-                        "x": 119.2,
-                        "y" : 2900
-                    },
-                    "6" : {
-                        "x": 138.5,
+                        "x" : 42.5,
                         "y" : 3200
                     },
-                    "7" : {
-                        "x": 155.2,
+                    "2" : {
+                        "x" : 68.4,
+                        "y" : 3400
+                    },
+                    "3" : {
+                        "x" : 92,
                         "y" : 3500
                     },
-                    "8" : {
-                        "x": 172.1,
-                        "y" : 4900
+                    "4" : {
+                        "x" : 110,
+                        "y" : 3800
                     },
-                    "9" : {
-                        "x": 205,
-                        "y" : 6000
+                    "5" : {
+                        "x" : 128.5,
+                        "y" : 4000
+                    },
+                    "6" : {
+                        "x" : 148,
+                        "y" : 6100
+                    },
+                    "7" : {
+                        "x" : 162,
+                        "y" : 6800
+                    },
+                    "8" : {
+                        "x":  250,
+                        "y" : 6800
                     }
                 }
             },
             "manual-fire-action" : {
-                "w1" : 3300,
-                "w2" : 3300,
-                "hood" : 15
+                "w1" : 3200,
+                "w2" : 3200,
+                "hood" : 5.5
             }
         },
         "intake": {
@@ -349,7 +342,7 @@
             },
             "power" : {
                 "intake" : 1.0,
-                "shooter" :0.2
+                "shooter" :0.6
             },
             "eject-action" : {
                 "power" : -1.0,
@@ -647,10 +640,10 @@
                 }
             },
             "w1": {
-                "kp": 0.00002,
-                "ki": 0.0,
+                "kp": 0.00003,
+                "ki": 0.01,
                 "kd": 0.0,
-                "kf": 1.04667e-4,
+                "kf": 7.5770890869800108049702863317126e-5,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
@@ -671,10 +664,10 @@
                 }
             },
             "w2": {
-                "kp": 0.00002,
-                "ki": 0.0,
+                "kp": 0.00003,
+                "ki": 0.01,
                 "kd": 0.0,
-                "kf": 1.0968e-4,
+                "kf": 7.7015464217335058214747736093144e-5,
                 "max": 1.0,
                 "min": -1.0,
                 "imax": 0.0
@@ -739,10 +732,10 @@
         }
     },
     "testmode": {
-        "enabled": true,
+        "enabled": false,
         "which": 101,
-        "power": 3826,
-        "duration": 1.0,
+        "power": 0.5,
+        "duration": 8.0,
         "distance": 1.0,
         "name": "far_tarmac_4_ball_1"
     }

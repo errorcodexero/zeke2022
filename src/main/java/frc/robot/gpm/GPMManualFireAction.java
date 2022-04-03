@@ -71,6 +71,7 @@ public class GPMManualFireAction extends Action {
     }
 
     private boolean isShooterReady() {
+
         double w1 = sub_.getShooter().getWheelMotor1().getVelocity() ;
         double w2 = sub_.getShooter().getWheelMotor2().getVelocity() ;
         double hood = sub_.getShooter().getHoodMotor().getPosition() ;
@@ -80,13 +81,10 @@ public class GPMManualFireAction extends Action {
         double dw2 = Math.abs(w2 - w2_) ;
         double dhood = Math.abs(hood - hood_) ;
 
-        MessageLogger logger = sub_.getRobot().getMessageLogger() ;
-        logger.add("dw1", dw1).add("dw2", dw2).add("dhood", dhood).endMessage();
+        double p1 = dw1 / w1_ * 100 ;
+        double p2 = dw2 / w2_ * 100 ;
 
         // return whether or not all the deltas are under the thresholds
-        boolean amIReallyReady = (dw1 < shooter_velocity_threshold_) && 
-                                    (dw2 < shooter_velocity_threshold_) && 
-                                        (dhood < hood_position_threshold_) ;
-        return  amIReallyReady ;
+        return p1 < shooter_velocity_threshold_ && p2 < shooter_velocity_threshold_ && dhood < hood_position_threshold_ ;
     }
 }
