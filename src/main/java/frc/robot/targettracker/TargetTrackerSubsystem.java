@@ -33,6 +33,11 @@ public class TargetTrackerSubsystem extends Subsystem {
     private TrackMethod track_method_ ;
     private TargetTracker field_target_tracker_ ;
 
+    // Lock the target to a fixed distance/angle. Don't track based on vision or field.
+    private boolean lock_enabled_ ;
+    private double  lock_angle_ ;
+    private double  lock_distance_ ;
+
     private double camera_offset_angle_ ;
 
     public static final String SubsystemName = "targettracker" ;
@@ -55,7 +60,8 @@ public class TargetTrackerSubsystem extends Subsystem {
 
         desired_turret_angle_ = 0.0 ;
         lost_count_ = 0 ;
-        has_vision_target_ = false;
+        has_vision_target_ = false ;
+        lock_enabled_ = false ;
 
         Translation2d target_coordinates = new Translation2d(27*12, 13.5*12) ;
         field_target_tracker_ = new TargetTracker(target_coordinates) ;
@@ -118,6 +124,10 @@ public class TargetTrackerSubsystem extends Subsystem {
         return has_vision_target_ ;
     }
 
+    public boolean hasTarget() {
+        return lock_enabled_ || has_vision_target_ || (track_method_ != TrackMethod.VisionOnly) ;
+    }
+
     public double getDesiredTurretAngle() {
         return desired_turret_angle_ ;
     }
@@ -126,13 +136,28 @@ public class TargetTrackerSubsystem extends Subsystem {
         return distance_ ;
     }
 
+    public void lockTarget(double angle, double distance) {
+        lock_enabled_ = true ;
+        lock_angle_ = angle ;
+        lock_distance_ = distance ;
+    }
+
+    public void unlockTarget() {
+        lock_enabled_ = false ;
+    }
+
     @Override
     public void computeMyState() {
         MessageLogger logger = getRobot().getMessageLogger() ;
 
         if (enabled_)
         {
-            if (ll_.isTargetDetected() && (track_method_ != TrackMethod.FieldPositionOnly))
+            if (lock_enabled_)
+            {
+                desired_turret_angle_ = lock_angle_ ;
+                distance_ = lock_distance_ ;    
+            }
+            else if (ll_.isTargetDetected() && (track_method_ != TrackMethod.FieldPositionOnly))
             {
                 distance_ = ll_.getDistance() ;
                

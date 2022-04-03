@@ -214,11 +214,7 @@ public class GPMFireAction extends Action {
 
             case DELAY:
             case WAITING:  
-                if (delay_timer_.isExpired()) {
-                    state_ = State.WAITING ;
-                }
-
-                has_target_ = target_tracker_.hasVisionTarget() ;
+                has_target_ = target_tracker_.hasTarget() ;
 
                 if (sub_.getConveyor().getBallCount() == 0) {
                     //

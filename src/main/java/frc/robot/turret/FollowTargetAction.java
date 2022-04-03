@@ -80,7 +80,7 @@ public class FollowTargetAction extends MotorAction {
         // point at the target.
         //
 
-        if (tracker_.hasVisionTarget()) {
+        if (tracker_.hasTarget()) {
             desired_ = tracker_.getDesiredTurretAngle() ;
 
             //
