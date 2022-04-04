@@ -38,7 +38,7 @@ public class MotorEncoderTrackPositionAction extends MotorAction {
         
         ctrl_ = new PIDCtrl(sub.getRobot().getSettingsSupplier(), "subsystems:" + sub.getName() + ":" + name, false) ;
 
-        plot_id_ = sub.initPlot(toString()) ;  
+        plot_id_ = sub.initPlot(toString(0)) ;
     }
 
     public double getError() {
