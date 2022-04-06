@@ -275,7 +275,7 @@ public class ClimbAction extends Action {
         logger.add("pressure", sub_.getRobot().getPressure()) ;
         logger.endMessage();
 
-        if (sub_.getRobot().getPressure() > pneumatic_pressure_required_ || Math.abs(pneumatic_pressure_required_) < 0.1) {
+        if (sub_.getRobot().getPressure() > pneumatic_pressure_required_ || Math.abs(pneumatic_pressure_required_) < 0.1 || sub_.getRobot().getPressure() < 0.0) {
             if (rotate_) {
                 db_.setAction(rotate_db_) ;
                 state_ = ClimbingStates.ROTATE_DRIVEBASE ;

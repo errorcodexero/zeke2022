@@ -33,14 +33,14 @@
 
             // Shoot related
             "shooter": false,
-            "fire-action" : true,
+            "fire-action" : false,
             "shooter-w1" : false,
             "shooter-w2" : false,
             "shooter-h" : false,            
             "turret" : false,
 
             // Climber related
-            "climber": false,
+            "climber": true,
             "climber-model": false,
 
             // OI
@@ -577,7 +577,7 @@
                 "backup-time-high-traverse" : 30.0,
 
                 // The pneumatic pressure required to start climb sequence
-                "pneumatic-pressure-required" : 0,
+                "pneumatic-pressure-required" : 30,
 
                 // The range used to ramp the windmill motors, in robot loops
                 "start-range" : 10,
