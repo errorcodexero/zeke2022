@@ -83,6 +83,11 @@ public class FollowTargetAction extends MotorAction {
         if (tracker_.hasTarget()) {
             desired_ = tracker_.getDesiredTurretAngle() ;
 
+            if (desired_ > 60.0)
+                desired_ = 60.0 ;
+            else if (desired_ < -60.0)
+                desired_ = -60.0 ;
+
             //
             // Update the turret motor power based on the current position of the turret and
             // the desired positon of the turret.

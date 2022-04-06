@@ -275,7 +275,7 @@ public class ClimbAction extends Action {
         logger.add("pressure", sub_.getRobot().getPressure()) ;
         logger.endMessage();
 
-        if (sub_.getRobot().getPressure() > pneumatic_pressure_required_) {
+        if (sub_.getRobot().getPressure() > pneumatic_pressure_required_ || Math.abs(pneumatic_pressure_required_) < 0.1) {
             if (rotate_) {
                 db_.setAction(rotate_db_) ;
                 state_ = ClimbingStates.ROTATE_DRIVEBASE ;
@@ -467,12 +467,7 @@ public class ClimbAction extends Action {
             else {
 
                 state_start_time_ = sub_.getRobot().getTime() ;
-
-                if (stop_when_safe_)
-                    state_ = ClimbingStates.COMPLETE ;
-                else {
-                    state_ = ClimbingStates.DELAY_BEFORE_MID_RELEASE ;
-                }
+                state_ = ClimbingStates.DELAY_BEFORE_MID_RELEASE ;
             }            
         }
         else {
@@ -504,7 +499,11 @@ public class ClimbAction extends Action {
         if (sub_.getRobot().getTime() - state_start_time_ > unclamp_loaded_wait_time_) {
             sensor_dead_time_end_ = sub_.getRobot().getTime()  + 1.0 ;
             windmill_high_to_traverse_ctrl_.start() ;
-            state_ = ClimbingStates.WINDMILL_TO_TRAVERSE_BAR ;
+
+            if (stop_when_safe_)
+                state_ = ClimbingStates.COMPLETE ;
+            else
+                state_ = ClimbingStates.WINDMILL_TO_TRAVERSE_BAR ;
         }
     }
 

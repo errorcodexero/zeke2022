@@ -131,8 +131,8 @@ public class ZekeOIDevice extends OIPanel {
         TargetTrackerSubsystem tracker = zeke.getTargetTracker() ;
         Gamepad g = getSubsystem().getGamePad() ;
 
-        // if (gpm.getAction() == fire_action_ && fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady())
-        //     g.rumble(1.0, 2.0);
+        if (gpm.getAction() == fire_action_ && fire_action_.hasTarget() && fire_action_.turretReady() && fire_action_.shooterReady())
+            g.rumble(1.0, 2.0);
         // else if (getValue(collect_v_shoot_gadget_) == 1 && gpm.getConveyor().getBallCount() == 2)
         //     g.rumble(1.0, 2.0) ;
 

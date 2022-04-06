@@ -40,6 +40,13 @@ public class ShooterSubsystem extends Subsystem {
         return hoodMotor_;
     }
 
+    public void stop() {
+        wheelMotor1_.cancelAction();
+        wheelMotor1_.setPower(0.0) ;
+        wheelMotor2_.cancelAction();
+        wheelMotor2_.setPower(0.0) ;
+    }
+
     @Override
     public SettingsValue getProperty(String name) {
         SettingsValue v = null ;

@@ -70,8 +70,11 @@ public class GPMFireAction extends Action {
     private final double db_velocity_threshold_ ;
     private final double shooter_velocity_threshold_ ;
     private final double hood_position_threshold_ ;
-    private final double gyro_threshold_ ;
     private final double accel_threshold_ ;
+    private int accel_x_count_ ;
+    private int accel_y_count_ ;
+    private int accel_z_count_ ;
+    private int accel_req_count_ ;
 
     private int fire_action_id_ ;
 
@@ -109,6 +112,9 @@ public class GPMFireAction extends Action {
         db_ = db ;
         turret_ = turret ;
         go_ = 0 ;
+        accel_x_count_ = 0 ;
+        accel_y_count_ = 0 ;
+        accel_z_count_ = 0 ;
  
         shutdown_start_timer_ = new XeroTimer(sub.getRobot(), "fire-action-shutdown-timer", sub_.getSettingsValue("fire-action:shutdown-delay").getDouble()) ;
 
@@ -117,8 +123,7 @@ public class GPMFireAction extends Action {
         value = sub_.getSettingsValue("fire-action:db_vel_threshold").getDouble() ;
         db_velocity_threshold_ = value;
 
-        value = sub_.getSettingsValue("fire-action:navx_gyro_threshold").getDouble() ;
-        gyro_threshold_ = value;
+        accel_req_count_ = sub_.getSettingsValue("fire-action:accel-req-count").getInteger() ;
 
         value = sub_.getSettingsValue("fire-action:navx_accel_threshold").getDouble() ;
         accel_threshold_ = value;
@@ -173,6 +178,10 @@ public class GPMFireAction extends Action {
 
         go_ = 0 ;
         delay_timer_.start() ;
+
+        accel_x_count_ = 0 ;
+        accel_y_count_ = 0 ;
+        accel_z_count_ = 0 ;
 
         //
         // We have started and are waiting to be ready to shoot
@@ -268,6 +277,7 @@ public class GPMFireAction extends Action {
                             logger.add("hood", shoot_params_.hood_) ;
                             logger.add("velocity", shoot_params_.v1_) ;
                             logger.add("balls", sub_.getConveyor().getBallCount()) ;
+                            logger.add("pressure", sub_.getRobot().getPressure()) ;
                             logger.endMessage();
 
                             shooter_action_.startPlot();
@@ -369,9 +379,9 @@ public class GPMFireAction extends Action {
         logger.add("isDbReady:") ;
         logger.add("lvel", db_.getLeftVelocity()) ;
         logger.add("rvel", db_.getRightVelocity()) ;
-        logger.add("gyrox", gyro.getGyroX()) ;
-        logger.add("gyroy", gyro.getGyroY()) ;
-        logger.add("gyroz", gyro.getGyroZ()) ;
+        logger.add("xcount", accel_x_count_) ;
+        logger.add("ycount", accel_y_count_) ;
+        logger.add("zcount", accel_z_count_) ;
         logger.add("accelx", gyro.getAccelX()) ;
         logger.add("accely", gyro.getAccelY()) ;
         logger.add("accelz", gyro.getAccelZ()) ;
@@ -380,25 +390,24 @@ public class GPMFireAction extends Action {
         if (Math.abs(db_.getLeftVelocity()) > db_velocity_threshold_ || Math.abs(db_.getRightVelocity()) > db_velocity_threshold_)
             return false ;
 
-        if (Math.abs(gyro.getGyroX()) > gyro_threshold_)
-            return false ;
-
-        if (Math.abs(gyro.getGyroY()) > gyro_threshold_)
-            return false ;
-
-        if (Math.abs(gyro.getGyroX()) > gyro_threshold_)
-            return false ;        
-            
         if (Math.abs(gyro.getAccelX()) > accel_threshold_)
-            return false ;  
+            accel_x_count_ = 0 ;
+        else
+            accel_x_count_++ ;
 
         if (Math.abs(gyro.getAccelY()) > accel_threshold_)
-            return false ;  
+            accel_y_count_ = 0 ;
+        else
+            accel_y_count_++ ;
             
-        if (Math.abs(gyro.getAccelZ()) > accel_threshold_)
-            return false ;              
+        if (Math.abs(gyro.getAccelZ() - 1.0) > accel_threshold_)
+            accel_z_count_ = 0 ;
+        else
+            accel_z_count_++ ;
 
-        return true ;
+        return accel_x_count_ >= accel_req_count_ && 
+                 accel_y_count_ >= accel_req_count_ && 
+                 accel_z_count_ >= accel_req_count_ ;
     }
 
     private boolean isShooterReady() {

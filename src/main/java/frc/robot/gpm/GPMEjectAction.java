@@ -19,7 +19,8 @@ public class GPMEjectAction extends Action {
     }
 
     @Override
-    public void start() {
+    public void start() throws Exception {
+        super.start() ;
         sub_.getConveyor().setAction(eject_, true) ;
         sub_.getShooter().setAction(shooter_, true) ;
     }
@@ -27,7 +28,7 @@ public class GPMEjectAction extends Action {
     @Override
     public void run() {
         if (eject_.isDone()) {
-            sub_.getShooter().cancelAction();
+            sub_.getShooter().stop() ;
             setDone() ;
         }
     }

@@ -281,6 +281,10 @@ public class ConveyorSubsystem extends Subsystem {
                             binfo.type_ = cargo_type_ ;
                             binfo.state_ = State.COLORSENSOR ;
                         }
+                        else if (risingEdge(SENSOR_IDX_CHIMNEY)) {
+                            binfo.state_ = State.CHIMNEY ;
+                            binfo.type_ = CargoType.Same ;
+                        }
                         break ;
 
                     case COLORSENSOR:
