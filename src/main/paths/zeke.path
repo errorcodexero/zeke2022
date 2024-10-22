@@ -1,5 +1,6 @@
 {
     "_version": "2",
+    "units" : "in",
     "groups": [
         {
             "name": "twoball",
